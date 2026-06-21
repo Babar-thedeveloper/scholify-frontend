@@ -44,10 +44,10 @@ export function SortBar({
           }
           aria-label="Sort scholarships"
         >
-          <SelectTrigger className="w-[180px] border-emerald-200/50 bg-white/70 backdrop-blur-md">
+          <SelectTrigger className="w-[180px] border-border/50 bg-card/70 backdrop-blur-md">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent className="border-emerald-200/50 bg-white/85 backdrop-blur-xl">
+          <SelectContent className="border-border/50 bg-card/85 backdrop-blur-xl">
             {sortOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -63,7 +63,7 @@ export function SortBar({
             No scholarships match your filters.{" "}
             <button
               onClick={onClearFilters}
-              className="font-medium text-emerald-700 underline-offset-2 hover:text-emerald-800 hover:underline"
+              className="font-medium text-primary underline-offset-2 hover:text-primary hover:underline"
             >
               Clear filters
             </button>

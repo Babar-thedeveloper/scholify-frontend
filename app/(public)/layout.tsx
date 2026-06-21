@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function PublicLayout({
   children,
@@ -30,6 +31,7 @@ export default function PublicLayout({
           </nav>
 
           <div className="flex items-center gap-2">
+            <ModeToggle />
             <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Log in</Link>
             </Button>

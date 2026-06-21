@@ -69,30 +69,30 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
 
   const deadlineClass =
     status === "open"
-      ? "bg-slate-50 text-slate-600"
+      ? "bg-muted text-muted-foreground"
       : status === "far"
-      ? "bg-emerald-50 text-emerald-700"
+      ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
       : status === "soon"
-      ? "bg-amber-50 text-amber-700"
-      : "bg-red-50 text-red-700";
+      ? "bg-amber-500/15 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300"
+      : "bg-red-500/15 text-red-700 dark:bg-red-500/20 dark:text-red-300";
 
   const categoryColorClass =
     scholarship.category === "national"
-      ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+      ? "bg-emerald-500/15 text-emerald-700 ring-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-300 dark:ring-emerald-500/30"
       : scholarship.category === "international"
-      ? "bg-blue-50 text-blue-700 ring-blue-200"
-      : "bg-amber-50 text-amber-700 ring-amber-200";
+      ? "bg-blue-500/15 text-blue-700 ring-blue-500/30 dark:bg-blue-500/20 dark:text-blue-300 dark:ring-blue-500/30"
+      : "bg-amber-500/15 text-amber-700 ring-amber-500/30 dark:bg-amber-500/20 dark:text-amber-300 dark:ring-amber-500/30";
 
   const categoryGradientClass =
     scholarship.category === "national"
-      ? "bg-gradient-to-b from-emerald-50/70 via-white/80 to-white/85"
+      ? "bg-gradient-to-b from-emerald-500/10 via-background/80 to-background/85"
       : scholarship.category === "international"
-      ? "bg-gradient-to-b from-blue-50/70 via-white/80 to-white/85"
-      : "bg-gradient-to-b from-amber-50/70 via-white/80 to-white/85";
+      ? "bg-gradient-to-b from-blue-500/10 via-background/80 to-background/85"
+      : "bg-gradient-to-b from-amber-500/10 via-background/80 to-background/85";
 
   return (
     <Card
-      className={`group relative flex h-full flex-col overflow-visible rounded-2xl border border-white/60 bg-white/85 shadow-md shadow-black/5 backdrop-blur-xl ring-0 transition-all hover:-translate-y-1 hover:bg-white/95 hover:shadow-[0_0_24px_-6px_rgba(5,150,105,0.15)] ${categoryGradientClass} ${getCategoryBorder(
+      className={`group relative flex h-full flex-col overflow-visible rounded-2xl border border-border/60 bg-card/85 shadow-md shadow-black/5 backdrop-blur-xl ring-0 transition-all hover:-translate-y-1 hover:bg-card/95 hover:shadow-[0_0_24px_-6px_rgba(5,150,105,0.15)] ${categoryGradientClass} ${getCategoryBorder(
         scholarship.category
       )}`}
     >
@@ -182,7 +182,7 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
           <div className="grid grid-cols-2 gap-2">
             <Button
               size="sm"
-              className="relative z-20 gap-1 bg-emerald-600/95 text-white shadow-sm shadow-emerald-900/10 backdrop-blur-sm transition-all hover:bg-emerald-600"
+              className="relative z-20 gap-1 bg-primary text-primary-foreground shadow-sm shadow-black/10 backdrop-blur-sm transition-all hover:bg-primary/90"
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
@@ -200,7 +200,7 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
                     size="sm"
                     variant="outline"
                     disabled
-                    className="relative z-20 w-full cursor-not-allowed border-emerald-200/70 bg-emerald-50/80 text-emerald-700 backdrop-blur-sm"
+                    className="relative z-20 w-full cursor-not-allowed border-border/70 bg-muted text-muted-foreground backdrop-blur-sm"
                     aria-label={`Apply with Scholify for ${scholarship.title} — coming soon`}
                   >
                     Apply with Scholify

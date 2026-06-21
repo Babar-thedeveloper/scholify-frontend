@@ -32,13 +32,13 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
 
   return (
     <div className="relative w-full">
-      <Search className="absolute top-1/2 left-3 z-10 -translate-y-1/2 text-emerald-600 size-5" aria-hidden="true" />
+      <Search className="absolute top-1/2 left-3 z-10 -translate-y-1/2 text-primary size-5" aria-hidden="true" />
       <Input
         type="text"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="Search scholarships by name, provider, or keyword..."
-        className="h-12 w-full rounded-xl border-emerald-200/50 bg-white/80 pl-10 pr-10 text-base shadow-sm shadow-black/5 backdrop-blur-xl transition-colors focus-visible:border-emerald-300 focus-visible:bg-white"
+        className="h-12 w-full rounded-xl border-border/50 bg-card/80 pl-10 pr-10 text-base shadow-sm shadow-black/5 backdrop-blur-xl transition-colors focus-visible:border-ring focus-visible:bg-background"
         aria-label="Search scholarships"
       />
       {inputValue && (

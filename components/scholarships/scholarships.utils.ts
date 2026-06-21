@@ -40,11 +40,11 @@ export function deadlineStatus(
 export function getCategoryBorder(category: ScholarshipCategory): string {
   switch (category) {
     case "national":
-      return "border-t-4 border-emerald-600";
+      return "border-t-4 border-emerald-600 dark:border-emerald-400";
     case "international":
-      return "border-t-4 border-blue-600";
+      return "border-t-4 border-blue-600 dark:border-blue-400";
     case "provincial":
-      return "border-t-4 border-amber-500";
+      return "border-t-4 border-amber-500 dark:border-amber-400";
     default:
       return "border-t-4 border-muted";
   }
@@ -53,11 +53,11 @@ export function getCategoryBorder(category: ScholarshipCategory): string {
 export function getCategoryPill(category: ScholarshipCategory): string {
   switch (category) {
     case "national":
-      return "bg-emerald-50 text-emerald-800";
+      return "bg-emerald-500/15 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300";
     case "international":
-      return "bg-blue-50 text-blue-800";
+      return "bg-blue-500/15 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300";
     case "provincial":
-      return "bg-amber-50 text-amber-800";
+      return "bg-amber-500/15 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300";
     default:
       return "bg-muted text-muted-foreground";
   }
@@ -66,13 +66,13 @@ export function getCategoryPill(category: ScholarshipCategory): string {
 export function getFundingPill(fundingType: FundingType): string {
   switch (fundingType) {
     case "fully-funded":
-      return "bg-yellow-50 text-yellow-800";
+      return "bg-yellow-500/15 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300";
     case "need-based":
-      return "bg-red-50 text-red-800";
+      return "bg-red-500/15 text-red-800 dark:bg-red-500/20 dark:text-red-300";
     case "merit-based":
-      return "bg-purple-50 text-purple-800";
+      return "bg-purple-500/15 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300";
     case "partial":
-      return "bg-gray-50 text-gray-700";
+      return "bg-gray-500/15 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300";
     default:
       return "bg-muted text-muted-foreground";
   }
