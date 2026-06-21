@@ -6,8 +6,18 @@ import { Reveal } from "./Reveal";
 
 export function FinalCTA() {
   return (
-    <section className="w-full bg-emerald-600 py-20 text-white md:py-28">
-      <div className={`${CONTAINER} max-w-3xl text-center`}>
+    <section className="sheen relative w-full overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-600 to-emerald-700 py-20 text-white md:py-28">
+      <div
+        aria-hidden="true"
+        className="animate-blob pointer-events-none absolute -left-16 bottom-0 size-72 rounded-full bg-white/10 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="animate-blob pointer-events-none absolute -right-16 top-0 size-72 rounded-full bg-emerald-900/20 blur-3xl"
+        style={{ animationDelay: "-10s" }}
+      />
+
+      <div className={`${CONTAINER} relative z-10 max-w-3xl text-center`}>
         <Reveal>
           <h2 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
             {finalCta.heading}
@@ -19,7 +29,7 @@ export function FinalCTA() {
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button
               size="lg"
-              className="bg-white text-emerald-700 hover:bg-emerald-50"
+              className="bg-white text-emerald-700 shadow-lg hover:bg-emerald-50"
               asChild
             >
               <Link href={finalCta.primaryCta.href}>
@@ -29,7 +39,7 @@ export function FinalCTA() {
             <Button
               size="lg"
               variant="outline"
-              className="border-white bg-transparent text-white hover:bg-white/10 hover:text-white dark:border-white dark:bg-transparent dark:hover:bg-white/10"
+              className="glass-tint border-white/40 text-white hover:bg-white/15 hover:text-white dark:border-white/40 dark:bg-transparent dark:hover:bg-white/15"
               asChild
             >
               <Link href={finalCta.secondaryCta.href}>
@@ -38,9 +48,12 @@ export function FinalCTA() {
             </Button>
           </div>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 text-sm text-emerald-100 sm:flex-row sm:gap-6">
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-3">
             {finalCta.bullets.map((bullet) => (
-              <span key={bullet} className="flex items-center gap-1.5">
+              <span
+                key={bullet}
+                className="glass-tint flex items-center gap-1.5 rounded-full px-3 py-1 text-sm text-white"
+              >
                 <Check className="size-4" />
                 {bullet}
               </span>

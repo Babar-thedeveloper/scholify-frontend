@@ -22,10 +22,14 @@ export function Reveal({ children, className, delay = 0, ...props }: RevealProps
   React.useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Fallback for environments without IntersectionObserver: reveal on the
+    // next frame (deferred so we don't setState synchronously in the effect).
     if (typeof IntersectionObserver === "undefined") {
-      setShown(true);
-      return;
+      const raf = requestAnimationFrame(() => setShown(true));
+      return () => cancelAnimationFrame(raf);
     }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

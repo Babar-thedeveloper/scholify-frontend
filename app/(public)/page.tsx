@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/home/HeroSection";
 import { ImpactBar } from "@/components/home/ImpactBar";
-import { FounderStory } from "@/components/home/FounderStory";
 import { FeatureGrid } from "@/components/home/FeatureGrid";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { Testimonials } from "@/components/home/Testimonials";
@@ -26,7 +25,6 @@ export default function HomePage() {
     <>
       <HeroSection />
       <ImpactBar />
-      <FounderStory />
       <FeatureGrid />
       <HowItWorks />
       <Testimonials />

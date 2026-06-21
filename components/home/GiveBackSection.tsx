@@ -7,8 +7,22 @@ import { Reveal } from "./Reveal";
 export function GiveBackSection() {
   const c = giveBack.campaign;
   return (
-    <section className="w-full bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-800 py-20 text-white md:py-28">
-      <div className={`${CONTAINER} max-w-4xl`}>
+    <section
+      id="give-back"
+      className="relative w-full scroll-mt-20 overflow-hidden bg-gradient-to-br from-emerald-700 via-emerald-600 to-emerald-800 py-20 text-white md:py-28"
+    >
+      {/* decorative animated blobs */}
+      <div
+        aria-hidden="true"
+        className="animate-blob pointer-events-none absolute -left-20 top-10 size-80 rounded-full bg-emerald-400/20 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="animate-blob pointer-events-none absolute -right-16 bottom-0 size-72 rounded-full bg-teal-300/20 blur-3xl"
+        style={{ animationDelay: "-9s" }}
+      />
+
+      <div className={`${CONTAINER} relative z-10 max-w-4xl`}>
         <Reveal className="text-center">
           <p className="text-sm font-medium uppercase tracking-wider text-emerald-200">
             {giveBack.eyebrow}
@@ -23,9 +37,9 @@ export function GiveBackSection() {
           </p>
         </Reveal>
 
-        {/* Live impact card */}
+        {/* Live impact card — frosted glass over the gradient */}
         <Reveal delay={120} className="mx-auto mt-10 max-w-2xl">
-          <div className="rounded-2xl bg-card p-7 text-card-foreground shadow-2xl shadow-emerald-950/20">
+          <div className="glass glass-card rounded-2xl p-7 text-card-foreground">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
               <Heart className="size-4 text-emerald-600" />
               {c.label}
