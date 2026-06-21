@@ -18,7 +18,7 @@ export default async function ScholarshipsPage() {
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           Scholarships don&apos;t find you. You find them. Start here.
         </h1>
-        <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
+        <p className="mt-1 max-w-4xl text-xs text-muted-foreground sm:text-sm">
           Every national, international and provincial scholarship for Pakistani students — in one place, updated daily, completely free.
         </p>
       </div>
