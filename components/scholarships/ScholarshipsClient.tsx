@@ -3,7 +3,6 @@
 import { useCallback, useMemo, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchBar } from "./SearchBar";
-import { CategoryTabs } from "./CategoryTabs";
 import { FilterBar } from "./FilterBar";
 import { SortBar } from "./SortBar";
 import { ScholarshipGrid } from "./ScholarshipGrid";
@@ -115,17 +114,11 @@ export function ScholarshipsClient({ scholarships }: ScholarshipsClientProps) {
   const hasFilters = hasActiveFilters(filterValues);
 
   return (
-    <div className={`flex flex-col gap-8 ${isPending ? "opacity-80" : ""}`}>
-      <section className="glass glow-ring flex flex-col gap-4 rounded-2xl p-4 sm:p-5">
-        <SearchBar
-          value={filters.search}
-          onChange={(search) => updateUrl({ search })}
-        />
-        <CategoryTabs
-          value={filters.category}
-          onChange={(category) => updateUrl({ category })}
-        />
-      </section>
+    <div className={`flex flex-col gap-5 ${isPending ? "opacity-80" : ""}`}>
+      <SearchBar
+        value={filters.search}
+        onChange={(search) => updateUrl({ search })}
+      />
 
       <FilterBar
         filters={filterValues}

@@ -33,6 +33,30 @@ export function SortBar({
 }: SortBarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center gap-2">
+        <span className="hidden text-sm text-muted-foreground sm:inline">
+          Sort by:
+        </span>
+        <Select
+          value={sort}
+          onValueChange={(value) =>
+            onSortChange(value as ScholarshipFilters["sort"])
+          }
+          aria-label="Sort scholarships"
+        >
+          <SelectTrigger className="w-[180px] border-emerald-200/50 bg-white/70 backdrop-blur-md">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent className="border-emerald-200/50 bg-white/85 backdrop-blur-xl">
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="text-sm text-muted-foreground">
         {count === 0 ? (
           <span className="text-foreground">
@@ -50,30 +74,6 @@ export function SortBar({
             found
           </span>
         )}
-      </div>
-
-      <div className="flex items-center gap-2">
-        <span className="hidden text-sm text-muted-foreground sm:inline">
-          Sort by:
-        </span>
-        <Select
-          value={sort}
-          onValueChange={(value) =>
-            onSortChange(value as ScholarshipFilters["sort"])
-          }
-          aria-label="Sort scholarships"
-        >
-          <SelectTrigger className="w-[180px] border-white/40 bg-white/70 backdrop-blur-md">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent className="border-white/40 bg-white/85 backdrop-blur-xl">
-            {sortOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
     </div>
   );

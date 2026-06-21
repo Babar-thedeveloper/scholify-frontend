@@ -92,7 +92,7 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
 
   return (
     <Card
-      className={`group relative flex h-full flex-col overflow-visible rounded-2xl border border-white/60 bg-white/85 shadow-md shadow-black/5 backdrop-blur-xl ring-0 transition-all hover:-translate-y-1 hover:border-emerald-200/60 hover:bg-white/95 hover:shadow-lg ${categoryGradientClass} ${getCategoryBorder(
+      className={`group relative flex h-full flex-col overflow-visible rounded-2xl border border-white/60 bg-white/85 shadow-md shadow-black/5 backdrop-blur-xl ring-0 transition-all hover:-translate-y-1 hover:bg-white/95 hover:shadow-[0_0_24px_-6px_rgba(5,150,105,0.15)] ${categoryGradientClass} ${getCategoryBorder(
         scholarship.category
       )}`}
     >
@@ -104,7 +104,7 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
         <span className="sr-only">View details</span>
       </Link>
 
-      <div className="relative z-20 px-5 pt-3">
+      <div className="relative z-20 px-4 pt-2">
         <span
           className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${categoryColorClass}`}
         >
@@ -112,7 +112,7 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
         </span>
       </div>
 
-      <CardContent className="relative z-10 flex flex-1 flex-col gap-4 p-5 pt-3">
+      <CardContent className="relative z-10 flex flex-1 flex-col gap-3 p-4 pt-2">
         {/* Header: provider + funding */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-0.5">

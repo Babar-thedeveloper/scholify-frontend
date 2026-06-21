@@ -13,13 +13,13 @@ export default async function ScholarshipsPage() {
   const scholarships = await fetchScholarships(baseUrl);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
-          Scholarships
+    <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl">
+      <div className="mb-5">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          Scholarships don&apos;t find you. You find them. Start here.
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Find funding for your education in Pakistan and abroad.
+        <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
+          Every national, international and provincial scholarship for Pakistani students — in one place, updated daily, completely free.
         </p>
       </div>
 

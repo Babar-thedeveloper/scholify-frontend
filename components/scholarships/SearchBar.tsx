@@ -38,7 +38,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         placeholder="Search scholarships by name, provider, or keyword..."
-        className="h-12 w-full rounded-xl border-white/40 bg-white/80 pl-10 pr-10 text-base shadow-sm shadow-black/5 backdrop-blur-xl transition-colors focus-visible:bg-white"
+        className="h-12 w-full rounded-xl border-emerald-200/50 bg-white/80 pl-10 pr-10 text-base shadow-sm shadow-black/5 backdrop-blur-xl transition-colors focus-visible:border-emerald-300 focus-visible:bg-white"
         aria-label="Search scholarships"
       />
       {inputValue && (

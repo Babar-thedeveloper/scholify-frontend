@@ -33,8 +33,8 @@ export function CategoryTabs({ value, onChange }: CategoryTabsProps) {
             className={cn(
               "rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               active
-                ? "bg-primary text-primary-foreground shadow-sm shadow-emerald-900/10"
-                : "border border-white/40 bg-white/70 text-muted-foreground shadow-sm shadow-black/5 backdrop-blur-md hover:border-primary/30 hover:bg-white/90"
+                ? "border border-emerald-200/40 bg-primary text-primary-foreground shadow-sm shadow-emerald-900/10"
+                : "border border-emerald-200/70 bg-white/70 text-muted-foreground shadow-sm shadow-black/5 backdrop-blur-md hover:border-emerald-300 hover:bg-white/90"
             )}
           >
             {tab.label}

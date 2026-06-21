@@ -2,6 +2,7 @@
 
 import { SlidersHorizontal, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CategoryTabs } from "./CategoryTabs";
 import {
   Select,
   SelectContent,
@@ -91,7 +92,7 @@ export function FilterBar({
         onValueChange={(value) => update("level", value as typeof filters.level)}
         aria-label="Degree level filter"
       >
-        <SelectTrigger className="w-full border-white/40 bg-white/70 backdrop-blur-md md:w-[150px]">
+        <SelectTrigger className="w-full border-emerald-200/50 bg-white/70 backdrop-blur-md md:w-[150px]">
           <SelectValue placeholder="Degree level" />
         </SelectTrigger>
         <SelectContent className="border-white/40 bg-white/85 backdrop-blur-xl">
@@ -110,7 +111,7 @@ export function FilterBar({
         }
         aria-label="Funding type filter"
       >
-        <SelectTrigger className="w-full border-white/40 bg-white/70 backdrop-blur-md md:w-[150px]">
+        <SelectTrigger className="w-full border-emerald-200/50 bg-white/70 backdrop-blur-md md:w-[150px]">
           <SelectValue placeholder="Funding type" />
         </SelectTrigger>
         <SelectContent className="border-white/40 bg-white/85 backdrop-blur-xl">
@@ -129,7 +130,7 @@ export function FilterBar({
         }
         aria-label="Destination filter"
       >
-        <SelectTrigger className="w-full border-white/40 bg-white/70 backdrop-blur-md md:w-[170px]">
+        <SelectTrigger className="w-full border-emerald-200/50 bg-white/70 backdrop-blur-md md:w-[170px]">
           <SelectValue placeholder="Destination" />
         </SelectTrigger>
         <SelectContent className="border-white/40 bg-white/85 backdrop-blur-xl">
@@ -148,7 +149,7 @@ export function FilterBar({
         }
         aria-label="Deadline filter"
       >
-        <SelectTrigger className="w-full border-white/40 bg-white/70 backdrop-blur-md md:w-[170px]">
+        <SelectTrigger className="w-full border-emerald-200/50 bg-white/70 backdrop-blur-md md:w-[170px]">
           <SelectValue placeholder="Deadline" />
         </SelectTrigger>
         <SelectContent className="border-white/40 bg-white/85 backdrop-blur-xl">
@@ -164,7 +165,7 @@ export function FilterBar({
         <TooltipTrigger asChild>
           <div className="w-full md:w-[170px]">
             <Select value="all" disabled aria-label="Field of study filter">
-              <SelectTrigger className="w-full cursor-not-allowed border-white/40 bg-white/50 opacity-60 backdrop-blur-md">
+              <SelectTrigger className="w-full cursor-not-allowed border-emerald-200/50 bg-white/50 opacity-60 backdrop-blur-md">
                 <div className="flex items-center gap-2">
                   <Lock className="size-3.5" aria-hidden="true" />
                   <SelectValue placeholder="Field of study" />
@@ -184,14 +185,20 @@ export function FilterBar({
   );
 
   return (
-    <div className="sticky top-14 z-30 rounded-xl border border-white/40 bg-white/80 p-4 shadow-sm shadow-black/5 backdrop-blur-xl">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="hidden md:block">{filterContent}</div>
+    <div className="sticky top-14 z-30 rounded-xl border border-emerald-200/50 bg-white/80 p-3 shadow-sm shadow-black/5 backdrop-blur-xl">
+      <div className="flex flex-col gap-2">
+        <CategoryTabs
+          value={filters.category}
+          onChange={(category) => onChange({ ...filters, category })}
+        />
 
-        <div className="flex items-center gap-2 md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="gap-2 border-white/40 bg-white/70 backdrop-blur-md" aria-label="Open filters">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="hidden md:block">{filterContent}</div>
+
+          <div className="flex items-center gap-2 md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="gap-2 border-emerald-200/60 bg-white/70 backdrop-blur-md" aria-label="Open filters">
                 <SlidersHorizontal className="size-4" aria-hidden="true" />
                 Filters
                 {activeCount > 0 && (
@@ -201,7 +208,7 @@ export function FilterBar({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-auto max-h-[85vh] border-white/30 bg-white/85 backdrop-blur-xl">
+            <SheetContent side="bottom" className="h-auto max-h-[85vh] border-emerald-200/50 bg-white/85 backdrop-blur-xl">
               <SheetHeader>
                 <SheetTitle>Filters</SheetTitle>
               </SheetHeader>
@@ -212,7 +219,7 @@ export function FilterBar({
                     <Button
                       variant="outline"
                       onClick={onClear}
-                      className="flex-1 border-white/40 bg-white/70 backdrop-blur-md hover:bg-white/90"
+                      className="flex-1 border-emerald-200/60 bg-white/70 backdrop-blur-md hover:bg-white/90"
                     >
                       Clear all
                     </Button>
@@ -232,7 +239,7 @@ export function FilterBar({
           {hasFilters && (
             <Button
               variant="outline"
-              className="text-sm border-white/40 bg-white/70 text-muted-foreground backdrop-blur-md hover:bg-white/90 hover:text-foreground"
+              className="text-sm border-emerald-200/60 bg-white/70 text-muted-foreground backdrop-blur-md hover:bg-white/90 hover:text-foreground"
               onClick={onClear}
               aria-label="Clear all filters"
             >
@@ -254,6 +261,7 @@ export function FilterBar({
           </Button>
         </div>
       )}
+      </div>
     </div>
   );
 }

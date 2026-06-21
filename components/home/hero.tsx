@@ -35,7 +35,7 @@ export function HomeHero() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/home#features">See how it works</Link>
+              <Link href="/#features">See how it works</Link>
             </Button>
           </div>
 

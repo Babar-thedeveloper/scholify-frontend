@@ -18,16 +18,13 @@ export default function PublicLayout({
           </Link>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-              Home
-            </Link>
             <Link href="/scholarships" className="text-muted-foreground hover:text-foreground transition-colors">
               Scholarships
             </Link>
-            <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
               Features
             </Link>
-            <Link href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
               Pricing
             </Link>
           </nav>
