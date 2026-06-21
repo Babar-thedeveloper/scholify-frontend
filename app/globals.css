@@ -57,7 +57,7 @@
 
 :root {
   /* Surfaces */
-  --background:              oklch(0.982 0.018 156.087); /* #F0FDF4 — faint green tint */
+  --background:              oklch(0.99 0.006 163.251); /* white with 5% emerald tint */
   --foreground:              oklch(0.208 0.040 265.759); /* #0F172A */
 
   --card:                    oklch(1 0 0);               /* pure white cards */
@@ -169,8 +169,118 @@
   }
   body {
     @apply bg-background text-foreground;
+    position: relative;
+    min-height: 100%;
   }
   html {
     @apply font-sans;
+  }
+
+  /* ─────────────────────────────────────────────
+     Animated aurora background — soft emerald glow
+     fields drifting behind every page.
+     ───────────────────────────────────────────── */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(48rem 48rem at 12% -8%, oklch(0.773 0.153 163 / 0.05), transparent 60%),
+      radial-gradient(42rem 42rem at 105% 10%, oklch(0.696 0.149 162 / 0.04), transparent 60%),
+      radial-gradient(50rem 50rem at 50% 115%, oklch(0.596 0.127 163 / 0.03), transparent 60%);
+    background-color: var(--background);
+    animation: aurora-drift 22s ease-in-out infinite alternate;
+  }
+
+  .dark body::before {
+    background:
+      radial-gradient(48rem 48rem at 12% -8%, oklch(0.696 0.149 162 / 0.04), transparent 60%),
+      radial-gradient(42rem 42rem at 105% 10%, oklch(0.773 0.153 163 / 0.03), transparent 60%),
+      radial-gradient(50rem 50rem at 50% 115%, oklch(0.596 0.127 163 / 0.04), transparent 60%);
+    background-color: var(--background);
+  }
+}
+
+@keyframes aurora-drift {
+  0%   { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  100% { background-position: 8% 6%, 92% 10%, 46% 92%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+@layer utilities {
+  /* Frosted-glass surface — translucent, blurred, with a subtle
+     top highlight and inner sheen. */
+  .glass {
+    background-color: oklch(1 0 0 / 0.62);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid oklch(1 0 0 / 0.55);
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 0.6) inset,
+      0 8px 32px -12px oklch(0.208 0.04 265 / 0.18);
+  }
+
+  .dark .glass {
+    background-color: oklch(0.2 0.025 163 / 0.55);
+    border: 1px solid oklch(1 0 0 / 0.1);
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 0.08) inset,
+      0 8px 32px -12px oklch(0 0 0 / 0.5);
+  }
+
+  /* Glowing glass card — adds an emerald aura that intensifies
+     on hover, plus a lift. Compose with .glass. */
+  .glass-card {
+    position: relative;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+
+  /* The glow halo sits behind the card via a blurred pseudo-element. */
+  .glass-card::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      oklch(0.773 0.153 163 / 0.7),
+      oklch(0.596 0.127 163 / 0) 40%,
+      oklch(0.596 0.127 163 / 0) 60%,
+      oklch(0.696 0.149 162 / 0.6)
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-4px);
+    border-color: oklch(0.596 0.127 163 / 0.45);
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 0.7) inset,
+      0 18px 48px -16px oklch(0.596 0.127 163 / 0.45),
+      0 0 0 1px oklch(0.596 0.127 163 / 0.15);
+  }
+
+  .glass-card:hover::after {
+    opacity: 1;
+  }
+
+  /* Soft static glow ring for emphasis surfaces (no hover needed). */
+  .glow-ring {
+    box-shadow:
+      0 0 0 1px oklch(0.596 0.127 163 / 0.2),
+      0 12px 40px -12px oklch(0.596 0.127 163 / 0.35);
   }
 }

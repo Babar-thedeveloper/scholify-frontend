@@ -8,7 +8,7 @@ import { ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 export function HomeHero() {
   return (
     <section className="relative w-full overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36 xl:max-w-8xl 2xl:max-w-screen-2xl">
         <div className="flex flex-col items-center text-center">
           <Badge
             variant="secondary"

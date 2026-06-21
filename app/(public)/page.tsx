@@ -64,7 +64,7 @@ export default function ComponentReferencePage() {
   const [inputValue, setInputValue] = useState("");
 
   return (
-    <div className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl space-y-12 px-4 py-12 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl">
       <div className="space-y-4">
         <h1 className="text-4xl font-bold tracking-tight">Component Reference</h1>
         <p className="text-lg text-muted-foreground">

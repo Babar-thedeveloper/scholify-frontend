@@ -3,7 +3,7 @@ import Link from "next/link";
 export function HomeFooter() {
   return (
     <footer className="w-full border-t border-border/50 bg-muted/30">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl">
         <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
           <Link href="/home" className="flex items-center gap-2 font-bold text-lg">
             <span className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg shadow-sm">
