@@ -30,7 +30,7 @@ export function AboutHero() {
 
           <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-foreground md:text-6xl">
             {aboutHero.headingTop}{" "}
-            <span className="gradient-text">{aboutHero.headingAccent}</span>
+            <span>{aboutHero.headingAccent}</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl">

@@ -32,7 +32,7 @@ export function HeroSection() {
 
           <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-foreground md:text-6xl">
             {hero.headlineTop}{" "}
-            <span className="gradient-text">{hero.headlineAccent}</span>
+            <span>{hero.headlineAccent}</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">

@@ -40,7 +40,7 @@ export function FounderStory() {
             <h2 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl">
               {founder.headingTop}
               <br />
-              <span className="gradient-text">{founder.headingAccent}</span>
+              <span>{founder.headingAccent}</span>
             </h2>
 
             <div className="glass-panel mt-6 space-y-4 rounded-2xl border-l-2 border-emerald-500 p-6">
