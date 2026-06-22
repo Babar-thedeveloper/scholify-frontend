@@ -31,7 +31,8 @@ export function HeroSection() {
           </Badge>
 
           <h1 className="text-4xl font-bold leading-[1.1] tracking-tight text-foreground md:text-6xl">
-            {hero.headlineTop}{" "}
+            {hero.headlineTop}
+            <br />
             <span>{hero.headlineAccent}</span>
           </h1>
 

@@ -17,10 +17,10 @@ export const CONTAINER =
 
 export const hero = {
   eyebrow: "Pakistan's #1 student opportunity platform",
-  headlineTop: "Scholarships don't find you.",
-  headlineAccent: "You find them. Start here.",
+  headlineTop: "You have the grades.",
+  headlineAccent: "We have the opportunities.",
   subtitle:
-    "Every national, international and provincial scholarship for Pakistani students - in one place, updated daily, completely free.",
+    "Scholarships, internships, and career opportunities for every Pakistani student — national, international, and everything in between. One platform, zero cost, forever.",
   primaryCta: { label: "Browse scholarships", href: "/scholarships" },
   secondaryCta: { label: "How it works", href: "#how-it-works" },
   trustLine:

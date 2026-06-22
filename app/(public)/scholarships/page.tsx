@@ -16,7 +16,8 @@ export default async function ScholarshipsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl">
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-          Scholarships
+          Every scholarship, one search.{" "}
+          <span className="text-primary">Zero guesswork.</span>
         </h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           Every national, international and provincial scholarship for Pakistani students - updated daily, completely free.
