@@ -34,8 +34,9 @@ export function PublicNavbar() {
           <Link href="/internships" className={cn("transition-colors", pathname.startsWith("/internships") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             Internships
           </Link>
-          <Link href="/#features" className={cn("transition-colors", pathname === "/#features" ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
-            Features
+          <Link href="/ai-cv" className={cn("inline-flex items-center gap-1.5 transition-colors", pathname.startsWith("/ai-cv") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
+            AI CV
+            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">Soon</span>
           </Link>
           <Link href="/about" className={cn("transition-colors", pathname.startsWith("/about") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             About

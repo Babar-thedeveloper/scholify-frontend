@@ -97,10 +97,22 @@ export const featureHeader = {
   eyebrow: "Everything you need",
   heading: "One platform. Every opportunity.",
   subtitle:
-    "From discovery to application to hiring - Scholify covers your entire journey.",
+    "AI-powered matching, smart CV builder, and deadline alerts — from discovery to application, Scholify covers your entire journey.",
 };
 
 export const features: Feature[] = [
+  {
+    icon: "Sparkles",
+    title: "AI opportunity matching",
+    description:
+      "Our AI analyzes your profile, GPA, and interests to show you exactly which scholarships and internships you're most likely to get. No more guesswork.",
+  },
+  {
+    icon: "FileText",
+    title: "AI-powered CV builder",
+    description:
+      "Add your details once. Our AI generates a professional, ATS-friendly CV tailored for every application — scholarships, internships, and jobs.",
+  },
   {
     icon: "Search",
     title: "All scholarships, one place",
@@ -120,22 +132,10 @@ export const features: Feature[] = [
       "Onsite, remote, paid - connect with Pakistani and international companies looking specifically for student talent.",
   },
   {
-    icon: "FileText",
-    title: "Auto-generated CV",
-    description:
-      "Fill your profile once. Get a professional, properly formatted CV instantly. Update once, use everywhere.",
-  },
-  {
     icon: "Users",
     title: "Companies find you",
     description:
       "Build your profile and let recruiters discover you. Reverse the search - opportunities come to you.",
-  },
-  {
-    icon: "Heart",
-    title: "Give back when you can",
-    description:
-      "Got a scholarship through Scholify? Pay it forward to another deserving student. 100% transparent, zero platform fees.",
   },
 ];
 
