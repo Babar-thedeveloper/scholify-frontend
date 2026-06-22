@@ -201,7 +201,7 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
                     variant="outline"
                     disabled
                     className="relative z-20 w-full cursor-not-allowed border-border/70 bg-muted text-muted-foreground backdrop-blur-sm"
-                    aria-label={`Apply with Scholify for ${scholarship.title} — coming soon`}
+                    aria-label={`Apply with Scholify for ${scholarship.title} - coming soon`}
                   >
                     Apply with Scholify
                   </Button>

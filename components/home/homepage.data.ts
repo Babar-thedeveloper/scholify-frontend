@@ -2,25 +2,25 @@
  * homepage.data.ts
  * ----------------
  * Single source of truth for all static homepage copy and content.
- * Edit text here — the section components stay presentation-only.
+ * Edit text here - the section components stay presentation-only.
  *
  * Icons are referenced by their lucide-react component name (string) and
  * resolved in the components via a small icon map, so this file stays free
  * of JSX and can be imported anywhere.
  */
 
-/** Shared content container — matches the navbar/footer width convention. */
+/** Shared content container - matches the navbar/footer width convention. */
 export const CONTAINER =
   "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl";
 
-/* ── Section 1 — Hero ───────────────────────────────────────────── */
+/* ── Section 1 - Hero ───────────────────────────────────────────── */
 
 export const hero = {
   eyebrow: "Pakistan's #1 student opportunity platform",
   headlineTop: "Scholarships don't find you.",
   headlineAccent: "You find them. Start here.",
   subtitle:
-    "Every national, international and provincial scholarship for Pakistani students — in one place, updated daily, completely free.",
+    "Every national, international and provincial scholarship for Pakistani students - in one place, updated daily, completely free.",
   primaryCta: { label: "Browse scholarships", href: "/scholarships" },
   secondaryCta: { label: "How it works", href: "#how-it-works" },
   trustLine:
@@ -51,7 +51,7 @@ export const hero = {
   ],
 };
 
-/* ── Section 2 — Impact Bar ─────────────────────────────────────── */
+/* ── Section 2 - Impact Bar ─────────────────────────────────────── */
 
 export interface ImpactStat {
   value: string;
@@ -67,7 +67,7 @@ export const impactStats: ImpactStat[] = [
 
 export const impactFootnote = "Updated daily · Last refresh: today";
 
-/* ── Section 3 — Founder Story ──────────────────────────────────── */
+/* ── Section 3 - Founder Story ──────────────────────────────────── */
 
 export const founder = {
   eyebrow: "Our Story",
@@ -75,17 +75,17 @@ export const founder = {
   headingAccent: "Built for every Pakistani student.",
   name: "Babar",
   title: "Founder · Scholify",
-  /** Photo location — drop a real image here to replace the initials avatar. */
+  /** Photo location - drop a real image here to replace the initials avatar. */
   photo: "/founder-placeholder.jpg",
   paragraphs: [
-    "During my university years, I missed scholarship after scholarship — not because I wasn't eligible, but because no one ever told me they existed.",
+    "During my university years, I missed scholarship after scholarship - not because I wasn't eligible, but because no one ever told me they existed.",
     "Deadlines came and went on Facebook groups I never saw. Opportunities lived in WhatsApp messages I never received. By the time I found out, it was always too late.",
-    "I built Scholify so no Pakistani student goes through that again. Every scholarship in one place. Every deadline tracked. Every opportunity visible. Free, forever — because your future shouldn't depend on who you know.",
+    "I built Scholify so no Pakistani student goes through that again. Every scholarship in one place. Every deadline tracked. Every opportunity visible. Free, forever - because your future shouldn't depend on who you know.",
   ],
-  signature: "— Babar, Founder",
+  signature: "- Babar, Founder",
 };
 
-/* ── Section 4 — Feature Grid ───────────────────────────────────── */
+/* ── Section 4 - Feature Grid ───────────────────────────────────── */
 
 export interface Feature {
   icon: string; // lucide icon name
@@ -97,7 +97,7 @@ export const featureHeader = {
   eyebrow: "Everything you need",
   heading: "One platform. Every opportunity.",
   subtitle:
-    "From discovery to application to hiring — Scholify covers your entire journey.",
+    "From discovery to application to hiring - Scholify covers your entire journey.",
 };
 
 export const features: Feature[] = [
@@ -105,7 +105,7 @@ export const features: Feature[] = [
     icon: "Search",
     title: "All scholarships, one place",
     description:
-      "HEC, PEEF, Chevening, DAAD, Fulbright — every Pakistani-eligible scholarship in one searchable directory. National, international, and provincial.",
+      "HEC, PEEF, Chevening, DAAD, Fulbright - every Pakistani-eligible scholarship in one searchable directory. National, international, and provincial.",
   },
   {
     icon: "Bell",
@@ -117,7 +117,7 @@ export const features: Feature[] = [
     icon: "Briefcase",
     title: "Internships included",
     description:
-      "Onsite, remote, paid — connect with Pakistani and international companies looking specifically for student talent.",
+      "Onsite, remote, paid - connect with Pakistani and international companies looking specifically for student talent.",
   },
   {
     icon: "FileText",
@@ -129,7 +129,7 @@ export const features: Feature[] = [
     icon: "Users",
     title: "Companies find you",
     description:
-      "Build your profile and let recruiters discover you. Reverse the search — opportunities come to you.",
+      "Build your profile and let recruiters discover you. Reverse the search - opportunities come to you.",
   },
   {
     icon: "Heart",
@@ -139,7 +139,7 @@ export const features: Feature[] = [
   },
 ];
 
-/* ── Section 5 — How It Works ───────────────────────────────────── */
+/* ── Section 5 - How It Works ───────────────────────────────────── */
 
 export interface Step {
   title: string;
@@ -170,7 +170,7 @@ export const steps: Step[] = [
   },
 ];
 
-/* ── Section 6 — Testimonials ───────────────────────────────────── */
+/* ── Section 6 - Testimonials ───────────────────────────────────── */
 
 export interface Testimonial {
   quote: string;
@@ -206,14 +206,14 @@ export const testimonials: Testimonial[] = [
 export const testimonialFootnote =
   "* Beta testers and early users. Full success stories coming soon.";
 
-/* ── Section 7 — Give Back ──────────────────────────────────────── */
+/* ── Section 7 - Give Back ──────────────────────────────────────── */
 
 export const giveBack = {
   eyebrow: "Pakistan ka apna platform",
   headingTop: "Pay it forward.",
   headingAccent: "Help the next student dream.",
   description:
-    "Got a scholarship or job through Scholify? Or just want to help a struggling student? Every rupee you donate goes directly to a verified Pakistani student in need — 100% transparent, zero platform fees, and proof of impact for every contribution.",
+    "Got a scholarship or job through Scholify? Or just want to help a struggling student? Every rupee you donate goes directly to a verified Pakistani student in need - 100% transparent, zero platform fees, and proof of impact for every contribution.",
   campaign: {
     label: "Current campaign",
     title: "Helping Aisha complete her final year at UET",
@@ -229,7 +229,7 @@ export const giveBack = {
     "Helping students in need · Powered by community · Always transparent.",
 };
 
-/* ── Section 8 — FAQ ────────────────────────────────────────────── */
+/* ── Section 8 - FAQ ────────────────────────────────────────────── */
 
 export interface FaqItem {
   question: string;
@@ -246,12 +246,12 @@ export const faqs: FaqItem[] = [
   {
     question: "Is Scholify really free? Will it always be free?",
     answer:
-      "Yes, 100% free for students — and it will always be free. We don't take a cut of your scholarship, we don't charge for premium features, and we don't sell your data. The platform sustains itself through optional company hiring fees and community donations.",
+      "Yes, 100% free for students - and it will always be free. We don't take a cut of your scholarship, we don't charge for premium features, and we don't sell your data. The platform sustains itself through optional company hiring fees and community donations.",
   },
   {
     question: "Where do the scholarships come from? Are they verified?",
     answer:
-      "Every scholarship listing comes from official sources — HEC, university financial aid offices, government portals like PEEF and Ehsaas, and verified international organizations like Chevening, DAAD, and Fulbright. We manually verify each one before publishing and update deadlines daily.",
+      "Every scholarship listing comes from official sources - HEC, university financial aid offices, government portals like PEEF and Ehsaas, and verified international organizations like Chevening, DAAD, and Fulbright. We manually verify each one before publishing and update deadlines daily.",
   },
   {
     question: "Can companies actually see my profile? Will I be contacted?",
@@ -267,7 +267,7 @@ export const faqs: FaqItem[] = [
   {
     question: "Where does my donation actually go?",
     answer:
-      "100% to the verified student you're supporting. Scholify takes 0% of donations — we cover transaction costs ourselves. Every donation is tracked, every student is verified through their university, and you get proof of impact (receipts, updates, sometimes a thank-you message).",
+      "100% to the verified student you're supporting. Scholify takes 0% of donations - we cover transaction costs ourselves. Every donation is tracked, every student is verified through their university, and you get proof of impact (receipts, updates, sometimes a thank-you message).",
   },
   {
     question: "Is my personal data safe?",
@@ -277,13 +277,13 @@ export const faqs: FaqItem[] = [
   {
     question: "Which universities can sign up?",
     answer:
-      "Any student enrolled in a recognized Pakistani university or college — public or private — can sign up. We currently have active users from NUST, LUMS, FAST, GIKI, UET, Punjab University, Karachi University, and many more.",
+      "Any student enrolled in a recognized Pakistani university or college - public or private - can sign up. We currently have active users from NUST, LUMS, FAST, GIKI, UET, Punjab University, Karachi University, and many more.",
   },
 ];
 
 export const faqContact = { label: "Still have questions? Get in touch", href: "/contact" };
 
-/* ── Section 9 — Final CTA ──────────────────────────────────────── */
+/* ── Section 9 - Final CTA ──────────────────────────────────────── */
 
 export const finalCta = {
   heading: "Your future is one click away.",
@@ -294,7 +294,7 @@ export const finalCta = {
   bullets: ["Free forever", "No credit card", "2-minute signup"],
 };
 
-/* ── Section 10 — Footer ────────────────────────────────────────── */
+/* ── Section 10 - Footer ────────────────────────────────────────── */
 
 export interface FooterLink {
   label: string;

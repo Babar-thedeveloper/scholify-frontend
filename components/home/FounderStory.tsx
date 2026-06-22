@@ -17,7 +17,7 @@ export function FounderStory() {
 
       <div className={`${CONTAINER} relative z-10`}>
         <div className="grid items-center gap-12 lg:grid-cols-5">
-          {/* Left — photo / avatar */}
+          {/* Left - photo / avatar */}
           <Reveal className="lg:col-span-2">
             <div className="mx-auto max-w-xs text-center">
               <div className="glass rounded-3xl p-3">
@@ -32,7 +32,7 @@ export function FounderStory() {
             </div>
           </Reveal>
 
-          {/* Right — story */}
+          {/* Right - story */}
           <Reveal delay={120} className="lg:col-span-3">
             <p className="text-sm font-medium uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
               {founder.eyebrow}

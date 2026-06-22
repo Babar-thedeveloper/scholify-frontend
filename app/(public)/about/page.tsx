@@ -5,7 +5,7 @@ import { AboutValues } from "@/components/about/AboutValues";
 import { FinalCTA } from "@/components/home/FinalCTA";
 
 export const metadata: Metadata = {
-  title: "About — Scholify",
+  title: "About - Scholify",
   description:
     "Scholify was built by a Pakistani student so no student misses an opportunity again. Read our story and what we stand for.",
 };

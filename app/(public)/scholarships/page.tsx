@@ -29,7 +29,7 @@ export default async function ScholarshipsPage() {
           Find your next scholarship
         </h1>
         <p className="mt-1 max-w-4xl text-xs text-muted-foreground sm:text-sm">
-          Every national, international and provincial scholarship for Pakistani students — in one place, updated daily, completely free.
+          Every national, international and provincial scholarship for Pakistani students - in one place, updated daily, completely free.
         </p>
       </div>
 

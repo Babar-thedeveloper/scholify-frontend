@@ -1,7 +1,7 @@
 /**
  * announcements.data.ts
  * ---------------------
- * Featured hero announcements — the streaming-style rotating showcase.
+ * Featured hero announcements - the streaming-style rotating showcase.
  * Add / reorder slides here; the HeroCarousel renders them in order.
  *
  * `icon` is a lucide-react component name (resolved in HeroCarousel).
@@ -31,7 +31,7 @@ export const announcements: Announcement[] = [
   {
     tag: "Now live",
     highlight: "47+ scholarships",
-    title: "Every scholarship for Pakistani students — in one place",
+    title: "Every scholarship for Pakistani students - in one place",
     description:
       "National, international and provincial opportunities, updated daily and completely free. Stop hunting across Facebook groups and WhatsApp.",
     cta: { label: "Browse scholarships", href: "/scholarships" },
@@ -40,7 +40,7 @@ export const announcements: Announcement[] = [
   },
   {
     tag: "International",
-    title: "Chevening, DAAD & Fulbright — applications open now",
+    title: "Chevening, DAAD & Fulbright - applications open now",
     description:
       "Track every global scholarship with email reminders 7, 3 and 1 day before each deadline. Never miss the chance to study abroad.",
     cta: { label: "Explore funded study abroad", href: "/scholarships" },
@@ -52,7 +52,7 @@ export const announcements: Announcement[] = [
     highlight: "12+ internships",
     title: "Paid internships from Pakistan's top companies",
     description:
-      "Onsite, remote and paid roles from employers actively hiring student talent — from Daraz to fast-growing startups.",
+      "Onsite, remote and paid roles from employers actively hiring student talent - from Daraz to fast-growing startups.",
     cta: { label: "View internships", href: "/internships" },
     icon: "Briefcase",
     theme: "violet",
@@ -70,7 +70,7 @@ export const announcements: Announcement[] = [
     tag: "Give back",
     title: "Help a Pakistani student complete their degree",
     description:
-      "100% transparent community donations — every rupee reaches a verified student, with proof of impact for every contribution.",
+      "100% transparent community donations - every rupee reaches a verified student, with proof of impact for every contribution.",
     cta: { label: "Support a student", href: "#give-back" },
     icon: "HeartHandshake",
     theme: "rose",

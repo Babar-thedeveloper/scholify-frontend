@@ -1,5 +1,5 @@
 /**
- * about.data.ts — content for the /about page.
+ * about.data.ts - content for the /about page.
  * `icon` values are lucide-react component names resolved in the components.
  */
 
@@ -8,7 +8,7 @@ export const aboutHero = {
   headingTop: "We're leveling the playing field",
   headingAccent: "for every Pakistani student.",
   intro:
-    "Scholify exists for one reason: no Pakistani student should miss a life-changing opportunity simply because they never heard about it. We bring every scholarship, internship and student opportunity into one place — free, verified, and updated daily.",
+    "Scholify exists for one reason: no Pakistani student should miss a life-changing opportunity simply because they never heard about it. We bring every scholarship, internship and student opportunity into one place - free, verified, and updated daily.",
   stats: [
     { value: "47+", label: "Scholarships tracked" },
     { value: "50+", label: "Universities reached" },
@@ -34,7 +34,7 @@ export const aboutValues: AboutValue[] = [
     icon: "Eye",
     title: "Visibility for all",
     description:
-      "Every national, international and provincial opportunity in one searchable place — so no student loses out just because they didn't know it existed.",
+      "Every national, international and provincial opportunity in one searchable place - so no student loses out just because they didn't know it existed.",
   },
   {
     icon: "ShieldCheck",

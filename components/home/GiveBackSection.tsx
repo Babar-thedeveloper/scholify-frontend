@@ -37,7 +37,7 @@ export function GiveBackSection() {
           </p>
         </Reveal>
 
-        {/* Live impact card — frosted glass over the gradient */}
+        {/* Live impact card - frosted glass over the gradient */}
         <Reveal delay={120} className="mx-auto mt-10 max-w-2xl">
           <div className="glass glass-card rounded-2xl p-7 text-card-foreground">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">

@@ -49,7 +49,7 @@
 }
 
 /* ─────────────────────────────────────────────
-   ScholarHub — Emerald Growth Theme
+   ScholarHub - Emerald Growth Theme
    Primary:    #059669  oklch(0.596 0.127 163)
    Secondary:  #10B981  oklch(0.696 0.149 163)
    Accent:     #34D399  oklch(0.773 0.153 163)
@@ -66,23 +66,23 @@
   --popover:                 oklch(1 0 0);
   --popover-foreground:      oklch(0.208 0.040 265.759);
 
-  /* Brand — Emerald */
+  /* Brand - Emerald */
   --primary:                 oklch(0.596 0.127 163.251); /* #059669 */
   --primary-foreground:      oklch(1 0 0);               /* white text on green */
 
-  /* Secondary — softer green for hover states, secondary buttons */
-  --secondary:               oklch(0.950 0.051 163.145); /* #D1FAE5 — light green */
-  --secondary-foreground:    oklch(0.432 0.086 166.940); /* #065F46 — dark green text */
+  /* Secondary - softer green for hover states, secondary buttons */
+  --secondary:               oklch(0.950 0.051 163.145); /* #D1FAE5 - light green */
+  --secondary-foreground:    oklch(0.432 0.086 166.940); /* #065F46 - dark green text */
 
-  /* Muted — neutral surfaces (inputs, tags, disabled) */
+  /* Muted - neutral surfaces (inputs, tags, disabled) */
   --muted:                   oklch(0.970 0.010 156.000); /* near-white with hint */
   --muted-foreground:        oklch(0.556 0.030 163.000); /* medium green-gray */
 
-  /* Accent — for hover chips, badges */
+  /* Accent - for hover chips, badges */
   --accent:                  oklch(0.950 0.051 163.145); /* same as secondary */
   --accent-foreground:       oklch(0.432 0.086 166.940);
 
-  /* Destructive — keep red, it's semantic */
+  /* Destructive - keep red, it's semantic */
   --destructive:             oklch(0.577 0.245 27.325);
 
   /* Borders & inputs */
@@ -90,7 +90,7 @@
   --input:                   oklch(0.900 0.040 163.000);
   --ring:                    oklch(0.596 0.127 163.251); /* focus ring = primary */
 
-  /* Charts — green family */
+  /* Charts - green family */
   --chart-1:                 oklch(0.596 0.127 163.251); /* primary */
   --chart-2:                 oklch(0.696 0.149 162.505); /* secondary */
   --chart-3:                 oklch(0.773 0.153 163.251); /* accent */
@@ -111,7 +111,7 @@
 }
 
 .dark {
-  /* Surfaces — deep green-tinted darks */
+  /* Surfaces - deep green-tinted darks */
   --background:              oklch(0.145 0.020 163.000); /* very dark green-black */
   --foreground:              oklch(0.985 0 0);
 
@@ -121,12 +121,12 @@
   --popover:                 oklch(0.200 0.025 163.000);
   --popover-foreground:      oklch(0.985 0 0);
 
-  /* Brand — same emerald as light theme */
+  /* Brand - same emerald as light theme */
   --primary:                 oklch(0.596 0.127 163.251); /* #059669 */
   --primary-foreground:      oklch(1 0 0);               /* white text on green */
 
   /* Secondary */
-  --secondary:               oklch(0.262 0.049 172.582); /* #022C22 — dark green surface */
+  --secondary:               oklch(0.262 0.049 172.582); /* #022C22 - dark green surface */
   --secondary-foreground:    oklch(0.950 0.051 163.145); /* light green text */
 
   /* Muted */
@@ -174,10 +174,11 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
 
   /* ─────────────────────────────────────────────
-     Animated aurora background — soft emerald glow
+     Animated aurora background - soft emerald glow
      fields drifting behind every page.
      ───────────────────────────────────────────── */
   body::before {
@@ -214,7 +215,7 @@
 }
 
 @layer utilities {
-  /* Frosted-glass surface — translucent, blurred, with a subtle
+  /* Frosted-glass surface - translucent, blurred, with a subtle
      top highlight and inner sheen. */
   .glass {
     background-color: oklch(1 0 0 / 0.62);
@@ -234,7 +235,7 @@
       0 8px 32px -12px oklch(0 0 0 / 0.5);
   }
 
-  /* Glowing glass card — adds an emerald aura that intensifies
+  /* Glowing glass card - adds an emerald aura that intensifies
      on hover, plus a lift. Compose with .glass. */
   .glass-card {
     position: relative;
@@ -285,7 +286,7 @@
   }
 }
 /* ─────────────────────────────────────────────
-   Homepage enhancements — extra glass surfaces,
+   Homepage enhancements - extra glass surfaces,
    animated gradient text, sheen sweeps & blobs.
    ───────────────────────────────────────────── */
 @layer utilities {
@@ -326,7 +327,7 @@
     border: 1px solid oklch(1 0 0 / 0.18);
   }
 
-  /* Moving sheen sweep — compose on a position:relative; overflow:hidden el. */
+  /* Moving sheen sweep - compose on a position:relative; overflow:hidden el. */
   .sheen { position: relative; }
   .sheen::after {
     content: "";
