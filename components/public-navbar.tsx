@@ -31,6 +31,9 @@ export function PublicNavbar() {
           <Link href="/scholarships" className="text-muted-foreground hover:text-foreground transition-colors">
             Scholarships
           </Link>
+          <Link href="/internships" className="text-muted-foreground hover:text-foreground transition-colors">
+            Internships
+          </Link>
           <Link href="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
             Features
           </Link>
