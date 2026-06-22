@@ -34,7 +34,7 @@ export function SortBar({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-2">
-        <span className="hidden text-sm text-muted-foreground sm:inline">
+        <span className="hidden text-[13px] text-gray-500 dark:text-gray-400 sm:inline">
           Sort by:
         </span>
         <Select
@@ -44,10 +44,10 @@ export function SortBar({
           }
           aria-label="Sort scholarships"
         >
-          <SelectTrigger className="w-[180px] border-border/50 bg-card/70 backdrop-blur-md">
+          <SelectTrigger className="w-[180px] text-[13px]">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
-          <SelectContent className="border-border/50 bg-card/85 backdrop-blur-xl">
+          <SelectContent>
             {sortOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
@@ -57,20 +57,20 @@ export function SortBar({
         </Select>
       </div>
 
-      <div className="text-sm text-muted-foreground">
+      <div className="text-[13px] text-gray-500 dark:text-gray-400">
         {count === 0 ? (
-          <span className="text-foreground">
+          <span className="text-gray-700 dark:text-gray-300">
             No scholarships match your filters.{" "}
             <button
               onClick={onClearFilters}
-              className="font-medium text-primary underline-offset-2 hover:text-primary hover:underline"
+              className="font-medium text-primary underline-offset-2 hover:underline"
             >
               Clear filters
             </button>
           </span>
         ) : (
           <span>
-            <strong className="text-foreground">{count}</strong> scholarships
+            <strong className="font-semibold text-gray-900 dark:text-gray-100">{count}</strong> scholarships
             found
           </span>
         )}

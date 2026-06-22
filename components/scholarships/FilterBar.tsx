@@ -92,10 +92,10 @@ export function FilterBar({
         onValueChange={(value) => update("level", value as typeof filters.level)}
         aria-label="Degree level filter"
       >
-        <SelectTrigger className="w-full border-border/50 bg-card/70 backdrop-blur-md md:w-[150px]">
+        <SelectTrigger className="w-full text-[13px] md:w-[150px]">
           <SelectValue placeholder="Degree level" />
         </SelectTrigger>
-        <SelectContent className="border-border/40 bg-card/85 backdrop-blur-xl">
+        <SelectContent>
           {degreeOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
@@ -111,10 +111,10 @@ export function FilterBar({
         }
         aria-label="Funding type filter"
       >
-        <SelectTrigger className="w-full border-border/50 bg-card/70 backdrop-blur-md md:w-[150px]">
+        <SelectTrigger className="w-full text-[13px] md:w-[150px]">
           <SelectValue placeholder="Funding type" />
         </SelectTrigger>
-        <SelectContent className="border-border/40 bg-card/85 backdrop-blur-xl">
+        <SelectContent>
           {fundingOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
@@ -130,10 +130,10 @@ export function FilterBar({
         }
         aria-label="Destination filter"
       >
-        <SelectTrigger className="w-full border-border/50 bg-card/70 backdrop-blur-md md:w-[170px]">
+        <SelectTrigger className="w-full text-[13px] md:w-[170px]">
           <SelectValue placeholder="Destination" />
         </SelectTrigger>
-        <SelectContent className="border-border/40 bg-card/85 backdrop-blur-xl">
+        <SelectContent>
           {destinationOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
@@ -149,10 +149,10 @@ export function FilterBar({
         }
         aria-label="Deadline filter"
       >
-        <SelectTrigger className="w-full border-border/50 bg-card/70 backdrop-blur-md md:w-[170px]">
+        <SelectTrigger className="w-full text-[13px] md:w-[170px]">
           <SelectValue placeholder="Deadline" />
         </SelectTrigger>
-        <SelectContent className="border-border/40 bg-card/85 backdrop-blur-xl">
+        <SelectContent>
           {deadlineOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
@@ -165,13 +165,13 @@ export function FilterBar({
         <TooltipTrigger asChild>
           <div className="w-full md:w-[170px]">
             <Select value="all" disabled aria-label="Field of study filter">
-              <SelectTrigger className="w-full cursor-not-allowed border-border/50 bg-muted/50 opacity-60 backdrop-blur-md">
+              <SelectTrigger className="w-full cursor-not-allowed opacity-60 text-[13px]">
                 <div className="flex items-center gap-2">
                   <Lock className="size-3.5" aria-hidden="true" />
                   <SelectValue placeholder="Field of study" />
                 </div>
               </SelectTrigger>
-              <SelectContent className="border-border/40 bg-card/85 backdrop-blur-xl">
+              <SelectContent>
                 <SelectItem value="all">All fields</SelectItem>
               </SelectContent>
             </Select>
@@ -185,7 +185,7 @@ export function FilterBar({
   );
 
   return (
-    <div className="sticky top-14 z-30 rounded-xl border border-border/50 bg-card/80 p-3 shadow-sm shadow-black/5 backdrop-blur-xl">
+    <div className="sticky top-14 z-30 rounded-2xl bg-card p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)]">
       <div className="flex flex-col gap-2">
         <CategoryTabs
           value={filters.category}
@@ -198,7 +198,7 @@ export function FilterBar({
           <div className="flex items-center gap-2 md:hidden">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" className="gap-2 border-border/60 bg-card/70 backdrop-blur-md" aria-label="Open filters">
+                <Button variant="outline" className="gap-2 text-[13px]" aria-label="Open filters">
                 <SlidersHorizontal className="size-4" aria-hidden="true" />
                 Filters
                 {activeCount > 0 && (
@@ -208,7 +208,7 @@ export function FilterBar({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-auto max-h-[85vh] border-border/50 bg-card/85 backdrop-blur-xl">
+            <SheetContent side="bottom" className="h-auto max-h-[85vh]">
               <SheetHeader>
                 <SheetTitle>Filters</SheetTitle>
               </SheetHeader>
@@ -219,14 +219,14 @@ export function FilterBar({
                     <Button
                       variant="outline"
                       onClick={onClear}
-                      className="flex-1 border-border/60 bg-card/70 backdrop-blur-md hover:bg-card/90"
+                      className="flex-1 text-[13px]"
                     >
                       Clear all
                     </Button>
                   </SheetClose>
                 )}
                 <SheetClose asChild>
-                  <Button className="flex-1 bg-primary text-primary-foreground shadow-sm shadow-black/10 backdrop-blur-sm transition-colors hover:bg-primary/90">
+                  <Button className="flex-1 text-[13px]">
                     Show results
                   </Button>
                 </SheetClose>
@@ -239,7 +239,7 @@ export function FilterBar({
           {hasFilters && (
             <Button
               variant="outline"
-              className="text-sm border-border/60 bg-card/70 text-muted-foreground backdrop-blur-md hover:bg-card/90 hover:text-foreground"
+              className="text-[13px] text-gray-500 hover:text-foreground"
               onClick={onClear}
               aria-label="Clear all filters"
             >
@@ -253,7 +253,7 @@ export function FilterBar({
         <div className="mt-2 flex md:hidden">
           <Button
             variant="ghost"
-            className="px-0 text-sm text-primary hover:bg-primary/10 hover:text-primary"
+            className="px-0 text-[13px] text-primary hover:text-primary"
             onClick={onClear}
             aria-label="Clear all filters"
           >

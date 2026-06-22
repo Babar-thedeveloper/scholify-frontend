@@ -12,24 +12,21 @@ export function ReminderNudge({ showNudge = true }: ReminderNudgeProps) {
   if (!showNudge) return null;
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border/40 bg-secondary/70 p-4 shadow-sm shadow-black/5 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-2xl bg-muted/30 p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 rounded-full bg-primary/15 p-1.5 text-primary backdrop-blur-md">
+        <div className="mt-0.5 rounded-full bg-primary/10 p-1.5 text-primary">
           <Bell className="size-4" aria-hidden="true" />
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-[13px] font-medium text-gray-900 dark:text-gray-100">
             Never miss a deadline.
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[13px] text-gray-500 dark:text-gray-400">
             Get free reminders 7 days before any scholarship closes.
           </p>
         </div>
       </div>
-      <Button
-        asChild
-        className="bg-primary text-primary-foreground shadow-sm shadow-black/10 backdrop-blur-sm transition-colors hover:bg-primary/90"
-      >
+      <Button size="sm" asChild className="text-xs">
         <Link href="/register">Create free account →</Link>
       </Button>
     </div>

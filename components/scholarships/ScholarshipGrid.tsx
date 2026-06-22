@@ -26,21 +26,18 @@ export function ScholarshipGrid({
   if (scholarships.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-        <div className="rounded-full border border-border/40 bg-card/70 p-4 shadow-sm shadow-black/5 backdrop-blur-md">
-          <SearchX className="size-8 text-primary" aria-hidden="true" />
+        <div className="rounded-full bg-muted/50 p-4">
+          <SearchX className="size-6 text-gray-400" aria-hidden="true" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-foreground">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
             No scholarships found
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-1 text-[13px] text-gray-500 dark:text-gray-400">
             Try adjusting your filters or search term
           </p>
         </div>
-        <Button
-          onClick={onClearFilters}
-          className="bg-primary text-primary-foreground shadow-sm shadow-black/10 backdrop-blur-sm transition-colors hover:bg-primary/90"
-        >
+        <Button size="sm" onClick={onClearFilters}>
           Clear all filters
         </Button>
       </div>
@@ -49,7 +46,7 @@ export function ScholarshipGrid({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
         {scholarships.map((scholarship) => (
           <ScholarshipCard key={scholarship.id} scholarship={scholarship} />
         ))}
@@ -65,11 +62,11 @@ export function ScholarshipGrid({
             disabled={page <= 1}
             onClick={() => onPageChange(page - 1)}
             aria-label="Previous page"
-            className="border-border/40 bg-card/70 backdrop-blur-md hover:bg-card/90"
+            className="text-[13px]"
           >
             ← Previous
           </Button>
-          <span className="rounded-lg border border-border/40 bg-card/70 px-3 py-1 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur-md">
+          <span className="px-3 py-1 text-[13px] text-gray-500 dark:text-gray-400">
             Page {page} of {totalPages}
           </span>
           <Button
@@ -78,7 +75,7 @@ export function ScholarshipGrid({
             disabled={page >= totalPages}
             onClick={() => onPageChange(page + 1)}
             aria-label="Next page"
-            className="border-border/40 bg-card/70 backdrop-blur-md hover:bg-card/90"
+            className="text-[13px]"
           >
             Next →
           </Button>

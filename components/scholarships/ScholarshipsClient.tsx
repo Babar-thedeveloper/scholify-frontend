@@ -114,7 +114,7 @@ export function ScholarshipsClient({ scholarships }: ScholarshipsClientProps) {
   const hasFilters = hasActiveFilters(filterValues);
 
   return (
-    <div className={`flex flex-col gap-5 ${isPending ? "opacity-80" : ""}`}>
+    <div className={`flex flex-col gap-6 ${isPending ? "opacity-70 transition-opacity" : "transition-opacity"}`}>
       <SearchBar
         value={filters.search}
         onChange={(search) => updateUrl({ search })}

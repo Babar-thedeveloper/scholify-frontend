@@ -31,10 +31,10 @@ export function CategoryTabs({ value, onChange }: CategoryTabsProps) {
             aria-selected={active}
             onClick={() => onChange(tab.value)}
             className={cn(
-              "rounded-full px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               active
-                ? "border border-primary/40 bg-primary text-primary-foreground shadow-sm shadow-black/10"
-                : "border border-border/70 bg-background/70 text-muted-foreground shadow-sm shadow-black/5 backdrop-blur-md hover:border-border hover:bg-background/90"
+                ? "bg-foreground text-background"
+                : "text-gray-500 hover:text-foreground hover:bg-muted dark:text-gray-400"
             )}
           >
             {tab.label}

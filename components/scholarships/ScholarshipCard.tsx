@@ -8,9 +8,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -18,8 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import type { Scholarship } from "./scholarships.types";
 import {
-  getCategoryBorder,
-  getFundingPill,
+  getCategoryPill,
   formatDeadline,
   daysUntil,
   deadlineStatus,
@@ -69,33 +66,15 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
 
   const deadlineClass =
     status === "open"
-      ? "bg-muted text-muted-foreground"
+      ? "bg-muted/60 text-muted-foreground"
       : status === "far"
-      ? "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
+      ? "bg-muted/60 text-muted-foreground"
       : status === "soon"
-      ? "bg-amber-500/15 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300"
-      : "bg-red-500/15 text-red-700 dark:bg-red-500/20 dark:text-red-300";
-
-  const categoryColorClass =
-    scholarship.category === "national"
-      ? "bg-emerald-500/15 text-emerald-700 ring-emerald-500/30 dark:bg-emerald-500/20 dark:text-emerald-300 dark:ring-emerald-500/30"
-      : scholarship.category === "international"
-      ? "bg-blue-500/15 text-blue-700 ring-blue-500/30 dark:bg-blue-500/20 dark:text-blue-300 dark:ring-blue-500/30"
-      : "bg-amber-500/15 text-amber-700 ring-amber-500/30 dark:bg-amber-500/20 dark:text-amber-300 dark:ring-amber-500/30";
-
-  const categoryGradientClass =
-    scholarship.category === "national"
-      ? "bg-gradient-to-b from-emerald-500/10 via-background/80 to-background/85"
-      : scholarship.category === "international"
-      ? "bg-gradient-to-b from-blue-500/10 via-background/80 to-background/85"
-      : "bg-gradient-to-b from-amber-500/10 via-background/80 to-background/85";
+      ? "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400"
+      : "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400";
 
   return (
-    <Card
-      className={`group relative flex h-full flex-col overflow-visible rounded-2xl border border-border/60 bg-card/85 shadow-md shadow-black/5 backdrop-blur-xl ring-0 transition-all hover:-translate-y-1 hover:bg-card/95 hover:shadow-[0_0_24px_-6px_rgba(5,150,105,0.15)] ${categoryGradientClass} ${getCategoryBorder(
-        scholarship.category
-      )}`}
-    >
+    <Card className="group relative flex h-full flex-col rounded-2xl border-0 bg-card shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)]">
       <Link
         href={`/scholarships/${scholarship.id}`}
         className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -104,93 +83,77 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
         <span className="sr-only">View details</span>
       </Link>
 
-      <div className="relative z-20 px-4 pt-2">
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${categoryColorClass}`}
-        >
-          {categoryLabel(scholarship.category)}
-        </span>
-      </div>
-
-      <CardContent className="relative z-10 flex flex-1 flex-col gap-3 p-4 pt-2">
-        {/* Header: provider + funding */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {scholarship.provider}
-            </span>
-          </div>
-          <Badge
-            variant="secondary"
-            className={`shrink-0 text-xs font-medium ${getFundingPill(
-              scholarship.fundingType
-            )} border-0`}
+      <CardContent className="relative z-10 flex flex-1 flex-col p-5">
+        {/* Category + funding row */}
+        <div className="flex items-center justify-between gap-2">
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${getCategoryPill(scholarship.category)}`}
           >
+            {categoryLabel(scholarship.category)}
+          </span>
+          <span className="text-[11px] text-gray-400 dark:text-gray-500">
             {fundingLabel(scholarship.fundingType)}
-          </Badge>
+          </span>
         </div>
 
-        {/* Title & summary */}
-        <div className="flex flex-col gap-2">
-          <h3 className="line-clamp-2 text-lg font-bold leading-snug text-foreground">
-            {scholarship.title}
-          </h3>
-          <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-            {scholarship.summary}
-          </p>
-        </div>
+        {/* Provider */}
+        <span className="mt-3 text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          {scholarship.provider}
+        </span>
+
+        {/* Title */}
+        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-semibold leading-tight text-gray-900 dark:text-gray-100">
+          {scholarship.title}
+        </h3>
+
+        {/* Summary */}
+        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-gray-500 dark:text-gray-400">
+          {scholarship.summary}
+        </p>
 
         {/* Tags */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge
-            variant="secondary"
-            className="bg-muted text-muted-foreground border-0 text-xs font-medium"
-          >
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600 dark:bg-gray-800 dark:text-gray-400">
             <GraduationCap className="mr-1 size-3" aria-hidden="true" />
             {levelLabel(scholarship.level)}
-          </Badge>
+          </span>
           {scholarship.destination !== "Pakistan" && (
-            <Badge
-              variant="secondary"
-              className="bg-muted text-muted-foreground border-0 text-xs font-medium"
-            >
+            <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600 dark:bg-gray-800 dark:text-gray-400">
               <MapPin className="mr-1 size-3" aria-hidden="true" />
               {scholarship.destination}
-            </Badge>
+            </span>
           )}
         </div>
 
-        <Separator className="mt-auto" />
+        {/* Spacer */}
+        <div className="mt-auto pt-4">
+          <div className="h-px bg-gray-100 dark:bg-gray-800" />
+        </div>
 
         {/* Deadline & action */}
-        <div className="flex flex-col gap-3">
+        <div className="mt-3 flex flex-col gap-2.5">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-sm">
-              <CalendarClock className="size-4 text-muted-foreground" aria-hidden="true" />
-              <span className="text-muted-foreground">
-                {formatDeadline(scholarship.deadline)}
-              </span>
+            <div className="flex items-center gap-1.5 text-[12px] text-gray-500 dark:text-gray-400">
+              <CalendarClock className="size-3.5" aria-hidden="true" />
+              <span>{formatDeadline(scholarship.deadline)}</span>
             </div>
-            <Badge
-              variant="secondary"
-              className={`border-0 text-xs font-semibold ${deadlineClass}`}
-            >
+            <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${deadlineClass}`}>
               {deadlineText}
-            </Badge>
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <Button
               size="sm"
-              className="relative z-20 gap-1 bg-primary text-primary-foreground shadow-sm shadow-black/10 backdrop-blur-sm transition-all hover:bg-primary/90"
+              className="relative z-20 gap-1 text-xs"
               onClick={(e) => {
                 e.stopPropagation();
                 window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
               }}
               aria-label={`Direct apply for ${scholarship.title}`}
             >
-              Direct apply
-              <ArrowRight className="size-4" aria-hidden="true" />
+              Apply
+              <ArrowRight className="size-3" aria-hidden="true" />
             </Button>
 
             <Tooltip>
@@ -200,10 +163,10 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
                     size="sm"
                     variant="outline"
                     disabled
-                    className="relative z-20 w-full cursor-not-allowed border-border/70 bg-muted text-muted-foreground backdrop-blur-sm"
+                    className="relative z-20 w-full cursor-not-allowed text-xs"
                     aria-label={`Apply with Scholify for ${scholarship.title} - coming soon`}
                   >
-                    Apply with Scholify
+                    Scholify Apply
                   </Button>
                 </span>
               </TooltipTrigger>
