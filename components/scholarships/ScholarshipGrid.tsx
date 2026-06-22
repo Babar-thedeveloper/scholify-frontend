@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScholarshipCard } from "./ScholarshipCard";
+import { ScholarshipModal } from "./ScholarshipModal";
 import { ReminderNudge } from "./ReminderNudge";
 import type { Scholarship } from "./scholarships.types";
 
@@ -23,6 +25,8 @@ export function ScholarshipGrid({
   onClearFilters,
   showNudge = true,
 }: ScholarshipGridProps) {
+  const [selectedScholarship, setSelectedScholarship] = useState<Scholarship | null>(null);
+
   if (scholarships.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
@@ -48,7 +52,11 @@ export function ScholarshipGrid({
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
         {scholarships.map((scholarship) => (
-          <ScholarshipCard key={scholarship.id} scholarship={scholarship} />
+          <ScholarshipCard
+            key={scholarship.id}
+            scholarship={scholarship}
+            onClick={() => setSelectedScholarship(scholarship)}
+          />
         ))}
       </div>
 
@@ -81,6 +89,14 @@ export function ScholarshipGrid({
           </Button>
         </div>
       )}
+
+      <ScholarshipModal
+        scholarship={selectedScholarship}
+        open={selectedScholarship !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedScholarship(null);
+        }}
+      />
     </div>
   );
 }

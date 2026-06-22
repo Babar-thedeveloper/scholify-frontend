@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   ArrowRight,
   CalendarClock,
@@ -24,6 +23,7 @@ import {
 
 interface ScholarshipCardProps {
   scholarship: Scholarship;
+  onClick?: () => void;
 }
 
 function fundingLabel(type: Scholarship["fundingType"]): string {
@@ -51,7 +51,7 @@ function categoryLabel(category: Scholarship["category"]): string {
   return category.charAt(0).toUpperCase() + category.slice(1);
 }
 
-export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
+export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) {
   const daysLeft = daysUntil(scholarship.deadline, new Date());
   const status = deadlineStatus(daysLeft);
 
@@ -74,14 +74,14 @@ export function ScholarshipCard({ scholarship }: ScholarshipCardProps) {
       : "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400";
 
   return (
-    <Card className="group relative flex h-full flex-col rounded-2xl border-0 bg-card shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)]">
-      <Link
-        href={`/scholarships/${scholarship.id}`}
-        className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        aria-label={`View details for ${scholarship.title}`}
-      >
-        <span className="sr-only">View details</span>
-      </Link>
+    <Card
+      className="group relative flex h-full cursor-pointer flex-col rounded-2xl border-0 bg-card shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)] transition-all duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.06)]"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); } }}
+      aria-label={`View details for ${scholarship.title}`}
+    >
 
       <CardContent className="relative z-10 flex flex-1 flex-col p-5">
         {/* Category + funding row */}
