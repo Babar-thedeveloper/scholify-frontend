@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/mode-toggle";
+import { ScholifyLogo } from "@/components/scholify-logo";
 import { cn } from "@/lib/utils";
 
 export function PublicNavbar() {
@@ -20,11 +21,12 @@ export function PublicNavbar() {
       )}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-          <span className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg shadow-[0_6px_20px_-6px_rgba(5,150,105,0.7)]">
-            S
-          </span>
-          <span>Scholify</span>
+        <Link
+          href="/"
+          className="flex items-center"
+          aria-label="Scholify home"
+        >
+          <ScholifyLogo className="h-10 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -36,7 +38,7 @@ export function PublicNavbar() {
           </Link>
           <Link href="/ai-cv" className={cn("inline-flex items-center gap-1.5 transition-colors", pathname.startsWith("/ai-cv") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             AI CV
-            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">Soon</span>
+            <svg className="size-3.5 text-amber-500" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/></svg>
           </Link>
           <Link href="/about" className={cn("transition-colors", pathname.startsWith("/about") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             About

@@ -1,4 +1,4 @@
-import { Search, Bell, Briefcase, FileText, Users, Heart } from "lucide-react";
+import { Search, Bell, Briefcase, FileText, Users, Heart, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { CONTAINER, featureHeader, features } from "./homepage.data";
 import { SectionHeading } from "./SectionHeading";
@@ -11,6 +11,7 @@ const ICONS: Record<string, LucideIcon> = {
   FileText,
   Users,
   Heart,
+  Sparkles,
 };
 
 export function FeatureGrid() {
