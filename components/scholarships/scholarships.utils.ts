@@ -6,7 +6,7 @@ import type {
   ScholarshipFilters,
 } from "./scholarships.types";
 
-const ITEMS_PER_PAGE = 18;
+const ITEMS_PER_PAGE = 9;
 
 function startOfDay(date: Date): Date {
   const d = new Date(date);

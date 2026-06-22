@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Pagination } from "@/components/ui/pagination";
 import { InternshipCard } from "./InternshipCard";
 import { InternshipModal } from "./InternshipModal";
 import { InternshipReminderNudge } from "./InternshipReminderNudge";
@@ -50,7 +51,10 @@ export function InternshipGrid({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+      <div
+        key={page}
+        className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3 animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
+      >
         {internships.map((internship) => (
           <InternshipCard
             key={internship.id}
@@ -62,33 +66,7 @@ export function InternshipGrid({
 
       <InternshipReminderNudge showNudge={showNudge} />
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page <= 1}
-            onClick={() => onPageChange(page - 1)}
-            aria-label="Previous page"
-            className="text-[13px]"
-          >
-            ← Previous
-          </Button>
-          <span className="px-3 py-1 text-[13px] text-gray-500 dark:text-gray-400">
-            Page {page} of {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages}
-            onClick={() => onPageChange(page + 1)}
-            aria-label="Next page"
-            className="text-[13px]"
-          >
-            Next →
-          </Button>
-        </div>
-      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
 
       <InternshipModal
         internship={selectedInternship}

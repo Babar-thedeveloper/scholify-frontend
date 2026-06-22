@@ -28,16 +28,16 @@ export function PublicNavbar() {
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <Link href="/scholarships" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/scholarships" className={cn("transition-colors", pathname.startsWith("/scholarships") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             Scholarships
           </Link>
-          <Link href="/internships" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/internships" className={cn("transition-colors", pathname.startsWith("/internships") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             Internships
           </Link>
-          <Link href="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/#features" className={cn("transition-colors", pathname === "/#features" ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             Features
           </Link>
-          <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link href="/about" className={cn("transition-colors", pathname.startsWith("/about") ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground")}>
             About
           </Link>
         </nav>
