@@ -366,6 +366,42 @@
 
   .animate-float-slow { animation: float-slow 7s ease-in-out infinite; }
   .animate-blob { animation: blob 20s ease-in-out infinite; }
+
+  /* Thin, subtle scrollbar for the auth form panel. */
+  .auth-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.596 0.127 163 / 0.35) transparent;
+  }
+  .auth-scroll::-webkit-scrollbar { width: 6px; }
+  .auth-scroll::-webkit-scrollbar-track { background: transparent; }
+  .auth-scroll::-webkit-scrollbar-thumb {
+    background: oklch(0.596 0.127 163 / 0.3);
+    border-radius: 9999px;
+  }
+  .auth-scroll::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.596 0.127 163 / 0.5);
+  }
+
+  /* Staggered fade-up for direct children (auth field groups). */
+  .stagger-fields > * {
+    opacity: 0;
+    animation: field-rise 0.45s ease forwards;
+  }
+  .stagger-fields > *:nth-child(1) { animation-delay: 0.04s; }
+  .stagger-fields > *:nth-child(2) { animation-delay: 0.10s; }
+  .stagger-fields > *:nth-child(3) { animation-delay: 0.16s; }
+  .stagger-fields > *:nth-child(4) { animation-delay: 0.22s; }
+  .stagger-fields > *:nth-child(5) { animation-delay: 0.28s; }
+  .stagger-fields > *:nth-child(6) { animation-delay: 0.34s; }
+  .stagger-fields > *:nth-child(7) { animation-delay: 0.40s; }
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-fields > * { opacity: 1; animation: none; }
+  }
+}
+
+@keyframes field-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes text-gradient {

@@ -1,0 +1,134 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { FormField } from "./FormField";
+import { PasswordInput } from "./PasswordInput";
+import { GoogleButton } from "./GoogleButton";
+import { validateLogin } from "./auth.schemas";
+import type { FieldErrors, LoginValues } from "./auth.types";
+
+const initial: LoginValues = { email: "", password: "" };
+
+export function LoginForm() {
+  const router = useRouter();
+  const [values, setValues] = useState<LoginValues>(initial);
+  const [errors, setErrors] = useState<FieldErrors<LoginValues>>({});
+  const [touched, setTouched] = useState<Record<keyof LoginValues, boolean>>({
+    email: false,
+    password: false,
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  function set<K extends keyof LoginValues>(key: K, value: LoginValues[K]) {
+    setValues((v) => ({ ...v, [key]: value }));
+    if (touched[key]) {
+      const next = validateLogin({ ...values, [key]: value });
+      setErrors((e) => ({ ...e, [key]: next[key] }));
+    }
+  }
+
+  function blur<K extends keyof LoginValues>(key: K) {
+    setTouched((t) => ({ ...t, [key]: true }));
+    const next = validateLogin(values);
+    setErrors((e) => ({ ...e, [key]: next[key] }));
+  }
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const next = validateLogin(values);
+    setErrors(next);
+    setTouched({ email: true, password: true });
+    if (Object.keys(next).length > 0) return;
+    setSubmitting(true);
+    await new Promise((r) => setTimeout(r, 1000));
+    router.push("/dashboard");
+  }
+
+  return (
+    <div className="flex h-full flex-col justify-center gap-5">
+      {/* Heading */}
+      <div className="text-center">
+        <h1 className="text-2xl font-bold text-foreground">Sign in</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Welcome back — let&apos;s find your next opportunity
+        </p>
+      </div>
+
+      {/* Google first — social login at top is better UX */}
+      <GoogleButton />
+
+      {/* Divider */}
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1 bg-border" />
+        <span className="text-[11px] text-muted-foreground">or use your email</span>
+        <div className="h-px flex-1 bg-border" />
+      </div>
+
+      {/* Fields */}
+      <form onSubmit={onSubmit} className="flex flex-col gap-3" noValidate>
+        <FormField id="email" label="Email address" error={errors.email}>
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@university.edu.pk"
+            value={values.email}
+            onChange={(e) => set("email", e.target.value)}
+            onBlur={() => blur("email")}
+            aria-invalid={!!errors.email || undefined}
+            className="h-9 text-sm"
+          />
+        </FormField>
+
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="text-sm font-medium text-foreground">
+              Password
+            </label>
+            <Link href="/forgot-password" className="text-xs text-primary hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+          <PasswordInput
+            id="password"
+            autoComplete="current-password"
+            placeholder="Enter your password"
+            value={values.password}
+            onChange={(e) => set("password", e.target.value)}
+            onBlur={() => blur("password")}
+            invalid={!!errors.password}
+          />
+          {errors.password && (
+            <p className="text-xs font-medium text-destructive" role="alert">
+              {errors.password}
+            </p>
+          )}
+        </div>
+
+        <Button type="submit" className="mt-1 h-9 w-full text-sm font-semibold transition-all hover:shadow-lg hover:shadow-emerald-600/25" disabled={submitting}>
+          {submitting ? (
+            <>
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              Signing in...
+            </>
+          ) : (
+            "Sign in"
+          )}
+        </Button>
+      </form>
+
+      {/* Footer */}
+      <p className="text-center text-xs text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="font-medium text-primary hover:underline">
+          Create one free →
+        </Link>
+      </p>
+    </div>
+  );
+}
