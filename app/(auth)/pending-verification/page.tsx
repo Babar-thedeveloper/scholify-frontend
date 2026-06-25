@@ -19,7 +19,16 @@ export default async function PendingVerificationPage({
   const contactName = contact?.split(" ")[0] || "there";
 
   return (
-    <AuthCard size="sm">
+    <AuthCard
+      size="sm"
+      aside={{
+        title: "Almost there!",
+        text: "We review every organization to keep our student community safe.",
+        switchPrompt: "Need help?",
+        switchLabel: "Contact us",
+        switchHref: "mailto:hello@scholify.pk",
+      }}
+    >
       <div className="flex flex-col items-center text-center">
         <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-emerald-100 text-primary dark:bg-emerald-500/15">
           <CheckCircle2 className="size-7" aria-hidden="true" />

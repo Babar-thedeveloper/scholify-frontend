@@ -55,7 +55,7 @@ export function OrgSignupFields({
     !errors.email && values.email.includes("@") && isPersonalEmail(values.email);
 
   return (
-    <div className="stagger-fields flex flex-col gap-2">
+    <div className="stagger-fields flex flex-col gap-3.5">
       {/* Row 1: Organization name (full width) */}
       <FormField
         id="organizationName"
@@ -79,7 +79,7 @@ export function OrgSignupFields({
         <div
           role="radiogroup"
           aria-label="Organization type"
-          className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1"
+          className="grid h-9 grid-cols-2 gap-1 rounded-xl bg-muted p-1"
         >
           {orgTypeOptions.map(({ value: v, label, Icon }) => {
             const active = values.organizationType === v;
@@ -91,9 +91,9 @@ export function OrgSignupFields({
                 aria-checked={active}
                 onClick={() => onChange("organizationType", v)}
                 className={cn(
-                  "inline-flex items-center justify-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   active
-                    ? "bg-white text-foreground shadow-sm dark:bg-background"
+                    ? "bg-white text-emerald-700 shadow-sm dark:bg-background dark:text-emerald-400"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -143,7 +143,7 @@ export function OrgSignupFields({
         <PasswordInput
           id="password"
           autoComplete="new-password"
-          placeholder="••••••••"
+          placeholder="Create a strong password"
           value={values.password}
           onChange={(e) => onChange("password", e.target.value)}
           onBlur={() => onBlur("password")}

@@ -26,7 +26,7 @@ export function FormField({
       : "text-muted-foreground";
 
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn("flex flex-col gap-1.5", className)}>
       <Label htmlFor={id}>{label}</Label>
       {children}
       {error ? (

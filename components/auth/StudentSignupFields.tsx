@@ -28,10 +28,10 @@ export function StudentSignupFields({
   onBlur,
 }: StudentSignupFieldsProps) {
   return (
-    <div className="stagger-fields flex flex-col gap-2.5">
+    <div className="stagger-fields flex flex-col gap-3.5">
 
       {/* Row 1: Full name + Email (2-col) */}
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-3">
         <FormField id="fullName" label="Full name" error={errors.fullName}>
           <Input
             id="fullName"
@@ -68,7 +68,7 @@ export function StudentSignupFields({
         <PasswordInput
           id="password"
           autoComplete="new-password"
-          placeholder="Min. 8 characters"
+          placeholder="Create a strong password"
           value={values.password}
           onChange={(e) => onChange("password", e.target.value)}
           onBlur={() => onBlur("password")}
@@ -84,7 +84,7 @@ export function StudentSignupFields({
       </div>
 
       {/* Row 3: University + Degree level (2-col) */}
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-3">
         <FormField id="university" label="University" error={errors.university}>
           <UniversityCombobox
             id="university"
@@ -102,7 +102,7 @@ export function StudentSignupFields({
           <div
             role="radiogroup"
             aria-label="Degree level"
-            className="grid grid-cols-3 gap-0.5 rounded-lg bg-muted p-0.5"
+            className="grid h-9 grid-cols-3 gap-0.5 rounded-lg bg-muted p-1"
           >
             {degreeOptions.map(({ value: v, label }) => {
               const active = values.degreeLevel === v;
@@ -114,9 +114,9 @@ export function StudentSignupFields({
                   aria-checked={active}
                   onClick={() => onChange("degreeLevel", v)}
                   className={cn(
-                    "rounded-md px-1 py-[7px] text-[11px] font-medium leading-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    "flex items-center justify-center rounded-md text-[11px] font-medium leading-none transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     active
-                      ? "bg-white text-foreground shadow-sm dark:bg-background"
+                      ? "bg-white text-emerald-700 shadow-sm dark:bg-background dark:text-emerald-400"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >

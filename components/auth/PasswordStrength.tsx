@@ -26,8 +26,8 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
   const { score, label } = getPasswordStrength(password);
 
   return (
-    <div className="mt-1">
-      <div className="flex items-center gap-1" aria-hidden="true">
+    <div className="flex items-center gap-2">
+      <div className="flex flex-1 items-center gap-1" aria-hidden="true">
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
@@ -37,8 +37,13 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
           />
         ))}
       </div>
-      <p className={`mt-1.5 text-xs font-medium ${labelColor[score]}`} aria-live="polite">
-        {password.length === 0 ? "Minimum 8 characters" : `Password strength: ${label}`}
+      <p
+        className={`w-20 shrink-0 text-right text-[11px] font-medium ${
+          password.length === 0 ? "text-muted-foreground" : labelColor[score]
+        }`}
+        aria-live="polite"
+      >
+        {password.length === 0 ? "8+ chars" : label}
       </p>
     </div>
   );

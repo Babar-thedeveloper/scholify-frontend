@@ -17,7 +17,16 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
   const displayEmail = email || "your email address";
 
   return (
-    <AuthCard size="sm">
+    <AuthCard
+      size="sm"
+      aside={{
+        title: "One last step!",
+        text: "Verify your email to unlock all Scholify features — scholarships, internships, and more.",
+        switchPrompt: "Already verified?",
+        switchLabel: "Sign in",
+        switchHref: "/login",
+      }}
+    >
       <div className="flex flex-col items-center text-center">
         <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-emerald-100 text-primary dark:bg-emerald-500/15">
           <Mail className="size-6" aria-hidden="true" />
