@@ -3,6 +3,8 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { UserProvider } from "@/components/auth/UserContext";
+import { RoleSwitcher } from "@/components/auth/RoleSwitcher";
 
 export const metadata: Metadata = {
   title: "Scholify",
@@ -23,10 +25,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            {children}
-            <Toaster />
-          </TooltipProvider>
+          <UserProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster />
+              <RoleSwitcher />
+            </TooltipProvider>
+          </UserProvider>
         </ThemeProvider>
       </body>
     </html>
