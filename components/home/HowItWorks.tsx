@@ -15,13 +15,7 @@ export function HowItWorks() {
           subtitle={howItWorksHeader.subtitle}
         />
 
-        <div className="relative mt-14">
-          {/* Dashed connector line (desktop only, behind the cards) */}
-          <div
-            aria-hidden="true"
-            className="absolute left-0 right-0 top-[42px] hidden border-t-2 border-dashed border-emerald-300 dark:border-emerald-500/30 md:block"
-          />
-
+        <div className="mt-14">
           <div className="grid gap-6 md:grid-cols-3">
             {steps.map((step, i) => (
               <Reveal key={step.title} delay={i * 120}>
