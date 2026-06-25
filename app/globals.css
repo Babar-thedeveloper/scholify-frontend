@@ -404,6 +404,51 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ─────────────────────────────────────────────
+   Dashboard motion + trust layer.
+   Applied across student & org logged-in pages.
+   ───────────────────────────────────────────── */
+@layer utilities {
+  /* Page entrance — keyed on route so it replays on navigation. */
+  .page-enter {
+    animation: page-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Staggered rise for grids/lists of cards. Wrap a container,
+     direct children fade up in sequence. */
+  .dash-stagger > * {
+    opacity: 0;
+    animation: field-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .dash-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+  .dash-stagger > *:nth-child(2) { animation-delay: 0.1s; }
+  .dash-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+  .dash-stagger > *:nth-child(4) { animation-delay: 0.2s; }
+  .dash-stagger > *:nth-child(5) { animation-delay: 0.25s; }
+  .dash-stagger > *:nth-child(6) { animation-delay: 0.3s; }
+
+  /* Interactive card — subtle lift + emerald-tinted ring on hover. */
+  .dash-card {
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+  .dash-card:hover {
+    transform: translateY(-2px);
+    border-color: oklch(0.596 0.127 163 / 0.4);
+    box-shadow: 0 10px 30px -12px oklch(0.596 0.127 163 / 0.25);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-enter,
+    .dash-stagger > * { animation: none; opacity: 1; transform: none; }
+    .dash-card:hover { transform: none; }
+  }
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes text-gradient {
   to { background-position: 200% center; }
 }

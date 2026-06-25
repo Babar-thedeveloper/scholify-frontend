@@ -45,7 +45,7 @@ export default function OrgDashboardPage() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="dash-stagger grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatsCard value={5} label="Active postings" Icon={BriefcaseBusiness} />
         <StatsCard value={142} label="Total applicants" Icon={Users} accent="text-blue-600" />
         <StatsCard value={23} label="New this week" Icon={UserPlus} accent="text-violet-600" />

@@ -24,7 +24,7 @@ export function PostingCard({ posting }: { posting: Posting }) {
       : ["Scholarship", p.fundingAmount, p.countryScope];
 
   return (
-    <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+    <div className="dash-card rounded-xl border border-border bg-white p-5 dark:bg-card">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <Link

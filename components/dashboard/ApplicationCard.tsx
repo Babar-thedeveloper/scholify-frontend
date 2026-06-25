@@ -12,7 +12,7 @@ export function ApplicationCard({ application }: { application: Application }) {
   return (
     <div
       className={cn(
-        "rounded-xl border bg-white p-4 transition-shadow hover:shadow-sm dark:bg-card sm:p-5",
+        "dash-card rounded-xl border bg-white p-4 dark:bg-card sm:p-5",
         external ? "border-dashed border-border/80" : "border-border"
       )}
     >

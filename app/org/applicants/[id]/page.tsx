@@ -1,183 +1,159 @@
 "use client";
 
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Mail,
-  GraduationCap,
-  Briefcase,
-  MapPin,
-  Calendar,
-  Sparkles,
-  BookOpen,
-  Award,
-  Download,
-  FileQuestion,
-  FileText,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useParams } from "next/navigation";
+import { ArrowLeft, Download, Mail, UserX } from "lucide-react";
+import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { StatusChangeControl } from "@/components/org/StatusChangeControl";
-import { MOCK_APPLICANTS } from "@/components/dashboard/dashboard.mock";
 import { EmptyState } from "@/components/dashboard/EmptyState";
+import { StatusChangeControl } from "@/components/org/StatusChangeControl";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { MOCK_APPLICANTS } from "@/components/dashboard/dashboard.mock";
 import { formatDate } from "@/components/dashboard/dashboard.utils";
 
 export default function ApplicantDetailPage() {
-  const params = useParams<{ id: string }>();
-  const router = useRouter();
-
-  // Find applicant from mock database
-  const applicant = MOCK_APPLICANTS.find((a) => a.id === params.id);
+  const { id } = useParams<{ id: string }>();
+  const applicant = MOCK_APPLICANTS.find((a) => a.id === id);
 
   if (!applicant) {
     return (
-      <div className="mx-auto max-w-3xl">
-        <EmptyState
-          Icon={FileQuestion}
-          title="Applicant not found"
-          description="This candidate application record does not exist or has been deleted."
-          actionLabel="Back to applicants"
-          actionHref="/org/applicants"
-        />
-      </div>
+      <EmptyState
+        Icon={UserX}
+        title="Applicant not found"
+        description="This applicant may have been removed or the link is incorrect."
+        actionLabel="Back to applicants"
+        actionHref="/org/applicants"
+      />
     );
   }
 
-  const a = applicant;
-
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <Link
         href="/org/applicants"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
       >
-        <ArrowLeft className="size-4" /> Back to applicants
+        <ArrowLeft className="size-4" />
+        Back to applicants
       </Link>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left Column: Student Profile (Read-only) */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
-            {/* Header info */}
-            <div className="flex items-center gap-4">
-              <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-violet-100 text-lg font-semibold text-violet-700 dark:bg-violet-500/20 dark:text-violet-300">
-                {a.initials}
+      <PageHeader title={applicant.name} subtitle={applicant.postingTitle} />
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="flex flex-col gap-6 lg:col-span-2">
+          {/* Profile card */}
+          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+            <div className="flex items-start gap-4">
+              <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-violet-100 text-lg font-semibold text-violet-700">
+                {applicant.initials}
               </span>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">{a.name}</h1>
-                <p className="text-sm text-muted-foreground">
-                  {a.degreeLevel} in {a.fieldOfStudy}
+              <div className="min-w-0">
+                <h2 className="text-xl font-semibold text-foreground">{applicant.name}</h2>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  {applicant.university} · {applicant.degreeLevel}
                 </p>
-                <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Mail className="size-3" /> {a.email}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="size-3" /> {a.city}
-                  </span>
-                </div>
               </div>
             </div>
 
-            {/* Academic Info */}
-            <div className="mt-8 border-t border-border pt-6">
-              <h3 className="text-sm font-semibold text-foreground mb-4">Academic Details</h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="flex items-start gap-2.5 rounded-lg border border-slate-50 bg-slate-50/50 p-3 dark:border-slate-800 dark:bg-slate-900/50">
-                  <GraduationCap className="size-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
-                      University
-                    </span>
-                    <span className="text-sm font-medium text-foreground">{a.university}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 rounded-lg border border-slate-50 bg-slate-50/50 p-3 dark:border-slate-800 dark:bg-slate-900/50">
-                  <Award className="size-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
-                      GPA / Academic Standing
-                    </span>
-                    <span className="text-sm font-semibold text-foreground">{a.gpa} / 4.0</span>
-                  </div>
-                </div>
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  GPA
+                </p>
+                <p className="mt-1 text-sm font-medium text-foreground">{applicant.gpa}</p>
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Field of study
+                </p>
+                <p className="mt-1 text-sm font-medium text-foreground">
+                  {applicant.fieldOfStudy}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  City
+                </p>
+                <p className="mt-1 text-sm font-medium text-foreground">{applicant.city}</p>
               </div>
             </div>
 
-            {/* Skills */}
-            {a.skills && a.skills.length > 0 && (
-              <div className="mt-6 border-t border-border pt-6">
-                <h3 className="text-sm font-semibold text-foreground mb-3">Key Skills</h3>
+            {applicant.skills && applicant.skills.length > 0 && (
+              <div className="mt-5">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  Skills
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {a.skills.map((skill) => (
+                  {applicant.skills.map((skill) => (
                     <span
                       key={skill}
-                      className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-foreground dark:bg-slate-800"
+                      className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
                     >
-                      <Sparkles className="size-3 text-amber-500" />
                       {skill}
                     </span>
                   ))}
                 </div>
               </div>
             )}
+
+            <Separator className="my-5" />
+
+            <div className="flex flex-wrap gap-3">
+              <Button onClick={() => toast("Preparing CV…")}>
+                <Download className="size-4" />
+                Download CV
+              </Button>
+              <Button variant="outline" asChild>
+                <a href={`mailto:${applicant.email}`}>
+                  <Mail className="size-4" />
+                  Contact
+                </a>
+              </Button>
+            </div>
           </div>
 
-          {/* Application Cover Letter */}
-          <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
-            <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-              <FileText className="size-4 text-primary" /> Cover Letter
-            </h3>
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-              {a.coverLetter || "No cover letter provided by the applicant."}
-            </p>
-          </div>
-        </div>
-
-        {/* Right Column: Context, Status and actions */}
-        <aside className="space-y-6">
-          {/* Status Panel */}
-          <StatusChangeControl current={a.status} applicantName={a.name} />
-
-          {/* Application Info */}
+          {/* Application card */}
           <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-            <h3 className="text-sm font-semibold text-foreground mb-4">Application Details</h3>
-            <dl className="space-y-4 text-sm">
-              <div>
-                <dt className="text-xs text-muted-foreground">Application ID</dt>
-                <dd className="font-mono text-xs font-semibold text-foreground mt-0.5">{a.applicationId}</dd>
-              </div>
+            <h3 className="text-base font-semibold text-foreground">Application</h3>
 
-              <div>
-                <dt className="text-xs text-muted-foreground">Applied For</dt>
-                <dd className="mt-0.5">
+            <dl className="mt-4 flex flex-col gap-3 text-sm">
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Posting</dt>
+                <dd>
                   <Link
-                    href={`/org/postings/${a.postingId}`}
-                    className="font-medium text-primary hover:underline"
+                    href={`/org/postings/${applicant.postingId}`}
+                    className="font-medium text-emerald-700 hover:underline dark:text-emerald-400"
                   >
-                    {a.postingTitle}
+                    {applicant.postingTitle}
                   </Link>
                 </dd>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Calendar className="size-4 text-muted-foreground shrink-0" />
-                <div>
-                  <dt className="text-xs text-muted-foreground">Submitted On</dt>
-                  <dd className="text-foreground">{formatDate(a.appliedAt)}</dd>
-                </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Application ID</dt>
+                <dd className="font-mono text-foreground">{applicant.applicationId}</dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-muted-foreground">Applied</dt>
+                <dd className="text-foreground">{formatDate(applicant.appliedAt)}</dd>
               </div>
             </dl>
-          </div>
 
-          {/* PDF Download Placeholder */}
-          <Button variant="outline" size="lg" className="w-full h-11">
-            <Download className="size-4 mr-2" /> Download Resume PDF
-          </Button>
-        </aside>
+            {applicant.coverLetter && (
+              <>
+                <Separator className="my-5" />
+                <h4 className="text-sm font-semibold text-foreground">Cover letter</h4>
+                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                  {applicant.coverLetter}
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="lg:col-span-1">
+          <StatusChangeControl current={applicant.status} applicantName={applicant.name} />
+        </div>
       </div>
     </div>
   );

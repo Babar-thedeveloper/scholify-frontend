@@ -3,22 +3,19 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Briefcase,
-  GraduationCap,
-  Pause,
-  Play,
-  Trash2,
-  Users,
-  Settings,
-  Calendar,
-  AlertTriangle,
-  FileQuestion,
-} from "lucide-react";
+import { ArrowLeft, FileQuestion, Pause, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { PageHeader } from "@/components/dashboard/PageHeader";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
@@ -31,11 +28,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { PostingForm } from "@/components/org/PostingForm";
-import { ApplicantTable } from "@/components/org/ApplicantTable";
-import { MOCK_POSTINGS, MOCK_APPLICANTS } from "@/components/dashboard/dashboard.mock";
 import { EmptyState } from "@/components/dashboard/EmptyState";
-import { cn } from "@/lib/utils";
+import { ApplicantTable } from "@/components/org/ApplicantTable";
+import { MOCK_APPLICANTS, MOCK_POSTINGS } from "@/components/dashboard/dashboard.mock";
 
 const STATUS_STYLES = {
   active: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
@@ -44,18 +39,24 @@ const STATUS_STYLES = {
   paused: "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
 } as const;
 
+const textareaClass =
+  "min-h-24 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none placeholder:text-xs placeholder:text-muted-foreground/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+
 export default function PostingDetailPage() {
-  const params = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  
-  // Find matching posting from mock database
-  const initialPosting = MOCK_POSTINGS.find((p) => p.id === params.id);
-  const [posting, setPosting] = useState(initialPosting);
-  
-  // Find applicants for this posting
-  const postingApplicants = MOCK_APPLICANTS.filter((a) => a.postingId === params.id);
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const posting = MOCK_POSTINGS.find((p) => p.id === id);
+  const applicants = MOCK_APPLICANTS.filter((a) => a.postingId === id);
+
+  // Editable form state, prefilled from the posting (hooks must run unconditionally).
+  const [title, setTitle] = useState(posting?.title ?? "");
+  const [description, setDescription] = useState(posting?.description ?? "");
+  const [deadline, setDeadline] = useState(posting?.deadlineAt?.slice(0, 10) ?? "");
+  const [applyMethod, setApplyMethod] = useState<string>(
+    posting?.applyMethod ?? "platform"
+  );
+  const [externalUrl, setExternalUrl] = useState(posting?.externalUrl ?? "");
 
   if (!posting) {
     return (
@@ -63,7 +64,7 @@ export default function PostingDetailPage() {
         <EmptyState
           Icon={FileQuestion}
           title="Posting not found"
-          description="This job, internship, or scholarship posting does not exist or has been removed."
+          description="This posting does not exist or has been removed."
           actionLabel="Back to postings"
           actionHref="/org/postings"
         />
@@ -71,41 +72,24 @@ export default function PostingDetailPage() {
     );
   }
 
-  const handleUpdateDetails = async (updatedFields: any) => {
-    setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    
-    setPosting((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        ...updatedFields,
-      };
-    });
-
-    toast.success("Opportunity details updated successfully!");
-    setIsSubmitting(false);
+  const handleSave = () => {
+    // TODO: API — persist posting changes
+    toast.success("Changes saved");
   };
 
-  const handleTogglePause = () => {
-    const isPaused = posting.status === "paused";
-    const nextStatus = isPaused ? "active" : "paused";
-    
-    setPosting((prev) => {
-      if (!prev) return prev;
-      return { ...prev, status: nextStatus };
-    });
-
-    toast.success(isPaused ? "Posting is now active" : "Posting has been paused");
+  const handlePause = () => {
+    // TODO: API — pause posting
+    toast.success("Posting paused");
   };
 
   const handleDelete = () => {
-    toast.success("Opportunity deleted successfully");
+    // TODO: API — delete posting
+    toast.success("Posting deleted");
     router.push("/org/postings");
   };
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-4xl">
       <Link
         href="/org/postings"
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
@@ -113,124 +97,128 @@ export default function PostingDetailPage() {
         <ArrowLeft className="size-4" /> Back to postings
       </Link>
 
-      {/* Header */}
-      <div className="mb-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-primary dark:bg-emerald-500/10">
-                {posting.type === "scholarship" ? (
-                  <GraduationCap className="size-3" />
-                ) : (
-                  <Briefcase className="size-3" />
-                )}
-                <span className="capitalize">{posting.type}</span>
-              </span>
-              <span
-                className={cn(
-                  "rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize",
-                  STATUS_STYLES[posting.status]
-                )}
-              >
-                {posting.status}
-              </span>
-            </div>
-            <h1 className="text-xl font-bold text-foreground sm:text-2xl">{posting.title}</h1>
-            <p className="text-sm text-muted-foreground">
-              {posting.organizationName}
-              {posting.deadlineAt && (
-                <> · Closes: {new Date(posting.deadlineAt).toLocaleDateString("en-US", { dateStyle: "medium" })}</>
-              )}
-            </p>
-          </div>
-
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleTogglePause}
-              className="h-9"
-              disabled={posting.status === "closed" || posting.status === "draft"}
-            >
-              {posting.status === "paused" ? (
-                <>
-                  <Play className="size-3.5 mr-1.5 text-emerald-600" /> Resume Posting
-                </>
-              ) : (
-                <>
-                  <Pause className="size-3.5 mr-1.5 text-amber-600" /> Pause Posting
-                </>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {posting.title}
+            </h1>
+            <span
+              className={cn(
+                "rounded-full px-2.5 py-0.5 text-xs font-medium capitalize",
+                STATUS_STYLES[posting.status]
               )}
-            </Button>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="sm" className="h-9">
-                  <Trash2 className="size-3.5 mr-1.5" /> Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete this opportunity?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete the posting &ldquo;{posting.title}&rdquo; and all associated candidate data. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
-                    Delete Permanently
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            >
+              {posting.status}
+            </span>
           </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {posting.applicantCount} applicant{posting.applicantCount === 1 ? "" : "s"}
+          </p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="applicants" className="space-y-6">
-        <TabsList className="bg-muted p-1">
-          <TabsTrigger value="applicants" className="gap-2">
-            <Users className="size-4" />
-            Applicants
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-foreground dark:bg-slate-800">
-              {postingApplicants.length}
-            </span>
-          </TabsTrigger>
-          <TabsTrigger value="edit" className="gap-2">
-            <Settings className="size-4" />
-            Edit details
-          </TabsTrigger>
+      <Tabs defaultValue="details" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="details">Posting details</TabsTrigger>
+          <TabsTrigger value="applicants">Applicants ({applicants.length})</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="applicants" className="space-y-4">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-base font-semibold text-foreground">Candidate Applications</h2>
-            <p className="text-xs text-muted-foreground">
-              Review and screen student applicants who applied natively via the Scholify platform.
-            </p>
-          </div>
+        <TabsContent value="details">
+          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+            <h2 className="mb-4 font-semibold text-foreground">Edit posting</h2>
+            <div className="space-y-5">
+              <div className="space-y-1.5">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
 
-          <ApplicantTable applicants={postingApplicants} />
+              <div className="space-y-1.5">
+                <Label htmlFor="description">Description</Label>
+                <textarea
+                  id="description"
+                  className={textareaClass}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="deadline">Deadline</Label>
+                <Input
+                  id="deadline"
+                  type="date"
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Apply method</Label>
+                <Select value={applyMethod} onValueChange={setApplyMethod}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select apply method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="platform">Apply on Scholify</SelectItem>
+                    <SelectItem value="external">Apply externally</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {applyMethod === "external" && (
+                <div className="space-y-1.5">
+                  <Label htmlFor="externalUrl">External URL</Label>
+                  <Input
+                    id="externalUrl"
+                    value={externalUrl}
+                    onChange={(e) => setExternalUrl(e.target.value)}
+                    placeholder="https://careers.example.com/apply"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
+              <Button onClick={handleSave}>Save changes</Button>
+              <Button variant="outline" onClick={handlePause}>
+                <Pause className="size-4" /> Pause posting
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="sm:ml-auto">
+                    <Trash2 className="size-4" /> Delete posting
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete this posting?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete &ldquo;{posting.title}&rdquo; and its
+                      applicant data. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
         </TabsContent>
 
-        <TabsContent value="edit" className="space-y-4">
-          <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
-            <div className="mb-4">
-              <h2 className="text-base font-semibold text-foreground">Edit Details</h2>
-              <p className="text-xs text-muted-foreground">
-                Update the metadata, description, deadlines, or requirements for this posting.
-              </p>
-            </div>
-            <PostingForm
-              type={posting.type}
-              initialData={posting}
-              onSubmit={handleUpdateDetails}
-              isSubmitting={isSubmitting}
-              submitLabel="Save Changes"
-            />
-          </div>
+        <TabsContent value="applicants">
+          <ApplicantTable applicants={applicants} />
         </TabsContent>
       </Tabs>
     </div>

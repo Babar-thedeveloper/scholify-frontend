@@ -26,7 +26,7 @@ export default function StudentOverviewPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="dash-stagger grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatsCard value={3} label="Active applications" Icon={ListChecks} />
         <StatsCard value={12} label="Saved items" Icon={Bookmark} accent="text-blue-600" />
         <StatsCard value={2} label="Closing this week" Icon={CalendarClock} accent="text-red-600" />

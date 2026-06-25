@@ -11,7 +11,7 @@ interface StatsCardProps {
 
 export function StatsCard({ value, label, Icon, accent = "text-emerald-600" }: StatsCardProps) {
   return (
-    <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+    <div className="dash-card rounded-xl border border-border bg-white p-5 dark:bg-card">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-3xl font-bold tracking-tight text-foreground">{value}</p>

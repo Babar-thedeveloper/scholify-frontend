@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScholifyLogo } from "@/components/scholify-logo";
@@ -21,6 +22,7 @@ interface DashboardShellProps {
 
 export function DashboardShell({ variant, sidebar, children }: DashboardShellProps) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
   const notifications =
     variant === "org" ? MOCK_NOTIFICATIONS_ORG : MOCK_NOTIFICATIONS_STUDENT;
   const notifHref = variant === "org" ? "/org/notifications" : "/dashboard/notifications";
@@ -69,7 +71,9 @@ export function DashboardShell({ variant, sidebar, children }: DashboardShellPro
           <AvatarDropdown />
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main key={pathname} className="page-enter flex-1 p-4 sm:p-6 lg:p-8">
+          {children}
+        </main>
       </div>
     </div>
   );
