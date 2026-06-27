@@ -13,6 +13,7 @@ import { StudentSignupFields } from "./StudentSignupFields";
 import { UserTypeToggle } from "./UserTypeToggle";
 import { useUser } from "./UserContext";
 import { ApiError } from "@/lib/api/client";
+import { signupOrg } from "@/lib/api/auth";
 import { validateOrgSignup, validateStudentSignup } from "./auth.schemas";
 import type {
   FieldErrors,
@@ -123,10 +124,10 @@ export function SignupForm() {
         setSubmitting(false);
       }
     } else {
-      // Organization signup creates an org + sets verification_status=pending.
-      // The backend endpoint for this lives in modules/organizations and is not
-      // wired yet — keep the form valid but route to the pending screen so the
-      // UX flow is testable end-to-end.
+      // ─── Organization signup ─────────────────────────────
+      // Backend creates user + org + owner membership atomically and queues
+      // the email-verification link. The org is created with
+      // verification_status=pending and reviewed by platform admins.
       const next = validateOrgSignup(orgValues);
       setOrgErrors(next);
       const allTouched: Partial<Record<keyof OrgSignupValues, boolean>> = {};
@@ -137,14 +138,34 @@ export function SignupForm() {
       if (Object.keys(next).length > 0) return;
 
       setSubmitting(true);
-      toast.info("Organization signups are launching soon. We've recorded your interest.");
-      // TODO: replace with `await signupOrg({...})` once /api/v1/organizations/signup exists.
-      await new Promise((r) => setTimeout(r, 600));
-      const params = new URLSearchParams({
-        org: orgValues.organizationName,
-        contact: orgValues.contactName,
-      });
-      router.push(`/pending-verification?${params.toString()}`);
+      try {
+        const { message } = await signupOrg({
+          email: orgValues.email,
+          password: orgValues.password,
+          contactName: orgValues.contactName,
+          designation: orgValues.designation,
+          organizationName: orgValues.organizationName,
+          organizationType: orgValues.organizationType,
+          website: orgValues.website || undefined,
+          country: orgValues.country,
+        });
+        toast.success(message);
+        const params = new URLSearchParams({
+          org: orgValues.organizationName,
+          contact: orgValues.contactName,
+          email: orgValues.email,
+        });
+        router.push(`/pending-verification?${params.toString()}`);
+      } catch (err) {
+        if (err instanceof ApiError && err.code === "CONFLICT") {
+          setOrgErrors({ email: "An account with this email already exists" });
+        } else if (err instanceof ApiError && err.code === "VALIDATION_ERROR") {
+          toast.error(err.message);
+        } else {
+          toast.error(err instanceof Error ? err.message : "Signup failed. Try again.");
+        }
+        setSubmitting(false);
+      }
     }
   }
 

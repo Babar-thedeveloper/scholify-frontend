@@ -20,7 +20,9 @@ export class ApiError extends Error {
     public readonly status: number,
     public readonly code: string,
     message: string,
-    public readonly details?: unknown
+    public readonly details?: unknown,
+    /** Short id the user can quote to support — matches a server log entry. */
+    public readonly requestId?: string
   ) {
     super(message);
     this.name = "ApiError";
@@ -92,12 +94,15 @@ async function parseOrThrow<T>(res: Response): Promise<T> {
   }
 
   if (!res.ok) {
-    const err = (payload as { error?: { code: string; message: string; details?: unknown } }).error;
+    const err = (payload as {
+      error?: { code: string; message: string; details?: unknown; requestId?: string };
+    }).error;
     throw new ApiError(
       res.status,
       err?.code ?? "UNKNOWN",
       err?.message ?? `Request failed (${res.status})`,
-      err?.details
+      err?.details,
+      err?.requestId
     );
   }
 

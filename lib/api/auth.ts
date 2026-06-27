@@ -48,9 +48,36 @@ export interface SignupInput {
   fullName: string;
 }
 
+/** Organization kinds — must match the `organization_kinds` lookup keys. */
+export type OrganizationKind =
+  | "scholarship_provider"
+  | "internship_provider"
+  | "both"
+  | "government"
+  | "ngo"
+  | "university"
+  | "corporate";
+
+export interface SignupOrgInput {
+  email: string;
+  password: string;
+  contactName: string;
+  designation: string;
+  organizationName: string;
+  organizationType: OrganizationKind | "scholarship-provider" | "internship-provider";
+  website?: string;
+  country?: string;
+}
+
 /** Critical auth endpoints return a `message` for the frontend to surface. */
 export interface SignupResult {
   user: AuthUser;
+  message: string;
+}
+
+export interface SignupOrgResult {
+  user: AuthUser;
+  organization: { id: string; name: string; slug: string; verified: boolean };
   message: string;
 }
 
@@ -80,6 +107,18 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
     body: input,
   });
   return { user: body.user, message: body.message ?? "Account created." };
+}
+
+/**
+ * Register a new organization (creates user + org + owner-membership atomically).
+ * Does NOT log the user in — they must verify their email AND wait for org
+ * verification (admin reviews within 1–2 business days).
+ */
+export async function signupOrg(input: SignupOrgInput): Promise<SignupOrgResult> {
+  return apiFetch<SignupOrgResult>(`${BASE}/signup-org`, {
+    method: "POST",
+    body: input,
+  });
 }
 
 /**

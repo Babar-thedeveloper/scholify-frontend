@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Mail, ShieldCheck } from "lucide-react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/button";
 
@@ -8,13 +8,13 @@ export const metadata = {
 };
 
 interface PendingVerificationPageProps {
-  searchParams: Promise<{ org?: string; contact?: string }>;
+  searchParams: Promise<{ org?: string; contact?: string; email?: string }>;
 }
 
 export default async function PendingVerificationPage({
   searchParams,
 }: PendingVerificationPageProps) {
-  const { org, contact } = await searchParams;
+  const { org, contact, email } = await searchParams;
   const orgName = org || "your organization";
   const contactName = contact?.split(" ")[0] || "there";
 
@@ -41,31 +41,38 @@ export default async function PendingVerificationPage({
           Your organization account for{" "}
           <span className="font-semibold text-foreground">&ldquo;{orgName}&rdquo;</span> is under review.
         </p>
-        <p className="mt-3 text-sm text-muted-foreground">
-          We verify all organizations before they go live to protect our student community.
-        </p>
 
         <div className="mt-6 w-full rounded-xl border border-border bg-muted/30 p-4 text-left">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             What happens next
           </p>
-          <ul className="space-y-1.5 text-sm text-foreground">
+          <ul className="space-y-2 text-sm text-foreground">
             <li className="flex gap-2">
-              <span className="text-primary">•</span>
-              Our team reviews your application (1-2 business days)
+              <Mail className="mt-0.5 size-4 shrink-0 text-primary" />
+              <span>
+                <span className="font-medium">Verify your email first.</span> We&apos;ve sent a link
+                to {email ? <span className="font-semibold">{email}</span> : "your inbox"}.
+              </span>
             </li>
             <li className="flex gap-2">
-              <span className="text-primary">•</span>
-              You&apos;ll receive an email once approved
+              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
+              <span>Our team reviews your organization (1–2 business days).</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-primary">•</span>
-              Then you can post scholarships / internships
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-primary" />
+              <span>Once approved you can publish scholarships &amp; internships.</span>
             </li>
           </ul>
         </div>
 
-        <Button variant="outline" size="sm" asChild className="mt-6 text-sm">
+        {email && (
+          <Button asChild className="mt-6 w-full">
+            <Link href={`/verify-email?email=${encodeURIComponent(email)}`}>
+              Go to verification page
+            </Link>
+          </Button>
+        )}
+        <Button variant="ghost" size="sm" asChild className="mt-2 text-sm">
           <Link href="/">← Back to home</Link>
         </Button>
 
