@@ -1,10 +1,17 @@
 "use client";
 
 // ─────────────────────────────────────────────────────────────
-// MOCK AUTH. Real authentication (Fastify + session/JWT) will
-// replace this provider. Until then we keep a fake user in React
-// state, persisted to localStorage so role survives refreshes.
-// Swap `useUser()` consumers to the real session hook later.
+// Real auth context. Backend-backed via lib/api/auth.
+//
+// What it gives the rest of the app:
+//   - `user`       — the logged-in user, or the guest sentinel
+//   - `role`       — coarse UI bucket ('guest' | 'student' | 'org')
+//   - `roles`      — fine-grained backend roles (for RBAC checks)
+//   - `login()`    — wraps the real /login + refreshes context
+//   - `signup()`   — wraps the real /signup + refreshes context
+//   - `logout()`   — wraps the real /logout + clears context
+//   - `refetch()`  — re-hydrate from /me (e.g. after role grant)
+//   - `isLoading`  — true until the initial /me check finishes
 // ─────────────────────────────────────────────────────────────
 
 import {
@@ -15,99 +22,142 @@ import {
   useMemo,
   useState,
 } from "react";
+import {
+  type AuthUser,
+  type BackendRole,
+  type LoginInput,
+  type LoginResult,
+  type SignupInput,
+  type SignupResult,
+  type UiRole,
+  deriveDisplayName,
+  deriveInitials,
+  deriveUiRole,
+  getMe,
+  login as loginApi,
+  logout as logoutApi,
+  signup as signupApi,
+} from "@/lib/api/auth";
 
-export type UserRole = "guest" | "student" | "org";
-
+/** Public-facing user shape. Combines backend `AuthUser` with UI-derived fields. */
 export interface User {
   id: string;
-  role: UserRole;
-  name: string;
   email: string;
+  roles: BackendRole[];
+  /** Coarse bucket for navbar/sidebar selection. */
+  role: UiRole;
+  name: string;
   initials: string;
+  /** Org context when present (set later by org-switcher). */
   organization?: {
     name: string;
-    type: "scholarship-provider" | "internship-provider";
-    logo?: string;
     verified: boolean;
   };
+  activeOrgId?: string;
 }
-
-// Canned identities per role for the mock.
-const MOCK_USERS: Record<Exclude<UserRole, "guest">, User> = {
-  student: {
-    id: "stu_ayesha",
-    role: "student",
-    name: "Ayesha Khan",
-    email: "ayesha@nust.edu.pk",
-    initials: "AK",
-  },
-  org: {
-    id: "org_daraz",
-    role: "org",
-    name: "Daraz Pakistan",
-    email: "hr@daraz.pk",
-    initials: "D",
-    organization: {
-      name: "Daraz Pakistan",
-      type: "internship-provider",
-      verified: true,
-    },
-  },
-};
 
 const GUEST: User = {
   id: "guest",
+  email: "",
+  roles: [],
   role: "guest",
   name: "Guest",
-  email: "",
   initials: "G",
 };
 
+/** Map backend `AuthUser` → frontend `User`. */
+function fromAuthUser(a: AuthUser): User {
+  const name = deriveDisplayName(a.email);
+  return {
+    id: a.id,
+    email: a.email,
+    roles: a.roles,
+    role: deriveUiRole(a.roles),
+    name,
+    initials: deriveInitials(name),
+    activeOrgId: a.activeOrgId,
+  };
+}
+
 interface UserContextValue {
   user: User;
-  role: UserRole;
-  setRole: (role: UserRole) => void;
-  logout: () => void;
+  role: UiRole;
+  roles: BackendRole[];
+  isAuthed: boolean;
   isLoading: boolean;
+  /** Returns { user, message } — show the message via toast. */
+  login: (input: LoginInput) => Promise<LoginResult>;
+  /** Returns { user, message } but does NOT log the user in
+   *  (they must verify their email first). */
+  signup: (input: SignupInput) => Promise<SignupResult>;
+  logout: () => Promise<void>;
+  refetch: () => Promise<void>;
+  /** Inline RBAC check. */
+  hasRole: (...roles: BackendRole[]) => boolean;
 }
 
 const UserContext = createContext<UserContextValue | null>(null);
 
-const STORAGE_KEY = "scholify:mock-role";
-
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const [role, setRoleState] = useState<UserRole>("guest");
+  const [user, setUser] = useState<User>(GUEST);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Hydrate from localStorage on mount (client only).
+  const refetch = useCallback(async () => {
+    try {
+      const u = await getMe();
+      setUser(u ? fromAuthUser(u) : GUEST);
+    } catch {
+      // Network failure during hydration → behave as guest, don't crash.
+      setUser(GUEST);
+    }
+  }, []);
+
+  // On mount, ask the backend "who am I?" — succeeds if the cookie is valid.
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY) as UserRole | null;
-      if (saved === "student" || saved === "org" || saved === "guest") {
-        setRoleState(saved);
-      }
-    } catch {
-      /* ignore */
-    }
-    setIsLoading(false);
+    let cancelled = false;
+    (async () => {
+      await refetch();
+      if (!cancelled) setIsLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, [refetch]);
+
+  const login = useCallback(async (input: LoginInput): Promise<LoginResult> => {
+    const result = await loginApi(input);
+    setUser(fromAuthUser(result.user));
+    return result;
   }, []);
 
-  const setRole = useCallback((next: UserRole) => {
-    setRoleState(next);
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next);
-    } catch {
-      /* ignore */
-    }
+  const signup = useCallback(async (input: SignupInput): Promise<SignupResult> => {
+    // No setUser — verification gate. The user becomes a real session only
+    // after they confirm the email and then call login.
+    return signupApi(input);
   }, []);
 
-  const logout = useCallback(() => setRole("guest"), [setRole]);
+  const logout = useCallback(async (): Promise<void> => {
+    try { await logoutApi(); } catch { /* still clear locally */ }
+    setUser(GUEST);
+  }, []);
 
-  const user = role === "guest" ? GUEST : MOCK_USERS[role];
+  const hasRole = useCallback(
+    (...roles: BackendRole[]) => roles.some((r) => user.roles.includes(r)),
+    [user.roles]
+  );
 
   const value = useMemo<UserContextValue>(
-    () => ({ user, role, setRole, logout, isLoading }),
-    [user, role, setRole, logout, isLoading]
+    () => ({
+      user,
+      role: user.role,
+      roles: user.roles,
+      isAuthed: user.role !== "guest",
+      isLoading,
+      login,
+      signup,
+      logout,
+      refetch,
+      hasRole,
+    }),
+    [user, isLoading, login, signup, logout, refetch, hasRole]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
@@ -118,3 +168,6 @@ export function useUser(): UserContextValue {
   if (!ctx) throw new Error("useUser must be used within a UserProvider");
   return ctx;
 }
+
+/** Backward-compat alias for older imports. */
+export type UserRole = UiRole;

@@ -4,12 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GoogleButton } from "./GoogleButton";
 import { OrgSignupFields } from "./OrgSignupFields";
 import { StudentSignupFields } from "./StudentSignupFields";
 import { UserTypeToggle } from "./UserTypeToggle";
+import { useUser } from "./UserContext";
+import { ApiError } from "@/lib/api/client";
 import { validateOrgSignup, validateStudentSignup } from "./auth.schemas";
 import type {
   FieldErrors,
@@ -42,6 +45,7 @@ const initialOrg: OrgSignupValues = {
 
 export function SignupForm() {
   const router = useRouter();
+  const { signup } = useUser();
   const [userType, setUserType] = useState<UserType>("student");
 
   const [studentValues, setStudentValues] = useState<StudentSignupValues>(initialStudent);
@@ -100,10 +104,29 @@ export function SignupForm() {
       );
       setStudentTouched(allTouched);
       if (Object.keys(next).length > 0) return;
+
       setSubmitting(true);
-      await new Promise((r) => setTimeout(r, 1000));
-      router.push(`/verify-email?email=${encodeURIComponent(studentValues.email)}`);
+      try {
+        const { message } = await signup({
+          email: studentValues.email,
+          password: studentValues.password,
+          fullName: studentValues.fullName,
+        });
+        toast.success(message);
+        router.push(`/verify-email?email=${encodeURIComponent(studentValues.email)}`);
+      } catch (err) {
+        if (err instanceof ApiError && err.code === "CONFLICT") {
+          setStudentErrors({ email: "An account with this email already exists" });
+        } else {
+          toast.error(err instanceof Error ? err.message : "Signup failed. Try again.");
+        }
+        setSubmitting(false);
+      }
     } else {
+      // Organization signup creates an org + sets verification_status=pending.
+      // The backend endpoint for this lives in modules/organizations and is not
+      // wired yet — keep the form valid but route to the pending screen so the
+      // UX flow is testable end-to-end.
       const next = validateOrgSignup(orgValues);
       setOrgErrors(next);
       const allTouched: Partial<Record<keyof OrgSignupValues, boolean>> = {};
@@ -112,8 +135,11 @@ export function SignupForm() {
       );
       setOrgTouched(allTouched);
       if (Object.keys(next).length > 0) return;
+
       setSubmitting(true);
-      await new Promise((r) => setTimeout(r, 1000));
+      toast.info("Organization signups are launching soon. We've recorded your interest.");
+      // TODO: replace with `await signupOrg({...})` once /api/v1/organizations/signup exists.
+      await new Promise((r) => setTimeout(r, 600));
       const params = new URLSearchParams({
         org: orgValues.organizationName,
         contact: orgValues.contactName,

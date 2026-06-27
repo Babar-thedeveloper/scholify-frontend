@@ -4,11 +4,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "./FormField";
 import { PasswordInput } from "./PasswordInput";
 import { GoogleButton } from "./GoogleButton";
+import { useUser } from "./UserContext";
+import { ApiError } from "@/lib/api/client";
+import { deriveUiRole } from "@/lib/api/auth";
 import { validateLogin } from "./auth.schemas";
 import type { FieldErrors, LoginValues } from "./auth.types";
 
@@ -16,6 +20,7 @@ const initial: LoginValues = { email: "", password: "" };
 
 export function LoginForm() {
   const router = useRouter();
+  const { login } = useUser();
   const [values, setValues] = useState<LoginValues>(initial);
   const [errors, setErrors] = useState<FieldErrors<LoginValues>>({});
   const [touched, setTouched] = useState<Record<keyof LoginValues, boolean>>({
@@ -44,9 +49,28 @@ export function LoginForm() {
     setErrors(next);
     setTouched({ email: true, password: true });
     if (Object.keys(next).length > 0) return;
+
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    router.push("/dashboard");
+    try {
+      const { user, message } = await login({ email: values.email, password: values.password });
+      toast.success(message);
+      router.push(deriveUiRole(user.roles) === "org" ? "/org/dashboard" : "/dashboard");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.code === "EMAIL_NOT_VERIFIED") {
+          toast.error(err.message);
+          router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
+        } else if (err.status === 401) {
+          setErrors({ password: "Invalid email or password" });
+        } else {
+          toast.error(err.message);
+        }
+      } else {
+        toast.error(err instanceof Error ? err.message : "Login failed. Try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
