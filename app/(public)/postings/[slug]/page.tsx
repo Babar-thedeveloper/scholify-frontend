@@ -12,6 +12,7 @@ import {
 import { getPostingBySlug } from "@/lib/api/postings";
 import { ApplyPanel } from "./apply-panel";
 import { SaveToggle } from "@/components/shared/SaveToggle";
+import { RemindMeButton } from "@/components/shared/RemindMeButton";
 
 export const dynamic = "force-dynamic";
 
@@ -209,6 +210,13 @@ export default async function PostingDetailPage({ params }: Props) {
 
           {/* Save / unsave — only shown to logged-in students */}
           <SaveToggle postingId={posting.id} postingSlug={posting.publicSlug} />
+
+          {/* Remind-me — students only, hidden when deadline already passed */}
+          <RemindMeButton
+            postingId={posting.id}
+            postingSlug={posting.publicSlug}
+            deadlineAt={posting.deadlineAt}
+          />
 
           {/* Direct external link (backup) */}
           {posting.applyMethod === "external" && posting.externalUrl && (

@@ -1,7 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { Bell, CalendarClock, Mail, MessageSquare, Pencil, Trash2 } from "lucide-react";
+// ─────────────────────────────────────────────────────────────
+// /dashboard/reminders — student's list of active reminders.
+//
+// Wired to GET /api/v1/reminders. Each row supports:
+//   - Edit: days-before + channel via dialog (PATCH)
+//   - Delete: confirm dialog → DELETE
+//   - Toggle active: pause / resume without deleting (PATCH)
+// ─────────────────────────────────────────────────────────────
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  Bell,
+  CalendarClock,
+  Loader2,
+  Mail,
+  MessageSquare,
+  Pencil,
+  Smartphone,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,90 +33,190 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
-import { MOCK_REMINDERS } from "@/components/dashboard/dashboard.mock";
 import { formatDate } from "@/components/dashboard/dashboard.utils";
-import type { Reminder } from "@/components/dashboard/dashboard.types";
+import {
+  deleteReminder,
+  listReminders,
+  patchReminder,
+  type ReminderChannel,
+  type ReminderDto,
+} from "@/lib/api/reminders";
+import { ApiError } from "@/lib/api/client";
 
-const CHANNEL_LABEL: Record<Reminder["channel"], { label: string; Icon: typeof Mail }> = {
+const DAYS_OPTIONS = [1, 3, 7, 14, 30];
+
+const CHANNEL_META: Record<string, { label: string; Icon: typeof Mail }> = {
   email: { label: "Email", Icon: Mail },
   whatsapp: { label: "WhatsApp", Icon: MessageSquare },
-  both: { label: "Email & WhatsApp", Icon: Mail },
+  sms: { label: "SMS", Icon: Smartphone },
+  in_app: { label: "In-app only", Icon: Bell },
 };
 
-export default function RemindersPage() {
-  const [reminders, setReminders] = useState<Reminder[]>(MOCK_REMINDERS);
+function channelMeta(key: string) {
+  return CHANNEL_META[key] ?? { label: key, Icon: Bell };
+}
 
-  function remove(id: string) {
-    setReminders((prev) => prev.filter((r) => r.id !== id));
-    // TODO: DELETE /reminders/:id
-    toast.success("Reminder deleted");
+export default function RemindersPage() {
+  const [reminders, setReminders] = useState<ReminderDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<ReminderDto | null>(null);
+  const [editDays, setEditDays] = useState<number>(7);
+  const [editChannel, setEditChannel] = useState<ReminderChannel>("email");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { items } = await listReminders();
+        if (!cancelled) setReminders(items);
+      } catch (err) {
+        if (!cancelled)
+          toast.error(err instanceof ApiError ? err.message : "Couldn't load reminders.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  async function handleDelete(id: string) {
+    const prev = reminders;
+    setReminders((r) => r.filter((x) => x.id !== id));
+    try {
+      await deleteReminder(id);
+      toast.success("Reminder deleted");
+    } catch (err) {
+      setReminders(prev);
+      toast.error(err instanceof ApiError ? err.message : "Couldn't delete reminder.");
+    }
   }
 
-  function edit(id: string) {
-    // TODO: Open edit modal when implemented
-    toast.info("Editing reminder — coming soon");
+  async function togglePause(r: ReminderDto) {
+    const next = !r.isActive;
+    setReminders((list) => list.map((x) => (x.id === r.id ? { ...x, isActive: next } : x)));
+    try {
+      await patchReminder(r.id, { isActive: next });
+      toast.success(next ? "Reminder resumed" : "Reminder paused");
+    } catch (err) {
+      setReminders((list) => list.map((x) => (x.id === r.id ? { ...x, isActive: !next } : x)));
+      toast.error(err instanceof ApiError ? err.message : "Couldn't update reminder.");
+    }
+  }
+
+  function openEdit(r: ReminderDto) {
+    setEditing(r);
+    setEditDays(r.daysBefore);
+    setEditChannel((r.channel as ReminderChannel) ?? "email");
+  }
+
+  async function saveEdit() {
+    if (!editing) return;
+    setSaving(true);
+    try {
+      const res = await patchReminder(editing.id, {
+        daysBefore: editDays,
+        channel: editChannel,
+      });
+      setReminders((list) => list.map((x) => (x.id === editing.id ? res.reminder : x)));
+      toast.success("Reminder updated");
+      setEditing(null);
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Couldn't update reminder.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <div className="mx-auto max-w-3xl">
       <PageHeader
         title="Reminders"
-        subtitle="Get notified before your saved scholarship and internship deadlines"
+        subtitle="Get notified before your scholarship and internship deadlines"
       />
 
-      {reminders.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-20 text-muted-foreground">
+          <Loader2 className="mr-2 size-4 animate-spin" /> Loading…
+        </div>
+      ) : reminders.length === 0 ? (
         <EmptyState
           Icon={Bell}
           title="No reminders set"
-          description="When you set reminders on scholarships or internships, they'll appear here."
+          description="Open a scholarship or internship and hit “Remind me” to get notified before it closes."
           actionLabel="Browse scholarships"
           actionHref="/scholarships"
         />
       ) : (
         <div className="flex flex-col gap-3">
           {reminders.map((r) => {
-            const ch = CHANNEL_LABEL[r.channel];
+            const ch = channelMeta(r.channel);
+            const inactive = !r.isActive;
             return (
               <div
                 key={r.id}
-                className="rounded-xl border border-border bg-white p-5 dark:bg-card"
+                className={`rounded-xl border border-border bg-white p-5 dark:bg-card ${inactive ? "opacity-60" : ""}`}
               >
                 <div className="flex items-start gap-3">
-                  {/* Icon */}
                   <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
                     <Bell className="size-5" />
                   </span>
 
-                  {/* Content */}
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-foreground">{r.itemTitle}</h3>
+                    <Link
+                      href={`/postings/${r.postingSlug}`}
+                      className="font-semibold text-foreground hover:underline"
+                    >
+                      {r.postingTitle}
+                    </Link>
+                    <p className="text-xs text-muted-foreground">{r.organizationName}</p>
                     <div className="mt-2 flex flex-col gap-1.5 text-sm text-muted-foreground">
                       <span className="flex items-center gap-2">
                         <CalendarClock className="size-3.5 shrink-0" />
-                        Reminder set for: {formatDate(r.remindAt)} ({r.daysBefore}{" "}
-                        {r.daysBefore === 1 ? "day" : "days"} before deadline)
+                        {formatDate(r.remindAt)} · {r.daysBefore}{" "}
+                        {r.daysBefore === 1 ? "day" : "days"} before deadline
                       </span>
                       <span className="flex items-center gap-2">
                         <ch.Icon className="size-3.5 shrink-0" />
-                        Channel: {ch.label}
+                        {ch.label}
+                        {r.lastSentAt && (
+                          <span className="ml-1 text-xs">· sent {formatDate(r.lastSentAt)}</span>
+                        )}
                       </span>
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex shrink-0 gap-1">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => edit(r.id)}
-                    >
+                  <div className="flex shrink-0 flex-col gap-1 sm:flex-row">
+                    <Button size="sm" variant="ghost" onClick={() => togglePause(r)}>
+                      {r.isActive ? "Pause" : "Resume"}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => openEdit(r)}>
                       <Pencil className="size-3.5" /> Edit
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive"
+                        >
                           <Trash2 className="size-3.5" /> Delete
                         </Button>
                       </AlertDialogTrigger>
@@ -106,13 +224,13 @@ export default function RemindersPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete this reminder?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            The reminder for &ldquo;{r.itemTitle}&rdquo; will be permanently
+                            The reminder for &ldquo;{r.postingTitle}&rdquo; will be permanently
                             removed. You can always create a new one later.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => remove(r.id)}>
+                          <AlertDialogAction onClick={() => handleDelete(r.id)}>
                             Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -125,6 +243,57 @@ export default function RemindersPage() {
           })}
         </div>
       )}
+
+      {/* Edit dialog */}
+      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="p-6">
+          <DialogHeader>
+            <DialogTitle>Edit reminder</DialogTitle>
+            <DialogDescription>{editing?.postingTitle}</DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4">
+            <div className="grid gap-1.5">
+              <label className="text-sm font-medium">Remind me</label>
+              <Select value={String(editDays)} onValueChange={(v) => setEditDays(Number(v))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {DAYS_OPTIONS.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      {d} day{d === 1 ? "" : "s"} before deadline
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid gap-1.5">
+              <label className="text-sm font-medium">Channel</label>
+              <Select value={editChannel} onValueChange={(v) => setEditChannel(v as ReminderChannel)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="email">Email</SelectItem>
+                  <SelectItem value="in_app">In-app only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)} disabled={saving}>
+              Cancel
+            </Button>
+            <Button onClick={saveEdit} disabled={saving}>
+              {saving && <Loader2 className="size-4 animate-spin" />}
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
