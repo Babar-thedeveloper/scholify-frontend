@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { getPostingBySlug } from "@/lib/api/postings";
 import { ApplyPanel } from "./apply-panel";
+import { SaveToggle } from "@/components/shared/SaveToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -205,6 +206,9 @@ export default async function PostingDetailPage({ params }: Props) {
             externalUrl={posting.externalUrl}
             deadlinePassed={!!deadlineDate && deadlineDate <= new Date()}
           />
+
+          {/* Save / unsave — only shown to logged-in students */}
+          <SaveToggle postingId={posting.id} postingSlug={posting.publicSlug} />
 
           {/* Direct external link (backup) */}
           {posting.applyMethod === "external" && posting.externalUrl && (

@@ -9,10 +9,6 @@ import { ScholifyLogo } from "@/components/scholify-logo";
 import { ModeToggle } from "@/components/mode-toggle";
 import { AvatarDropdown } from "@/components/shared/AvatarDropdown";
 import { NotificationDropdown } from "@/components/shared/NotificationDropdown";
-import {
-  MOCK_NOTIFICATIONS_ORG,
-  MOCK_NOTIFICATIONS_STUDENT,
-} from "@/components/dashboard/dashboard.mock";
 
 interface DashboardShellProps {
   variant: "student" | "org";
@@ -23,8 +19,6 @@ interface DashboardShellProps {
 export function DashboardShell({ variant, sidebar, children }: DashboardShellProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const notifications =
-    variant === "org" ? MOCK_NOTIFICATIONS_ORG : MOCK_NOTIFICATIONS_STUDENT;
   const notifHref = variant === "org" ? "/org/notifications" : "/dashboard/notifications";
 
   return (
@@ -59,7 +53,7 @@ export function DashboardShell({ variant, sidebar, children }: DashboardShellPro
           </div>
           <div className="flex items-center gap-1">
             <ModeToggle />
-            <NotificationDropdown notifications={notifications} viewAllHref={notifHref} />
+            <NotificationDropdown viewAllHref={notifHref} />
             <AvatarDropdown />
           </div>
         </header>
@@ -67,7 +61,7 @@ export function DashboardShell({ variant, sidebar, children }: DashboardShellPro
         {/* Desktop top bar (notifications + avatar) */}
         <header className="sticky top-0 z-30 hidden h-14 items-center justify-end gap-1 border-b border-border bg-white/80 px-6 backdrop-blur dark:bg-card/80 md:flex">
           <ModeToggle />
-          <NotificationDropdown notifications={notifications} viewAllHref={notifHref} />
+          <NotificationDropdown viewAllHref={notifHref} />
           <AvatarDropdown />
         </header>
 

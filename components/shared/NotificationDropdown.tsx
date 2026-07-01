@@ -1,13 +1,26 @@
 "use client";
 
-import { useState } from "react";
+// ─────────────────────────────────────────────────────────────
+// Notification bell + dropdown.
+//
+// Delivery model: polling. Backend has a cheap GET /unread-count
+// endpoint we hit every 30s to update the red dot on the bell.
+// The full list is only fetched when the dropdown opens (or after
+// a mutation like mark-all-read). This keeps traffic minimal while
+// UI stays live.
+//
+// We upgrade to Server-Sent Events (SSE) once concurrent users
+// justify the infra work — API layer is designed to be a drop-in.
+// ─────────────────────────────────────────────────────────────
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Bell,
   CalendarClock,
   CheckCircle2,
-  UserPlus,
+  Loader2,
   Megaphone,
+  UserPlus,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -16,33 +29,105 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/components/dashboard/dashboard.utils";
-import type { AppNotification } from "@/components/dashboard/dashboard.types";
+import {
+  type NotificationDto,
+  getUnreadCount,
+  listNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+} from "@/lib/api/notifications";
+import { useUser } from "@/components/auth/UserContext";
 
-const TYPE_ICON = {
-  "application-status": CheckCircle2,
-  "deadline-reminder": CalendarClock,
-  "new-applicant": UserPlus,
+const POLL_INTERVAL_MS = 30_000;
+
+const TYPE_ICON: Record<string, typeof Bell> = {
+  application_status: CheckCircle2,
+  deadline_reminder: CalendarClock,
+  new_applicant: UserPlus,
+  posting_published: Megaphone,
+  verification: CheckCircle2,
   system: Megaphone,
-} as const;
+};
 
-interface NotificationDropdownProps {
-  notifications: AppNotification[];
+interface Props {
   viewAllHref: string;
 }
 
-export function NotificationDropdown({
-  notifications,
-  viewAllHref,
-}: NotificationDropdownProps) {
-  const [items, setItems] = useState(notifications);
-  const unread = items.filter((n) => !n.read).length;
+export function NotificationDropdown({ viewAllHref }: Props) {
+  const { isAuthed, isLoading: authLoading } = useUser();
 
-  function markAllRead() {
-    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+  const [unread, setUnread] = useState(0);
+  const [items, setItems] = useState<NotificationDto[]>([]);
+  const [open, setOpen] = useState(false);
+  const [loadingList, setLoadingList] = useState(false);
+
+  // ─── Poll unread count while authed ─────────────────────
+  useEffect(() => {
+    if (authLoading || !isAuthed) return;
+
+    let cancelled = false;
+    async function tick() {
+      try {
+        const c = await getUnreadCount();
+        if (!cancelled) setUnread(c);
+      } catch {
+        /* silent — bell just doesn't tick */
+      }
+    }
+    void tick();
+    const t = setInterval(tick, POLL_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(t);
+    };
+  }, [authLoading, isAuthed]);
+
+  // ─── Fetch list when the menu opens ─────────────────────
+  const fetchList = useCallback(async () => {
+    setLoadingList(true);
+    try {
+      const res = await listNotifications({ pageSize: 8 });
+      setItems(res.items);
+    } catch {
+      /* silent */
+    } finally {
+      setLoadingList(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (open) void fetchList();
+  }, [open, fetchList]);
+
+  // ─── Mark actions ───────────────────────────────────────
+  async function handleMarkAllRead() {
+    try {
+      await markAllNotificationsRead();
+      setItems((prev) => prev.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })));
+      setUnread(0);
+    } catch {
+      /* silent — polling will resync */
+    }
   }
 
+  async function handleItemClick(n: NotificationDto) {
+    if (n.readAt) return;
+    try {
+      await markNotificationRead(n.id);
+      setItems((prev) =>
+        prev.map((x) => (x.id === n.id ? { ...x, readAt: new Date().toISOString() } : x))
+      );
+      setUnread((u) => Math.max(0, u - 1));
+    } catch {
+      /* silent — polling will resync */
+    }
+  }
+
+  // Hidden entirely for guests.
+  if (!isAuthed) return null;
+
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <button
           className="relative flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -60,7 +145,7 @@ export function NotificationDropdown({
           <p className="text-sm font-semibold text-foreground">Notifications</p>
           {unread > 0 && (
             <button
-              onClick={markAllRead}
+              onClick={handleMarkAllRead}
               className="text-xs font-medium text-primary hover:underline"
             >
               Mark all as read
@@ -69,18 +154,23 @@ export function NotificationDropdown({
         </div>
 
         <div className="max-h-[360px] overflow-y-auto">
-          {items.length === 0 ? (
+          {loadingList ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="size-4 animate-spin text-muted-foreground" />
+            </div>
+          ) : items.length === 0 ? (
             <p className="px-4 py-10 text-center text-sm text-muted-foreground">
               You&apos;re all caught up.
             </p>
           ) : (
             items.map((n) => {
-              const Icon = TYPE_ICON[n.type];
+              const Icon = TYPE_ICON[n.type] ?? Megaphone;
+              const isRead = !!n.readAt;
               const content = (
                 <div
                   className={cn(
                     "flex gap-3 px-4 py-3 transition-colors hover:bg-muted/60",
-                    !n.read && "bg-emerald-50/40 dark:bg-emerald-500/5"
+                    !isRead && "bg-emerald-50/40 dark:bg-emerald-500/5"
                   )}
                 >
                   <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
@@ -90,21 +180,37 @@ export function NotificationDropdown({
                     <p className="text-sm font-medium leading-snug text-foreground">
                       {n.title}
                     </p>
-                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                      {n.subtitle}
+                    {n.subtitle && (
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                        {n.subtitle}
+                      </p>
+                    )}
+                    <p className="mt-0.5 text-[10px] text-muted-foreground/70">
+                      {timeAgo(n.createdAt)}
                     </p>
                   </div>
-                  {!n.read && (
+                  {!isRead && (
                     <span className="mt-1.5 size-2 shrink-0 rounded-full bg-blue-500" />
                   )}
                 </div>
               );
               return n.link ? (
-                <Link key={n.id} href={n.link} className="block">
+                <Link
+                  key={n.id}
+                  href={n.link}
+                  className="block"
+                  onClick={() => handleItemClick(n)}
+                >
                   {content}
                 </Link>
               ) : (
-                <div key={n.id}>{content}</div>
+                <button
+                  key={n.id}
+                  onClick={() => handleItemClick(n)}
+                  className="block w-full text-left"
+                >
+                  {content}
+                </button>
               );
             })
           )}

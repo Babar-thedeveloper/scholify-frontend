@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Bookmark,
-  GraduationCap,
   Briefcase,
-  MapPin,
   CalendarClock,
-  Bell,
+  GraduationCap,
+  Loader2,
+  MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
-import { MOCK_SAVED_ITEMS } from "@/components/dashboard/dashboard.mock";
 import { daysUntil, formatDeadline } from "@/components/dashboard/dashboard.utils";
-import type { SavedItem } from "@/components/dashboard/dashboard.types";
+import { listSaved, unsavePosting, type SavedItemDto } from "@/lib/api/saved";
+import { ApiError } from "@/lib/api/client";
 
 type Filter = "all" | "scholarship" | "internship";
 
@@ -28,15 +28,46 @@ const CHIPS: { key: Filter; label: string }[] = [
 
 export default function SavedItemsPage() {
   const [filter, setFilter] = useState<Filter>("all");
-  const [items, setItems] = useState<SavedItem[]>(MOCK_SAVED_ITEMS);
+  const [items, setItems] = useState<SavedItemDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filtered =
-    filter === "all" ? items : items.filter((s) => s.type === filter);
+  const load = useCallback(async () => {
+    try {
+      const res = await listSaved();
+      setItems(res.items);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Couldn't load saved items");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  function unsave(id: string) {
-    setItems((prev) => prev.filter((s) => s.id !== id));
-    // TODO: DELETE /saved/:id when the API exists.
-    toast.success("Removed from saved items");
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      await load();
+      if (cancelled) setItems([]);
+    })();
+    return () => { cancelled = true; };
+  }, [load]);
+
+  const filtered = useMemo(
+    () => (filter === "all" ? items : items.filter((s) => s.type === filter)),
+    [items, filter]
+  );
+
+  async function unsave(postingId: string) {
+    // Optimistic removal — undo on failure.
+    const prev = items;
+    setItems((p) => p.filter((s) => s.postingId !== postingId));
+    try {
+      await unsavePosting(postingId);
+      toast.success("Removed from saved items");
+    } catch (err) {
+      setItems(prev);
+      toast.error(err instanceof ApiError ? err.message : "Couldn't remove.");
+    }
   }
 
   return (
@@ -70,34 +101,52 @@ export default function SavedItemsPage() {
         })}
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-16 text-muted-foreground">
+          <Loader2 className="size-5 animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">
+          <p className="font-medium">Couldn&apos;t load saved items</p>
+          <p className="mt-1 text-destructive/80">{error}</p>
+        </div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           Icon={Bookmark}
-          title="Nothing saved yet"
-          description="Browse scholarships and internships, and bookmark the ones you like."
-          actionLabel="Browse scholarships"
-          actionHref="/scholarships"
+          title={items.length === 0 ? "Nothing saved yet" : "No items match this filter"}
+          description={
+            items.length === 0
+              ? "Browse scholarships and internships, and bookmark the ones you like."
+              : undefined
+          }
+          actionLabel={items.length === 0 ? "Browse internships" : undefined}
+          actionHref={items.length === 0 ? "/internships" : undefined}
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((item) => {
-            const left = daysUntil(item.deadlineAt);
+            const left = daysUntil(item.deadlineAt ?? undefined);
             const urgent = left !== null && left >= 0 && left <= 3;
+            const money =
+              item.type === "scholarship"
+                ? item.fundingAmount
+                : item.stipendAmount
+                  ? `PKR ${Number(item.stipendAmount).toLocaleString()}/month`
+                  : null;
             return (
               <div
-                key={item.id}
+                key={item.postingId}
                 className="group relative rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-sm dark:bg-card"
               >
                 {/* Bookmark toggle */}
                 <button
-                  onClick={() => unsave(item.id)}
+                  onClick={() => unsave(item.postingId)}
                   className="absolute right-3 top-3 rounded-md p-1.5 text-emerald-600 transition-colors hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
                   aria-label="Remove from saved"
                 >
                   <Bookmark className="size-4 fill-current" />
                 </button>
 
-                {/* Type badge */}
                 <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
                   {item.type === "scholarship" ? (
                     <GraduationCap className="size-3" />
@@ -108,7 +157,7 @@ export default function SavedItemsPage() {
                 </span>
 
                 <h3 className="mt-3 pr-6 text-sm font-semibold leading-snug text-foreground">
-                  {item.title}
+                  {item.postingTitle}
                 </h3>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {item.organizationName}
@@ -120,37 +169,25 @@ export default function SavedItemsPage() {
                       <MapPin className="size-3 shrink-0" /> {item.location}
                     </span>
                   )}
-                  {(item.fundingAmount || item.stipend) && (
-                    <span className="font-medium text-foreground">
-                      {item.fundingAmount || item.stipend}
-                    </span>
+                  {money && (
+                    <span className="font-medium text-foreground">{money}</span>
                   )}
                 </div>
 
-                {/* Deadline + reminder */}
                 <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
                   <span
                     className={cn(
                       "flex items-center gap-1.5 text-xs font-medium",
-                      urgent
-                        ? "text-red-600"
-                        : "text-muted-foreground"
+                      urgent ? "text-red-600" : "text-muted-foreground"
                     )}
                   >
                     <CalendarClock className="size-3" />
                     {item.deadlineAt ? formatDeadline(item.deadlineAt) : "No deadline"}
                   </span>
-                  {item.reminderSet && (
-                    <Bell
-                      className="size-3.5 text-emerald-600 dark:text-emerald-400"
-                      aria-label="Reminder set"
-                    />
-                  )}
                 </div>
 
-                {/* Apply link */}
                 <Link
-                  href="/scholarships"
+                  href={`/postings/${item.postingSlug}`}
                   className="mt-3 block text-center text-xs font-medium text-primary hover:underline"
                 >
                   View details →

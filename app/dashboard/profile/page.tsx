@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck, Camera, Check, Loader2, Save, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,72 +15,194 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import {
+  DEGREE_LABEL,
+  PROVINCE_LABEL,
+  getMyProfile,
+  patchMyProfile,
+  type DegreeLevelKey,
+  type ProfileDto,
+  type ProvinceKey,
+} from "@/lib/api/users";
+import { ApiError } from "@/lib/api/client";
 
-// ─── Mock profile state ─────────────────────────────────────
-const PROFILE_PERCENT = 85;
-
-const PROVINCES = [
-  "Punjab",
-  "Sindh",
-  "KPK",
-  "Balochistan",
-  "Islamabad Capital Territory",
-  "Gilgit-Baltistan",
-  "Azad Kashmir",
+const DEGREE_KEYS: DegreeLevelKey[] = ["undergraduate", "masters", "phd", "diploma"];
+const PROVINCE_KEYS: ProvinceKey[] = [
+  "punjab", "sindh", "kpk", "balochistan", "islamabad", "gb", "ajk",
 ];
+const YEAR_OPTIONS = [1, 2, 3, 4, 5];
 
-const DEGREE_LEVELS = [
-  "Undergraduate",
-  "Graduate (Masters)",
-  "PhD",
-  "Diploma / Certificate",
-];
-
-const YEAR_OPTIONS = ["1st year", "2nd year", "3rd year", "4th year", "5th year"];
+function initials(name: string | null, email: string): string {
+  const base = name?.trim() || email.split("@")[0] || "?";
+  const parts = base.split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return base.slice(0, 2).toUpperCase();
+}
 
 export default function ProfilePage() {
-  // ─── Section 1: Personal Info ──────────────────────────────
-  const [personal, setPersonal] = useState({
-    fullName: "Ayesha Khan",
-    dob: "2004-03-15",
-    phone: "+92 300 1234567",
-  });
+  const [profile, setProfile] = useState<ProfileDto | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [savingSection, setSavingSection] = useState<string | null>(null);
 
-  // ─── Section 2: Academic ───────────────────────────────────
+  // Section-local editable state, hydrated after fetch.
+  const [personal, setPersonal] = useState({ fullName: "", dob: "", phone: "", whatsapp: "" });
   const [academic, setAcademic] = useState({
-    university: "NUST",
-    degreeLevel: "Undergraduate",
-    currentYear: "3rd year",
-    fieldOfStudy: "Computer Science",
-    gpa: "3.8",
-    graduationYear: "2027",
+    university: "",
+    degreeLevel: "" as DegreeLevelKey | "",
+    currentYear: "",
+    fieldOfStudy: "",
+    gpa: "",
+    graduationYear: "",
   });
-
-  // ─── Section 3: Address ────────────────────────────────────
   const [address, setAddress] = useState({
-    city: "Islamabad",
-    province: "Islamabad Capital Territory",
-    postalAddress: "H-12, Islamabad",
+    city: "",
+    province: "" as ProvinceKey | "",
+    postalAddress: "",
   });
 
-  // ─── Section 4: Verification ───────────────────────────────
-  const [verificationEmail, setVerificationEmail] = useState("ayesha@nust.edu.pk");
-  const [verified, setVerified] = useState(false);
+  // Verification (backend flow lands later; UI reflects current state).
+  const [verificationEmail, setVerificationEmail] = useState("");
   const [verifying, setVerifying] = useState(false);
 
-  function saveSection(section: string) {
-    // TODO: PATCH /profile/:section when API exists
-    toast.success(`${section} saved`);
+  // ─── Load ────────────────────────────────────────────────
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const p = await getMyProfile();
+        if (cancelled) return;
+        setProfile(p);
+        setPersonal({
+          fullName: p.personal.fullName ?? "",
+          dob: p.personal.dateOfBirth ?? "",
+          phone: p.personal.phone ?? "",
+          whatsapp: p.personal.whatsapp ?? "",
+        });
+        setAcademic({
+          university: p.academic.universityName ?? p.academic.universityOther ?? "",
+          degreeLevel: p.academic.degreeLevel ?? "",
+          currentYear: p.academic.currentYear != null ? String(p.academic.currentYear) : "",
+          fieldOfStudy: p.academic.fieldOfStudyName ?? "",
+          gpa: p.academic.cgpa ?? "",
+          graduationYear:
+            p.academic.expectedGraduationYear != null
+              ? String(p.academic.expectedGraduationYear)
+              : "",
+        });
+        setAddress({
+          city: p.address.city ?? "",
+          province: p.address.provinceKey ?? "",
+          postalAddress: p.address.line1 ?? "",
+        });
+        setVerificationEmail(p.user.email);
+      } catch (err) {
+        if (cancelled) return;
+        toast.error(err instanceof ApiError ? err.message : "Couldn't load your profile");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // ─── Section save handlers ──────────────────────────────
+  async function savePersonal() {
+    setSavingSection("personal");
+    try {
+      const { profile: p, message } = await patchMyProfile({
+        personal: {
+          fullName: personal.fullName || null,
+          dateOfBirth: personal.dob || null,
+          phone: personal.phone || null,
+          whatsapp: personal.whatsapp || null,
+        },
+      });
+      setProfile(p);
+      toast.success(message);
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Couldn't save.");
+    } finally {
+      setSavingSection(null);
+    }
+  }
+
+  async function saveAcademic() {
+    setSavingSection("academic");
+    try {
+      const cgpa = academic.gpa ? Number(academic.gpa) : null;
+      const gradYear = academic.graduationYear ? Number(academic.graduationYear) : null;
+      const currentYear = academic.currentYear ? Number(academic.currentYear) : null;
+
+      const { profile: p, message } = await patchMyProfile({
+        academic: {
+          universityOther: academic.university || null,
+          degreeLevel: academic.degreeLevel || null,
+          currentYear,
+          cgpa: cgpa != null && !Number.isNaN(cgpa) ? cgpa : null,
+          expectedGraduationYear: gradYear,
+          fieldOfStudyOther: academic.fieldOfStudy || null,
+        },
+      });
+      setProfile(p);
+      toast.success(message);
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Couldn't save.");
+    } finally {
+      setSavingSection(null);
+    }
+  }
+
+  async function saveAddress() {
+    setSavingSection("address");
+    try {
+      const { profile: p, message } = await patchMyProfile({
+        address: {
+          line1: address.postalAddress || null,
+          city: address.city || null,
+          province: address.province || null,
+          postalCode: null,
+        },
+      });
+      setProfile(p);
+      toast.success(message);
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Couldn't save.");
+    } finally {
+      setSavingSection(null);
+    }
   }
 
   function verify() {
+    // Real .edu.pk flow ships in a later phase — for now this is a UI-only stub.
     setVerifying(true);
-    // Simulate verification delay
     setTimeout(() => {
-      setVerified(true);
       setVerifying(false);
-      toast.success("Email verified successfully!");
-    }, 1500);
+      toast.info("Student verification will be available soon.");
+    }, 900);
+  }
+
+  const initialsStr = useMemo(() => {
+    if (!profile) return "??";
+    return initials(personal.fullName, profile.user.email);
+  }, [personal.fullName, profile]);
+
+  const verified = profile?.verification.isVerifiedStudent ?? false;
+  const completion = profile?.completionPercent ?? 0;
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
+        <Loader2 className="size-5 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="mx-auto max-w-3xl p-6 text-sm text-muted-foreground">
+        Couldn&apos;t load your profile. Try refreshing the page.
+      </div>
+    );
   }
 
   return (
@@ -95,9 +216,9 @@ export default function ProfilePage() {
       <div className="mb-8 rounded-xl border border-border bg-white p-5 dark:bg-card">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-foreground">Profile completion</p>
-          <span className="text-sm font-bold text-emerald-600">{PROFILE_PERCENT}%</span>
+          <span className="text-sm font-bold text-emerald-600">{completion}%</span>
         </div>
-        <Progress value={PROFILE_PERCENT} className="mt-2 h-2" />
+        <Progress value={completion} className="mt-2 h-2" />
         <p className="mt-2 text-xs text-muted-foreground">
           Complete all fields to reach 100% and improve your chances.
         </p>
@@ -111,7 +232,7 @@ export default function ProfilePage() {
         <div className="mb-6 flex items-center gap-4">
           <div className="relative">
             <span className="flex size-20 items-center justify-center rounded-full bg-emerald-100 text-2xl font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
-              AK
+              {initialsStr}
             </span>
             <button
               className="absolute -bottom-1 -right-1 flex size-8 items-center justify-center rounded-full border-2 border-white bg-primary text-primary-foreground shadow-sm dark:border-card"
@@ -156,8 +277,13 @@ export default function ProfilePage() {
           </div>
         </div>
         <div className="mt-5 flex justify-end">
-          <Button onClick={() => saveSection("Personal information")}>
-            <Save className="size-4" /> Save changes
+          <Button onClick={savePersonal} disabled={savingSection === "personal"}>
+            {savingSection === "personal" ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Save className="size-4" />
+            )}
+            Save changes
           </Button>
         </div>
       </section>
@@ -179,15 +305,15 @@ export default function ProfilePage() {
             <Label>Degree level</Label>
             <Select
               value={academic.degreeLevel}
-              onValueChange={(v) => setAcademic({ ...academic, degreeLevel: v })}
+              onValueChange={(v) => setAcademic({ ...academic, degreeLevel: v as DegreeLevelKey })}
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-                {DEGREE_LEVELS.map((d) => (
-                  <SelectItem key={d} value={d}>
-                    {d}
+                {DEGREE_KEYS.map((k) => (
+                  <SelectItem key={k} value={k}>
+                    {DEGREE_LABEL[k]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -200,12 +326,12 @@ export default function ProfilePage() {
               onValueChange={(v) => setAcademic({ ...academic, currentYear: v })}
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
                 {YEAR_OPTIONS.map((y) => (
-                  <SelectItem key={y} value={y}>
-                    {y}
+                  <SelectItem key={y} value={String(y)}>
+                    {y === 1 ? "1st year" : y === 2 ? "2nd year" : y === 3 ? "3rd year" : `${y}th year`}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -226,6 +352,7 @@ export default function ProfilePage() {
               value={academic.gpa}
               onChange={(e) => setAcademic({ ...academic, gpa: e.target.value })}
               placeholder="e.g. 3.8"
+              inputMode="decimal"
             />
           </div>
           <div className="space-y-1.5">
@@ -235,12 +362,18 @@ export default function ProfilePage() {
               value={academic.graduationYear}
               onChange={(e) => setAcademic({ ...academic, graduationYear: e.target.value })}
               placeholder="e.g. 2027"
+              inputMode="numeric"
             />
           </div>
         </div>
         <div className="mt-5 flex justify-end">
-          <Button onClick={() => saveSection("Academic details")}>
-            <Save className="size-4" /> Save changes
+          <Button onClick={saveAcademic} disabled={savingSection === "academic"}>
+            {savingSection === "academic" ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Save className="size-4" />
+            )}
+            Save changes
           </Button>
         </div>
       </section>
@@ -261,15 +394,15 @@ export default function ProfilePage() {
             <Label>Province</Label>
             <Select
               value={address.province}
-              onValueChange={(v) => setAddress({ ...address, province: v })}
+              onValueChange={(v) => setAddress({ ...address, province: v as ProvinceKey })}
             >
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Select" />
               </SelectTrigger>
               <SelectContent>
-                {PROVINCES.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    {p}
+                {PROVINCE_KEYS.map((k) => (
+                  <SelectItem key={k} value={k}>
+                    {PROVINCE_LABEL[k]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -285,13 +418,18 @@ export default function ProfilePage() {
           </div>
         </div>
         <div className="mt-5 flex justify-end">
-          <Button onClick={() => saveSection("Address & contact")}>
-            <Save className="size-4" /> Save changes
+          <Button onClick={saveAddress} disabled={savingSection === "address"}>
+            {savingSection === "address" ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Save className="size-4" />
+            )}
+            Save changes
           </Button>
         </div>
       </section>
 
-      {/* Section 4 — Verification */}
+      {/* Section 4 — Verification (real .edu.pk flow ships later) */}
       <section className="mb-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Verification</h2>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">

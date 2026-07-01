@@ -10,10 +10,8 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@/components/auth/UserContext";
 import { AvatarDropdown } from "@/components/shared/AvatarDropdown";
 import { NotificationDropdown } from "@/components/shared/NotificationDropdown";
-import {
-  MOCK_NOTIFICATIONS_ORG,
-  MOCK_NOTIFICATIONS_STUDENT,
-} from "@/components/dashboard/dashboard.mock";
+// Mock imports below are no longer used — NotificationDropdown now fetches
+// live from the backend and polls the unread count every 30s.
 
 interface NavLink {
   href: string;
@@ -91,10 +89,7 @@ export function PublicNavbar() {
 
           {role === "student" && (
             <>
-              <NotificationDropdown
-                notifications={MOCK_NOTIFICATIONS_STUDENT}
-                viewAllHref="/dashboard/notifications"
-              />
+              <NotificationDropdown viewAllHref="/dashboard/notifications" />
               <AvatarDropdown />
             </>
           )}
@@ -107,10 +102,7 @@ export function PublicNavbar() {
                   Post opportunity
                 </Link>
               </Button>
-              <NotificationDropdown
-                notifications={MOCK_NOTIFICATIONS_ORG}
-                viewAllHref="/org/notifications"
-              />
+              <NotificationDropdown viewAllHref="/org/notifications" />
               <AvatarDropdown />
             </>
           )}
