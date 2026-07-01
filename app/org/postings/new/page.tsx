@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import type { ApplicationType } from "@/components/dashboard/dashboard.types";
+import { createPosting, type CreatePostingInput } from "@/lib/api/postings";
+import { ApiError } from "@/lib/api/client";
 
 const DEGREE_LEVELS = ["Undergraduate", "Masters", "PhD"];
 const FIELDS = ["Engineering", "Computer Science", "Business", "Medicine", "Arts"];
@@ -85,6 +87,7 @@ export default function NewPostingPage() {
   const [type, setType] = useState<ApplicationType | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [skillInput, setSkillInput] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -137,17 +140,63 @@ export default function NewPostingPage() {
     if (validateDetails()) setStep(3);
   };
 
-  const saveDraft = () => {
-    // TODO: API — persist draft posting
-    toast.success("Saved as draft");
-    router.push("/org/postings");
-  };
+  /** Build the discriminated-union payload the backend expects. */
+  function buildPayload(publish: boolean): CreatePostingInput | null {
+    if (!type) return null;
 
-  const publish = () => {
-    // TODO: API — publish posting
-    toast.success("Posting published 🎉");
-    router.push("/org/postings");
-  };
+    const base = {
+      title: form.title.trim(),
+      description: form.description.trim(),
+      eligibilityCriteria: form.eligibility.trim() || undefined,
+      deadlineAt: form.deadline ? new Date(form.deadline).toISOString() : undefined,
+      applyMethod: form.applyMethod,
+      externalUrl: form.applyMethod === "external" ? form.externalUrl.trim() : undefined,
+      publish,
+    };
+
+    if (type === "scholarship") {
+      return {
+        ...base,
+        type: "scholarship",
+        fundingAmount: form.fundingAmount.trim() || undefined,
+        countryScope: (form.countryScope as "pakistan" | "international" | "specific") || undefined,
+      };
+    }
+
+    // Internship — extract the numeric month count from a free-text field like "3 months".
+    const durationMonths = form.duration ? parseInt(form.duration.replace(/[^\d]/g, ""), 10) : NaN;
+    return {
+      ...base,
+      type: "internship",
+      workMode: (form.workMode as "remote" | "onsite" | "hybrid") || "onsite",
+      city: form.city.trim() || undefined,
+      isPaid: form.isPaid,
+      stipendAmount: form.isPaid && form.stipend ? Number(form.stipend) : undefined,
+      stipendCurrency: "PKR",
+      durationMonths: Number.isFinite(durationMonths) && durationMonths > 0 ? durationMonths : undefined,
+      startDate: form.startDate || undefined,
+    };
+  }
+
+  async function submit(publish: boolean) {
+    const payload = buildPayload(publish);
+    if (!payload) return;
+    if (!validateDetails()) return;
+
+    setSubmitting(true);
+    try {
+      const { message } = await createPosting(payload);
+      toast.success(message);
+      router.push("/org/postings");
+    } catch (err) {
+      if (err instanceof ApiError) toast.error(err.message);
+      else toast.error("Couldn't save posting. Please try again.");
+      setSubmitting(false);
+    }
+  }
+
+  const saveDraft = () => void submit(false);
+  const publish = () => void submit(true);
 
   const steps = [
     { n: 1, label: "Type" },
@@ -537,10 +586,10 @@ export default function NewPostingPage() {
               <ArrowLeft className="size-4" /> Back
             </Button>
             <div className="flex gap-3">
-              <Button variant="outline" onClick={saveDraft}>
+              <Button variant="outline" onClick={saveDraft} disabled={submitting}>
                 Save as draft
               </Button>
-              <Button onClick={goReview}>
+              <Button onClick={goReview} disabled={submitting}>
                 Next <ArrowRight className="size-4" />
               </Button>
             </div>
@@ -621,10 +670,16 @@ export default function NewPostingPage() {
               <Button
                 variant="outline"
                 onClick={() => toast.success("Opening preview…")}
+                disabled={submitting}
               >
                 Preview
               </Button>
-              <Button onClick={publish}>Publish</Button>
+              <Button variant="outline" onClick={saveDraft} disabled={submitting}>
+                Save as draft
+              </Button>
+              <Button onClick={publish} disabled={submitting}>
+                {submitting ? "Publishing…" : "Publish"}
+              </Button>
             </div>
           </div>
         </div>

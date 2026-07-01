@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -9,7 +9,8 @@ import {
   CalendarClock,
   Check,
   Copy,
-  Download,
+  FileQuestion,
+  Loader2,
   MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -29,17 +30,119 @@ import {
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { ApplicationTimeline } from "@/components/dashboard/ApplicationTimeline";
 import { EmptyState } from "@/components/dashboard/EmptyState";
-import { MOCK_APPLICATIONS } from "@/components/dashboard/dashboard.mock";
+import type {
+  ApplicationStatus,
+  ApplicationTimelineEvent,
+} from "@/components/dashboard/dashboard.types";
 import { STATUS_FLOW, formatDate, formatStatus, statusStepIndex } from "@/components/dashboard/dashboard.utils";
-import { FileQuestion } from "lucide-react";
+import {
+  type ApplicationDetailDto,
+  type ApplicationStatusKey,
+  getApplicationDetail,
+  withdrawApplication,
+} from "@/lib/api/applications";
+import { ApiError } from "@/lib/api/client";
+
+// Backend uses snake_case, the dashboard UI types use kebab-case.
+const STATUS_MAP: Record<ApplicationStatusKey, ApplicationStatus> = {
+  draft: "draft",
+  submitted: "submitted",
+  under_review: "under-review",
+  shortlisted: "shortlisted",
+  interview: "interview",
+  accepted: "accepted",
+  not_selected: "not-selected",
+  withdrawn: "withdrawn",
+};
+
+const EVENT_TYPE_MAP: Record<string, ApplicationTimelineEvent["type"]> = {
+  submission: "submission",
+  status_change: "status-change",
+  note: "note",
+  message: "message",
+  attachment: "note",   // no dedicated icon — reuse "note"
+  view: "note",
+};
+
+const ACTOR_MAP: Record<string, ApplicationTimelineEvent["actor"]> = {
+  student: "student",
+  organization: "organization",
+  system: "system",
+};
+
+function mapStatus(k: ApplicationStatusKey | null): ApplicationStatus | undefined {
+  return k ? STATUS_MAP[k] : undefined;
+}
+
+function toTimeline(events: ApplicationDetailDto["timeline"]): ApplicationTimelineEvent[] {
+  // Newest first — matches the mock we replaced.
+  return [...events].reverse().map((e) => ({
+    timestamp: e.occurredAt,
+    type: EVENT_TYPE_MAP[e.eventType] ?? "note",
+    description: e.description ?? "",
+    fromStatus: mapStatus(e.fromStatus),
+    toStatus: mapStatus(e.toStatus),
+    actor: ACTOR_MAP[e.actorKind] ?? "system",
+  }));
+}
 
 export default function ApplicationDetailPage() {
-  const params = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const application = MOCK_APPLICATIONS.find((a) => a.id === params.id);
+
+  const [detail, setDetail] = useState<ApplicationDetailDto | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  if (!application) {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const d = await getApplicationDetail(id);
+        if (!cancelled) setDetail(d);
+      } catch (err) {
+        if (cancelled) return;
+        if (err instanceof ApiError && err.status === 404) setNotFound(true);
+        else toast.error(err instanceof Error ? err.message : "Couldn't load application");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [id]);
+
+  function copyId() {
+    if (!detail) return;
+    navigator.clipboard.writeText(detail.publicId);
+    setCopied(true);
+    toast.success("Application ID copied");
+    setTimeout(() => setCopied(false), 1500);
+  }
+
+  async function handleWithdraw() {
+    setBusy(true);
+    try {
+      const { message } = await withdrawApplication(id);
+      toast.success(message);
+      router.push("/dashboard/applications");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't withdraw.");
+      setBusy(false);
+    }
+  }
+
+  // ─── States ─────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
+        <Loader2 className="size-5 animate-spin" />
+      </div>
+    );
+  }
+
+  if (notFound || !detail) {
     return (
       <div className="mx-auto max-w-3xl">
         <EmptyState
@@ -53,22 +156,11 @@ export default function ApplicationDetailPage() {
     );
   }
 
-  const a = application;
-  const currentStep = statusStepIndex(a.status);
-  const rejected = a.status === "not-selected";
-
-  function copyId() {
-    navigator.clipboard.writeText(a.id);
-    setCopied(true);
-    toast.success("Application ID copied");
-    setTimeout(() => setCopied(false), 1500);
-  }
-
-  function withdraw() {
-    // TODO: PATCH /applications/:id { status: 'withdrawn' }
-    toast.success("Application withdrawn");
-    router.push("/dashboard/applications");
-  }
+  const uiStatus = STATUS_MAP[detail.status] ?? "submitted";
+  const currentStep = statusStepIndex(uiStatus);
+  const rejected = uiStatus === "not-selected";
+  const canWithdraw = !["withdrawn", "not-selected", "accepted"].includes(uiStatus);
+  const timelineEvents = toTimeline(detail.timeline);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -85,14 +177,14 @@ export default function ApplicationDetailPage() {
           <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h1 className="text-xl font-semibold text-foreground">{a.itemTitle}</h1>
-                <p className="mt-1 text-sm text-muted-foreground">{a.organizationName}</p>
+                <h1 className="text-xl font-semibold text-foreground">{detail.postingTitle}</h1>
+                <p className="mt-1 text-sm text-muted-foreground">{detail.organizationName}</p>
               </div>
-              <StatusBadge status={a.status} size="md" />
+              <StatusBadge status={uiStatus} size="md" />
             </div>
 
             <div className="mt-3 flex items-center gap-2">
-              <span className="font-mono text-xs text-muted-foreground">{a.id}</span>
+              <span className="font-mono text-xs text-muted-foreground">{detail.publicId}</span>
               <button
                 onClick={copyId}
                 className="text-muted-foreground hover:text-foreground"
@@ -103,44 +195,56 @@ export default function ApplicationDetailPage() {
             </div>
 
             {/* Status stepper */}
-            {!a.isExternal && (
-              <div className="mt-6 flex items-center">
-                {STATUS_FLOW.map((s, i) => {
-                  const done = currentStep > i;
-                  const current = currentStep === i;
-                  return (
-                    <div key={s} className="flex flex-1 items-center last:flex-none">
-                      <div className="flex flex-col items-center gap-1.5">
-                        <span
-                          className={cn(
-                            "flex size-7 items-center justify-center rounded-full text-xs font-semibold",
-                            done && "bg-emerald-600 text-white",
-                            current && !rejected && "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-600 dark:bg-emerald-500/20",
-                            current && rejected && "bg-red-100 text-red-700 ring-2 ring-red-500",
-                            !done && !current && "bg-muted text-muted-foreground"
-                          )}
-                        >
-                          {done ? <Check className="size-4" /> : i + 1}
-                        </span>
-                        <span className="text-[11px] font-medium text-muted-foreground">
-                          {i === 3 && rejected ? "Decision" : formatStatus(s)}
-                        </span>
-                      </div>
-                      {i < STATUS_FLOW.length - 1 && (
-                        <div className={cn("mx-1 h-0.5 flex-1", done ? "bg-emerald-600" : "bg-border")} />
-                      )}
+            <div className="mt-6 flex items-center">
+              {STATUS_FLOW.map((s, i) => {
+                const done = currentStep > i;
+                const current = currentStep === i;
+                return (
+                  <div key={s} className="flex flex-1 items-center last:flex-none">
+                    <div className="flex flex-col items-center gap-1.5">
+                      <span
+                        className={cn(
+                          "flex size-7 items-center justify-center rounded-full text-xs font-semibold",
+                          done && "bg-emerald-600 text-white",
+                          current && !rejected && "bg-emerald-100 text-emerald-700 ring-2 ring-emerald-600 dark:bg-emerald-500/20",
+                          current && rejected && "bg-red-100 text-red-700 ring-2 ring-red-500",
+                          !done && !current && "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {done ? <Check className="size-4" /> : i + 1}
+                      </span>
+                      <span className="text-[11px] font-medium text-muted-foreground">
+                        {i === 3 && rejected ? "Decision" : formatStatus(s)}
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                    {i < STATUS_FLOW.length - 1 && (
+                      <div className={cn("mx-1 h-0.5 flex-1", done ? "bg-emerald-600" : "bg-border")} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Timeline */}
           <div className="mt-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
             <h2 className="mb-4 font-semibold text-foreground">Timeline</h2>
-            <ApplicationTimeline events={a.timeline} />
+            {timelineEvents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No events yet.</p>
+            ) : (
+              <ApplicationTimeline events={timelineEvents} />
+            )}
           </div>
+
+          {/* Cover letter (if student wrote one) */}
+          {detail.coverLetter && (
+            <div className="mt-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
+              <h2 className="mb-3 font-semibold text-foreground">Your cover letter</h2>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">
+                {detail.coverLetter}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -148,37 +252,50 @@ export default function ApplicationDetailPage() {
           <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
             <h2 className="mb-3 text-sm font-semibold text-foreground">Quick info</h2>
             <dl className="space-y-3 text-sm">
-              {a.deadlineAt && (
+              {detail.deadlineAt && (
                 <div className="flex items-center gap-2.5">
                   <CalendarClock className="size-4 text-muted-foreground" />
                   <div>
                     <dt className="text-xs text-muted-foreground">Deadline</dt>
-                    <dd className="text-foreground">{formatDate(a.deadlineAt)}</dd>
+                    <dd className="text-foreground">{formatDate(detail.deadlineAt)}</dd>
                   </div>
                 </div>
               )}
-              <div className="flex items-center gap-2.5">
-                <CalendarClock className="size-4 text-muted-foreground" />
-                <div>
-                  <dt className="text-xs text-muted-foreground">Applied</dt>
-                  <dd className="text-foreground">{formatDate(a.appliedAt)}</dd>
+              {detail.submittedAt && (
+                <div className="flex items-center gap-2.5">
+                  <CalendarClock className="size-4 text-muted-foreground" />
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Applied</dt>
+                    <dd className="text-foreground">{formatDate(detail.submittedAt)}</dd>
+                  </div>
                 </div>
-              </div>
-              {a.fundingAmount && (
+              )}
+              {detail.fundingAmount && (
                 <div className="flex items-center gap-2.5">
                   <Banknote className="size-4 text-muted-foreground" />
                   <div>
                     <dt className="text-xs text-muted-foreground">Funding</dt>
-                    <dd className="text-foreground">{a.fundingAmount}</dd>
+                    <dd className="text-foreground">{detail.fundingAmount}</dd>
                   </div>
                 </div>
               )}
-              {a.location && (
+              {detail.stipendAmount && (
+                <div className="flex items-center gap-2.5">
+                  <Banknote className="size-4 text-muted-foreground" />
+                  <div>
+                    <dt className="text-xs text-muted-foreground">Stipend</dt>
+                    <dd className="text-foreground">
+                      PKR {Number(detail.stipendAmount).toLocaleString()} / month
+                    </dd>
+                  </div>
+                </div>
+              )}
+              {detail.location && (
                 <div className="flex items-center gap-2.5">
                   <MapPin className="size-4 text-muted-foreground" />
                   <div>
                     <dt className="text-xs text-muted-foreground">Location</dt>
-                    <dd className="text-foreground">{a.location}</dd>
+                    <dd className="text-foreground">{detail.location}</dd>
                   </div>
                 </div>
               )}
@@ -186,13 +303,13 @@ export default function ApplicationDetailPage() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Button variant="outline" size="lg" className="w-full">
-              <Download className="size-4" /> Download application PDF
+            <Button variant="outline" size="lg" asChild className="w-full">
+              <Link href={`/postings/${detail.postingSlug}`}>View posting</Link>
             </Button>
-            {!["withdrawn", "not-selected", "accepted"].includes(a.status) && (
+            {canWithdraw && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="lg" className="w-full">
+                  <Button variant="destructive" size="lg" className="w-full" disabled={busy}>
                     Withdraw application
                   </Button>
                 </AlertDialogTrigger>
@@ -200,13 +317,15 @@ export default function ApplicationDetailPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Withdraw this application?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will withdraw your application for &ldquo;{a.itemTitle}&rdquo;. This
-                      action cannot be undone.
+                      This will withdraw your application for &ldquo;{detail.postingTitle}&rdquo;.
+                      This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={withdraw}>Withdraw</AlertDialogAction>
+                    <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleWithdraw} disabled={busy}>
+                      {busy ? "Withdrawing…" : "Withdraw"}
+                    </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

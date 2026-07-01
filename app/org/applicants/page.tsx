@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Loader2, Users } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ApplicantTable } from "@/components/org/ApplicantTable";
@@ -12,55 +12,125 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MOCK_APPLICANTS, MOCK_POSTINGS } from "@/components/dashboard/dashboard.mock";
-import { formatStatus, ORG_STATUS_OPTIONS } from "@/components/dashboard/dashboard.utils";
-import type { ApplicationStatus } from "@/components/dashboard/dashboard.types";
+import type { Applicant, ApplicationStatus } from "@/components/dashboard/dashboard.types";
+import {
+  type ApplicationStatusKey,
+  type ListOrgApplicantsParams,
+  type OrgApplicantDto,
+  listOrgApplicants,
+} from "@/lib/api/applications";
+import { listMyPostings, type MyPostingDto } from "@/lib/api/postings";
+import { ApiError } from "@/lib/api/client";
 
-type SortKey = "recent" | "oldest" | "gpa" | "name";
+type SortKey = NonNullable<ListOrgApplicantsParams["sort"]>;
+
+// backend key → UI label
+const STATUS_LABEL: Record<ApplicationStatusKey, string> = {
+  draft: "Draft",
+  submitted: "Submitted",
+  under_review: "Under review",
+  shortlisted: "Shortlisted",
+  interview: "Interview",
+  accepted: "Accepted",
+  not_selected: "Not selected",
+  withdrawn: "Withdrawn",
+};
+
+// backend snake_case → dashboard kebab-case (for the ApplicantTable component).
+const STATUS_MAP: Record<ApplicationStatusKey, ApplicationStatus> = {
+  draft: "draft",
+  submitted: "submitted",
+  under_review: "under-review",
+  shortlisted: "shortlisted",
+  interview: "interview",
+  accepted: "accepted",
+  not_selected: "not-selected",
+  withdrawn: "withdrawn",
+};
+
+function toApplicant(dto: OrgApplicantDto): Applicant {
+  return {
+    id: dto.publicId,
+    applicationId: dto.publicId,
+    postingId: dto.postingId,
+    postingTitle: dto.postingTitle,
+    name: dto.student.fullName || dto.student.email,
+    initials: dto.student.initials,
+    email: dto.student.email,
+    university: dto.student.university ?? "—",
+    degreeLevel: dto.student.degreeLevel ?? "—",
+    fieldOfStudy: dto.student.fieldOfStudy ?? "—",
+    gpa: dto.student.cgpa ?? "—",
+    city: "",
+    appliedAt: dto.submittedAt ?? dto.createdAt,
+    status: STATUS_MAP[dto.status] ?? "submitted",
+    coverLetter: dto.coverLetter ?? undefined,
+  };
+}
 
 export default function ApplicantsPage() {
   const [posting, setPosting] = useState("all");
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState<"all" | ApplicationStatusKey>("all");
   const [university, setUniversity] = useState("all");
   const [sort, setSort] = useState<SortKey>("recent");
 
-  const postings = useMemo(() => {
-    const seen = new Set<string>();
-    return MOCK_POSTINGS.filter((p) => {
-      if (seen.has(p.title)) return false;
-      seen.add(p.title);
-      return true;
-    });
+  const [postings, setPostings] = useState<MyPostingDto[]>([]);
+  const [applicants, setApplicants] = useState<OrgApplicantDto[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch posting list once for the dropdown.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await listMyPostings();
+        if (!cancelled) setPostings(res.items);
+      } catch {
+        /* silent — dropdown gracefully degrades to "All postings" only */
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
+  // Fetch applicants whenever filters change (server-side filter).
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    (async () => {
+      try {
+        const params: ListOrgApplicantsParams = {
+          postingId: posting !== "all" ? posting : undefined,
+          status: status !== "all" ? status : undefined,
+          university: university !== "all" ? university : undefined,
+          sort,
+          pageSize: 50,
+        };
+        const res = await listOrgApplicants(params);
+        if (cancelled) return;
+        setApplicants(res.items);
+        setTotal(res.total);
+      } catch (err) {
+        if (cancelled) return;
+        setError(err instanceof ApiError ? err.message : "Couldn't load applicants");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [posting, status, university, sort]);
+
   const universities = useMemo(
-    () => Array.from(new Set(MOCK_APPLICANTS.map((a) => a.university))).sort(),
-    []
+    () =>
+      Array.from(
+        new Set(applicants.map((a) => a.student.university).filter((u): u is string => !!u))
+      ).sort(),
+    [applicants]
   );
 
-  const result = useMemo(() => {
-    const list = MOCK_APPLICANTS.filter((a) => {
-      if (posting !== "all" && a.postingId !== posting) return false;
-      if (status !== "all" && a.status !== status) return false;
-      if (university !== "all" && a.university !== university) return false;
-      return true;
-    });
-
-    return [...list].sort((a, b) => {
-      switch (sort) {
-        case "recent":
-          return new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime();
-        case "oldest":
-          return new Date(a.appliedAt).getTime() - new Date(b.appliedAt).getTime();
-        case "gpa":
-          return parseFloat(b.gpa) - parseFloat(a.gpa);
-        case "name":
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
-  }, [posting, status, university, sort]);
+  const rows = useMemo(() => applicants.map(toApplicant), [applicants]);
 
   return (
     <div>
@@ -68,7 +138,7 @@ export default function ApplicantsPage() {
 
       <div className="mb-4 flex flex-wrap gap-3">
         <Select value={posting} onValueChange={setPosting}>
-          <SelectTrigger className="h-9 w-[200px] text-sm">
+          <SelectTrigger className="h-9 w-[220px] text-sm">
             <SelectValue placeholder="All postings" />
           </SelectTrigger>
           <SelectContent>
@@ -81,17 +151,22 @@ export default function ApplicantsPage() {
           </SelectContent>
         </Select>
 
-        <Select value={status} onValueChange={setStatus}>
+        <Select
+          value={status}
+          onValueChange={(v) => setStatus(v as "all" | ApplicationStatusKey)}
+        >
           <SelectTrigger className="h-9 w-[180px] text-sm">
             <SelectValue placeholder="All statuses" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
-            {ORG_STATUS_OPTIONS.map((s) => (
-              <SelectItem key={s} value={s}>
-                {formatStatus(s as ApplicationStatus)}
-              </SelectItem>
-            ))}
+            {(Object.keys(STATUS_LABEL) as ApplicationStatusKey[])
+              .filter((k) => k !== "draft" && k !== "withdrawn")
+              .map((k) => (
+                <SelectItem key={k} value={k}>
+                  {STATUS_LABEL[k]}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
 
@@ -116,24 +191,33 @@ export default function ApplicantsPage() {
           <SelectContent>
             <SelectItem value="recent">Most recent</SelectItem>
             <SelectItem value="oldest">Oldest</SelectItem>
-            <SelectItem value="gpa">GPA (highest)</SelectItem>
-            <SelectItem value="name">Name (A–Z)</SelectItem>
+            <SelectItem value="gpa_desc">GPA (highest)</SelectItem>
+            <SelectItem value="name_asc">Name (A–Z)</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <p className="mb-3 text-sm text-muted-foreground">
-        {result.length} {result.length === 1 ? "applicant" : "applicants"}
+        {total} {total === 1 ? "applicant" : "applicants"}
       </p>
 
-      {result.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-16 text-muted-foreground">
+          <Loader2 className="size-5 animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">
+          <p className="font-medium">Couldn&apos;t load applicants</p>
+          <p className="mt-1 text-destructive/80">{error}</p>
+        </div>
+      ) : rows.length === 0 ? (
         <EmptyState
           Icon={Users}
           title="No applicants match these filters"
           description="Try adjusting or clearing your filters to see more applicants."
         />
       ) : (
-        <ApplicantTable applicants={result} showPosting />
+        <ApplicantTable applicants={rows} showPosting />
       )}
     </div>
   );

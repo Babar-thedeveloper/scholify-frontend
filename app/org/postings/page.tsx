@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FileText, Plus } from "lucide-react";
+import { FileText, Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { PostingCard } from "@/components/org/PostingCard";
-import { MOCK_POSTINGS } from "@/components/dashboard/dashboard.mock";
-import type { PostingStatus } from "@/components/dashboard/dashboard.types";
+import type { Posting, PostingStatus } from "@/components/dashboard/dashboard.types";
+import { listMyPostings, toDashboardPosting } from "@/lib/api/postings";
+import { ApiError } from "@/lib/api/client";
 
 const TABS: { key: string; label: string; match: (s: PostingStatus) => boolean }[] = [
   { key: "all", label: "All", match: () => true },
@@ -20,8 +21,29 @@ const TABS: { key: string; label: string; match: (s: PostingStatus) => boolean }
 
 export default function OrgPostingsPage() {
   const [active, setActive] = useState("all");
+  const [postings, setPostings] = useState<Posting[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await listMyPostings();
+        if (cancelled) return;
+        setPostings(res.items.map(toDashboardPosting));
+      } catch (err) {
+        if (cancelled) return;
+        setError(err instanceof ApiError ? err.message : "Couldn't load your postings");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   const tab = TABS.find((t) => t.key === active)!;
-  const filtered = MOCK_POSTINGS.filter((p) => tab.match(p.status));
+  const filtered = postings.filter((p) => tab.match(p.status));
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -39,7 +61,7 @@ export default function OrgPostingsPage() {
 
       <div className="mb-6 flex flex-wrap gap-2">
         {TABS.map((t) => {
-          const count = MOCK_POSTINGS.filter((p) => t.match(p.status)).length;
+          const count = postings.filter((p) => t.match(p.status)).length;
           return (
             <button
               key={t.key}
@@ -57,7 +79,16 @@ export default function OrgPostingsPage() {
         })}
       </div>
 
-      {filtered.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-16 text-muted-foreground">
+          <Loader2 className="size-5 animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">
+          <p className="font-medium">Couldn&apos;t load your postings</p>
+          <p className="mt-1 text-destructive/80">{error}</p>
+        </div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           Icon={FileText}
           title="No postings here"

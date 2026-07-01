@@ -51,6 +51,16 @@ function categoryLabel(category: Scholarship["category"]): string {
   return category.charAt(0).toUpperCase() + category.slice(1);
 }
 
+function providerInitials(provider: string): string {
+  return provider
+    .trim()
+    .split(/\s+/)
+    .map((s) => s[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase() || "?";
+}
+
 export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) {
   const daysLeft = daysUntil(scholarship.deadline, new Date());
   const status = deadlineStatus(daysLeft);
@@ -96,10 +106,18 @@ export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) 
           </span>
         </div>
 
-        {/* Provider */}
-        <span className="mt-3 text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
-          {scholarship.provider}
-        </span>
+        {/* Provider (matches internship card layout: initials avatar + name) */}
+        <div className="mt-3 flex items-center gap-2">
+          <span className="flex size-5 items-center justify-center rounded-md bg-emerald-100 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+            {providerInitials(scholarship.provider)}
+          </span>
+          <span className="truncate text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {scholarship.provider}
+            {scholarship.destination && scholarship.destination !== "Pakistan"
+              ? ` · ${scholarship.destination}`
+              : ""}
+          </span>
+        </div>
 
         {/* Title */}
         <h3 className="mt-1.5 line-clamp-2 text-[15px] font-semibold leading-tight text-gray-900 dark:text-gray-100">

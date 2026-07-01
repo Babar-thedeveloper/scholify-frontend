@@ -1,0 +1,209 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowRight, CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useUser } from "@/components/auth/UserContext";
+import { submitApplication } from "@/lib/api/applications";
+import { ApiError } from "@/lib/api/client";
+
+interface Props {
+  postingSlug: string;
+  postingTitle: string;
+  applyMethod: "platform" | "external";
+  externalUrl: string | null;
+  deadlinePassed: boolean;
+}
+
+export function ApplyPanel({
+  postingSlug,
+  postingTitle,
+  applyMethod,
+  externalUrl,
+  deadlinePassed,
+}: Props) {
+  const { user, isAuthed, isLoading } = useUser();
+  const router = useRouter();
+  const [coverLetter, setCoverLetter] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  // ─── State-driven CTA copy ─────────────────────────────────
+  if (deadlinePassed) {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 text-sm text-muted-foreground dark:bg-card">
+        This posting is no longer accepting applications.
+      </div>
+    );
+  }
+
+  // External-apply → route the CTA to the org's own site
+  if (applyMethod === "external") {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+        <p className="text-sm text-muted-foreground">
+          This organization accepts applications on their own site.
+        </p>
+        <Button size="lg" className="mt-3 w-full" asChild disabled={!externalUrl}>
+          <a href={externalUrl ?? "#"} target="_blank" rel="noopener noreferrer">
+            Apply on their site <ExternalLink className="size-4" />
+          </a>
+        </Button>
+      </div>
+    );
+  }
+
+  // Platform-apply flow ------------------------------------------------
+  if (isLoading) {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+        <Loader2 className="size-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // Not signed in → prompt to log in
+  if (!isAuthed) {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+        <p className="text-sm text-muted-foreground">
+          Sign in to apply through Scholify — we&apos;ll track your application status for you.
+        </p>
+        <div className="mt-3 flex flex-col gap-2">
+          <Button size="lg" asChild>
+            <Link
+              href={`/login?next=${encodeURIComponent(`/postings/${postingSlug}`)}`}
+            >
+              Sign in to apply <ArrowRight className="size-4" />
+            </Link>
+          </Button>
+          <Button size="lg" variant="outline" asChild>
+            <Link
+              href={`/signup?next=${encodeURIComponent(`/postings/${postingSlug}`)}`}
+            >
+              Create a free account
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Logged in as org — can't apply as an org
+  if (user.role === "org") {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 text-sm text-muted-foreground dark:bg-card">
+        Only student accounts can apply on Scholify. Sign out and use your student account
+        to apply.
+      </div>
+    );
+  }
+
+  // Just applied → success state
+  if (submitted) {
+    return (
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/25 dark:bg-emerald-500/10">
+        <div className="flex items-start gap-2">
+          <CheckCircle2 className="mt-0.5 size-5 text-emerald-600" />
+          <div>
+            <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+              Application submitted
+            </p>
+            <p className="mt-0.5 text-xs text-emerald-700 dark:text-emerald-400">
+              Track its status from your dashboard.
+            </p>
+          </div>
+        </div>
+        <Button size="lg" className="mt-3 w-full" asChild>
+          <Link href="/dashboard/applications">
+            Go to my applications <ArrowRight className="size-4" />
+          </Link>
+        </Button>
+      </div>
+    );
+  }
+
+  async function handleSubmit() {
+    setSubmitting(true);
+    try {
+      await submitApplication({
+        postingSlug,
+        coverLetter: coverLetter.trim() || undefined,
+      });
+      setSubmitted(true);
+      toast.success("Application submitted successfully.");
+    } catch (err) {
+      if (err instanceof ApiError && err.code === "CONFLICT") {
+        toast.error("You've already applied to this posting.");
+        // Route to their applications so they can see the existing one.
+        setTimeout(() => router.push("/dashboard/applications"), 800);
+      } else {
+        toast.error(err instanceof Error ? err.message : "Couldn't submit your application.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  // Signed in as student → primary apply CTA + optional cover letter dialog
+  return (
+    <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+      <p className="text-sm text-muted-foreground">
+        You&apos;re signed in as <span className="font-medium text-foreground">{user.email}</span>.
+      </p>
+
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button size="lg" className="mt-3 w-full">
+            Apply on Scholify <ArrowRight className="size-4" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Apply — {postingTitle}</DialogTitle>
+            <DialogDescription>
+              Add a short cover letter to strengthen your application. This is optional.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-2">
+            <label htmlFor="cover-letter" className="text-sm font-medium">
+              Cover letter <span className="text-muted-foreground">(optional)</span>
+            </label>
+            <textarea
+              id="cover-letter"
+              value={coverLetter}
+              onChange={(e) => setCoverLetter(e.target.value)}
+              rows={6}
+              maxLength={4000}
+              placeholder="Why are you a great fit for this opportunity?"
+              className="mt-1.5 min-h-32 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {coverLetter.length}/4000
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button onClick={handleSubmit} disabled={submitting}>
+              {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+              Submit application
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
