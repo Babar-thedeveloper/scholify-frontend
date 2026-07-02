@@ -23,6 +23,7 @@ export function RoleGuard({ allow, children }: RoleGuardProps) {
     if (role === "guest") router.replace("/login");
     else if (role === "student") router.replace("/dashboard");
     else if (role === "org") router.replace("/org/dashboard");
+    else if (role === "admin") router.replace("/admin");
   }, [role, allow, isLoading, router]);
 
   if (isLoading || role !== allow) {

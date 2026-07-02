@@ -63,6 +63,7 @@ export interface ListPostingsParams {
   degreeLevel?: string;
   countryScope?: "pakistan" | "international" | "specific";
   deadlineBefore?: string;
+  orgSlug?: string;
   sort?: string;
   page?: number;
   pageSize?: number;

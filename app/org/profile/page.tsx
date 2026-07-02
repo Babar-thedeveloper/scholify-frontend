@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { BadgeCheck, Camera, Save } from "lucide-react";
+import { BadgeCheck, Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,36 +14,117 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/dashboard/PageHeader";
+import {
+  getMyOrg,
+  patchMyOrg,
+  type OrgProfileDto,
+} from "@/lib/api/organizations";
+import { ApiError } from "@/lib/api/client";
 
 const TEXTAREA_CLASS =
   "flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
 
+const ORG_KIND_OPTIONS = [
+  { value: "scholarship_provider", label: "Scholarship Provider" },
+  { value: "internship_provider",  label: "Internship Provider" },
+  { value: "government",           label: "Government" },
+  { value: "ngo",                  label: "NGO" },
+  { value: "university",           label: "University" },
+  { value: "corporate",            label: "Corporate" },
+];
+
 export default function OrgProfilePage() {
-  // ─── Branding ──────────────────────────────────────────────
-  const [name, setName] = useState("Daraz Pakistan");
-  const [description, setDescription] = useState(
-    "Daraz is Pakistan's leading online marketplace, connecting thousands of sellers with millions of customers across the region."
-  );
-  const [industry, setIndustry] = useState("E-commerce");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<string | null>(null);
+  const [profile, setProfile] = useState<OrgProfileDto | null>(null);
 
-  // ─── Online presence ───────────────────────────────────────
-  const [website, setWebsite] = useState("https://daraz.pk");
-  const [linkedin, setLinkedin] = useState("https://linkedin.com/company/daraz");
-  const [twitter, setTwitter] = useState("https://x.com/darazpk");
-  const [instagram, setInstagram] = useState("https://instagram.com/darazpk");
-  const [facebook, setFacebook] = useState("https://facebook.com/darazpk");
+  // ─── Form state ────────────────────────────────────────────
+  const [name, setName] = useState("");
+  const [legalName, setLegalName] = useState("");
+  const [description, setDescription] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [kind, setKind] = useState("");
+  const [website, setWebsite] = useState("");
 
-  // ─── Contact ───────────────────────────────────────────────
-  const [address, setAddress] = useState(
-    "Daraz Head Office, Sector 15, Korangi Industrial Area, Karachi"
-  );
-  const [phone, setPhone] = useState("+92 21 111 132 729");
-  const [contactEmail, setContactEmail] = useState("careers@daraz.pk");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressCity, setAddressCity] = useState("");
 
-  function saveSection(label: string) {
-    // TODO: API — persist this section
-    toast.success("Saved");
-    void label;
+  const [linkedin, setLinkedin] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [youtube, setYoutube] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const p = await getMyOrg();
+        setProfile(p);
+        setName(p.name ?? "");
+        setLegalName(p.legalName ?? "");
+        setDescription(p.description ?? "");
+        setIndustry(p.industry ?? "");
+        setKind(p.kind ?? "");
+        setWebsite(p.website ?? "");
+        setAddressLine1(p.address.line1 ?? "");
+        setAddressCity(p.address.city ?? "");
+        setLinkedin(p.social.linkedin ?? "");
+        setTwitter(p.social.twitter ?? "");
+        setInstagram(p.social.instagram ?? "");
+        setFacebook(p.social.facebook ?? "");
+        setYoutube(p.social.youtube ?? "");
+      } catch (err) {
+        toast.error(err instanceof ApiError ? err.message : "Couldn't load profile.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  async function saveSection(section: "branding" | "presence" | "contact") {
+    setSaving(section);
+    try {
+      let updated: OrgProfileDto;
+      if (section === "branding") {
+        updated = await patchMyOrg({
+          name: name || undefined,
+          legalName: legalName || null,
+          description: description || null,
+          industry: industry || null,
+          kind: kind || undefined,
+        });
+      } else if (section === "presence") {
+        updated = await patchMyOrg({
+          website: website || null,
+          social: { linkedin, twitter, instagram, facebook, youtube },
+        });
+      } else {
+        updated = await patchMyOrg({
+          address: { line1: addressLine1 || null, city: addressCity || null },
+        });
+      }
+      setProfile(updated);
+      toast.success("Saved");
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Couldn't save changes.");
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  const initials = (profile?.name ?? name)
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "?";
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20 text-muted-foreground">
+        <Loader2 className="mr-2 size-4 animate-spin" /> Loading profile…
+      </div>
+    );
   }
 
   return (
@@ -52,9 +133,11 @@ export default function OrgProfilePage() {
         title={
           <span className="flex items-center gap-2">
             Organization profile
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
-              <BadgeCheck className="size-3.5" /> Verified
-            </span>
+            {profile?.verified && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
+                <BadgeCheck className="size-3.5" /> Verified
+              </span>
+            )}
           </span>
         }
         subtitle="Manage how your organization appears to students"
@@ -66,34 +149,23 @@ export default function OrgProfilePage() {
           <h3 className="mb-4 font-semibold text-foreground">Branding</h3>
 
           <div className="mb-5 flex items-center gap-4">
-            <div className="relative">
-              <span className="flex size-16 items-center justify-center rounded-full bg-violet-100 text-2xl font-semibold text-violet-700">
-                D
-              </span>
-              <button
-                type="button"
-                onClick={() => toast.success("Saved")}
-                className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border border-border bg-white text-muted-foreground shadow-sm hover:text-foreground dark:bg-card"
-                aria-label="Upload logo"
-              >
-                <Camera className="size-3.5" />
-              </button>
-            </div>
+            <span className="flex size-16 items-center justify-center rounded-full bg-violet-100 text-2xl font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+              {initials}
+            </span>
             <p className="text-sm text-muted-foreground">
-              Upload a square logo. PNG or JPG, up to 2MB.
+              Logo upload coming in Phase 7 (Documents).
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="orgName">Organization name</Label>
-              <Input
-                id="orgName"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <Input id="orgName" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
-
+            <div className="space-y-1.5">
+              <Label htmlFor="orgLegalName">Legal name <span className="text-muted-foreground">(optional)</span></Label>
+              <Input id="orgLegalName" value={legalName} onChange={(e) => setLegalName(e.target.value)} placeholder="As registered with the government" />
+            </div>
             <div className="space-y-1.5">
               <Label htmlFor="orgDescription">Description / about</Label>
               <textarea
@@ -104,28 +176,31 @@ export default function OrgProfilePage() {
                 className={TEXTAREA_CLASS}
               />
             </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="orgIndustry">Industry / sector</Label>
-              <Select value={industry} onValueChange={setIndustry}>
-                <SelectTrigger id="orgIndustry" className="w-full">
-                  <SelectValue placeholder="Select an industry" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="E-commerce">E-commerce</SelectItem>
-                  <SelectItem value="Technology">Technology</SelectItem>
-                  <SelectItem value="Education">Education</SelectItem>
-                  <SelectItem value="Finance">Finance</SelectItem>
-                  <SelectItem value="Non-profit">Non-profit</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="orgKind">Organization type</Label>
+                <Select value={kind} onValueChange={setKind}>
+                  <SelectTrigger id="orgKind" className="w-full">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ORG_KIND_OPTIONS.map((o) => (
+                      <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="orgIndustry">Industry / sector</Label>
+                <Input id="orgIndustry" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. Technology, Education…" />
+              </div>
             </div>
           </div>
 
           <div className="mt-5 flex justify-end">
-            <Button onClick={() => saveSection("branding")}>
-              <Save className="size-4" /> Save changes
+            <Button onClick={() => saveSection("branding")} disabled={saving === "branding"}>
+              {saving === "branding" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              Save changes
             </Button>
           </div>
         </section>
@@ -135,99 +210,50 @@ export default function OrgProfilePage() {
           <h3 className="mb-4 font-semibold text-foreground">Online presence</h3>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="website">Website</Label>
-              <Input
-                id="website"
-                type="url"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="linkedin">LinkedIn</Label>
-              <Input
-                id="linkedin"
-                type="url"
-                value={linkedin}
-                onChange={(e) => setLinkedin(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="twitter">Twitter / X</Label>
-              <Input
-                id="twitter"
-                type="url"
-                value={twitter}
-                onChange={(e) => setTwitter(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="instagram">Instagram</Label>
-              <Input
-                id="instagram"
-                type="url"
-                value={instagram}
-                onChange={(e) => setInstagram(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="facebook">Facebook</Label>
-              <Input
-                id="facebook"
-                type="url"
-                value={facebook}
-                onChange={(e) => setFacebook(e.target.value)}
-              />
-            </div>
+            {(
+              [
+                { id: "website",   label: "Website",      value: website,   set: setWebsite },
+                { id: "linkedin",  label: "LinkedIn",     value: linkedin,  set: setLinkedin },
+                { id: "twitter",   label: "Twitter / X",  value: twitter,   set: setTwitter },
+                { id: "instagram", label: "Instagram",    value: instagram, set: setInstagram },
+                { id: "facebook",  label: "Facebook",     value: facebook,  set: setFacebook },
+                { id: "youtube",   label: "YouTube",      value: youtube,   set: setYoutube },
+              ] as const
+            ).map(({ id, label, value, set }) => (
+              <div key={id} className="space-y-1.5">
+                <Label htmlFor={id}>{label}</Label>
+                <Input id={id} type="url" value={value} onChange={(e) => set(e.target.value)} placeholder="https://" />
+              </div>
+            ))}
           </div>
 
           <div className="mt-5 flex justify-end">
-            <Button onClick={() => saveSection("presence")}>
-              <Save className="size-4" /> Save changes
+            <Button onClick={() => saveSection("presence")} disabled={saving === "presence"}>
+              {saving === "presence" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              Save changes
             </Button>
           </div>
         </section>
 
-        {/* ─── Contact ──────────────────────────────────── */}
+        {/* ─── Contact / address ────────────────────────── */}
         <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
-          <h3 className="mb-4 font-semibold text-foreground">Contact</h3>
+          <h3 className="mb-4 font-semibold text-foreground">Office address</h3>
 
-          <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="address">Office address</Label>
-              <textarea
-                id="address"
-                rows={3}
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className={TEXTAREA_CLASS}
-              />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label htmlFor="addrLine1">Street / building</Label>
+              <Input id="addrLine1" value={addressLine1} onChange={(e) => setAddressLine1(e.target.value)} />
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="phone">Phone</Label>
-                <Input
-                  id="phone"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="contactEmail">Public contact email</Label>
-                <Input
-                  id="contactEmail"
-                  type="email"
-                  value={contactEmail}
-                  onChange={(e) => setContactEmail(e.target.value)}
-                />
-              </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="addrCity">City</Label>
+              <Input id="addrCity" value={addressCity} onChange={(e) => setAddressCity(e.target.value)} />
             </div>
           </div>
 
           <div className="mt-5 flex justify-end">
-            <Button onClick={() => saveSection("contact")}>
-              <Save className="size-4" /> Save changes
+            <Button onClick={() => saveSection("contact")} disabled={saving === "contact"}>
+              {saving === "contact" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              Save changes
             </Button>
           </div>
         </section>

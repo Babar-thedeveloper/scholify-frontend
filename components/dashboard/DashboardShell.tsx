@@ -11,7 +11,7 @@ import { AvatarDropdown } from "@/components/shared/AvatarDropdown";
 import { NotificationDropdown } from "@/components/shared/NotificationDropdown";
 
 interface DashboardShellProps {
-  variant: "student" | "org";
+  variant: "student" | "org" | "admin";
   sidebar: (props: { onNavigate?: () => void }) => React.ReactNode;
   children: React.ReactNode;
 }
@@ -19,7 +19,7 @@ interface DashboardShellProps {
 export function DashboardShell({ variant, sidebar, children }: DashboardShellProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const notifHref = variant === "org" ? "/org/notifications" : "/dashboard/notifications";
+  const notifHref = variant === "org" ? "/org/notifications" : variant === "admin" ? "/dashboard/notifications" : "/dashboard/notifications";
 
   return (
     <div className="flex min-h-screen bg-emerald-50/30 dark:bg-background">

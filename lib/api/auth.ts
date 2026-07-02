@@ -28,7 +28,7 @@ export type BackendRole =
   | "platform_admin"
   | "platform_moderator";
 
-export type UiRole = "guest" | "student" | "org";
+export type UiRole = "guest" | "student" | "org" | "admin";
 
 export interface AuthUser {
   id: string;
@@ -174,6 +174,7 @@ export async function resendVerification(email: string): Promise<MessageResult> 
 // ─── Helpers used by UserContext + UI ─────────────────────────
 
 export function deriveUiRole(roles: BackendRole[]): UiRole {
+  if (roles.includes("platform_admin") || roles.includes("platform_moderator")) return "admin";
   if (roles.some((r) =>
     r === "org_owner" || r === "org_admin" || r === "org_recruiter" || r === "org_viewer"
   )) return "org";

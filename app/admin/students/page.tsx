@@ -1,0 +1,181 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { listAdminStudents, verifyStudent, type AdminStudent, type PaginatedResponse } from "@/lib/api/admin";
+
+export default function AdminStudentsPage() {
+  const [data, setData] = useState<PaginatedResponse<AdminStudent> | null>(null);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [verifiedFilter, setVerifiedFilter] = useState<string>("");
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState<string | null>(null);
+  const [toggling, setToggling] = useState<string | null>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 350);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  const load = useCallback(() => {
+    setError(null);
+    listAdminStudents({
+      search: debouncedSearch || undefined,
+      verified: verifiedFilter === "" ? undefined : verifiedFilter === "true",
+      page,
+      pageSize: 25,
+    })
+      .then(setData)
+      .catch((e) => setError(e?.message ?? "Failed to load"));
+  }, [debouncedSearch, verifiedFilter, page]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function toggle(student: AdminStudent) {
+    setToggling(student.id);
+    try {
+      await verifyStudent(student.id, !student.isVerifiedStudent);
+      load();
+    } catch {
+      // silently fail — the next load will show the real state
+    } finally {
+      setToggling(null);
+    }
+  }
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Students</h1>
+        <p className="text-sm text-muted-foreground">Grant or revoke student verification badges.</p>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative w-60">
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Search name or email…"
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          />
+        </div>
+        <div className="flex gap-1">
+          {[{ v: "", label: "All" }, { v: "true", label: "Verified" }, { v: "false", label: "Unverified" }].map((opt) => (
+            <button
+              key={opt.v}
+              onClick={() => { setVerifiedFilter(opt.v); setPage(1); }}
+              className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+                verifiedFilter === opt.v
+                  ? "bg-foreground text-background"
+                  : "border border-border bg-white text-foreground hover:bg-muted dark:bg-card"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+          <AlertTriangle className="size-4 shrink-0" /> {error}
+        </div>
+      )}
+
+      <div className="overflow-x-auto rounded-xl border border-border bg-white dark:bg-card">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-muted/40">
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Student</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Profile</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Verified</th>
+              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Since</th>
+              <th className="w-24 px-4 py-3" />
+            </tr>
+          </thead>
+          <tbody>
+            {!data && (
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>
+            )}
+            {data?.items.length === 0 && (
+              <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">No students found.</td></tr>
+            )}
+            {data?.items.map((s) => (
+              <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                <td className="px-4 py-3">
+                  <div className="font-medium text-foreground">{s.fullName ?? "—"}</div>
+                  <div className="text-xs text-muted-foreground">{s.email}</div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-emerald-500"
+                        style={{ width: `${s.completionPercent}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted-foreground">{s.completionPercent}%</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  {s.isVerifiedStudent ? (
+                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+                      Verified
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                      Unverified
+                    </span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {new Date(s.createdAt).toLocaleDateString("en-PK", { year: "numeric", month: "short" })}
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    disabled={toggling === s.id}
+                    onClick={() => toggle(s)}
+                    className={`rounded-md px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
+                      s.isVerifiedStudent
+                        ? "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400"
+                        : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400"
+                    }`}
+                  >
+                    {toggling === s.id ? "…" : s.isVerifiedStudent ? "Revoke" : "Verify"}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {data && data.totalPages > 1 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>
+            {(page - 1) * 25 + 1}–{Math.min(page * 25, data.total)} of {data.total}
+          </span>
+          <div className="flex gap-1">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+            <button
+              disabled={page === data.totalPages}
+              onClick={() => setPage((p) => p + 1)}
+              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted"
+            >
+              <ChevronRight className="size-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
