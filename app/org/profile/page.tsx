@@ -19,7 +19,7 @@ import {
   patchMyOrg,
   type OrgProfileDto,
 } from "@/lib/api/organizations";
-import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 const TEXTAREA_CLASS =
   "flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
@@ -74,7 +74,7 @@ export default function OrgProfilePage() {
         setFacebook(p.social.facebook ?? "");
         setYoutube(p.social.youtube ?? "");
       } catch (err) {
-        toast.error(err instanceof ApiError ? err.message : "Couldn't load profile.");
+        handleApiError(err, "Couldn't load profile.");
       } finally {
         setLoading(false);
       }
@@ -106,7 +106,7 @@ export default function OrgProfilePage() {
       setProfile(updated);
       toast.success("Saved");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't save changes.");
+      handleApiError(err, "Couldn't save changes.");
     } finally {
       setSaving(null);
     }

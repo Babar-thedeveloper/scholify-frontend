@@ -18,6 +18,7 @@ import {
 import { useUser } from "@/components/auth/UserContext";
 import { submitApplication } from "@/lib/api/applications";
 import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 interface Props {
   postingSlug: string;
@@ -150,7 +151,7 @@ export function ApplyPanel({
         // Route to their applications so they can see the existing one.
         setTimeout(() => router.push("/dashboard/applications"), 800);
       } else {
-        toast.error(err instanceof Error ? err.message : "Couldn't submit your application.");
+        handleApiError(err, "Couldn't submit your application.");
       }
     } finally {
       setSubmitting(false);

@@ -89,10 +89,10 @@ export function Footer() {
           <p>© 2026 Scholify. All rights reserved.</p>
           <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1">
             {footer.legal.map((item, i) => (
-              <span key={item} className="flex items-center gap-2">
+              <span key={item.label} className="flex items-center gap-2">
                 {i > 0 ? <span aria-hidden="true">·</span> : null}
-                <Link href="#" className="transition-colors hover:text-white">
-                  {item}
+                <Link href={item.href} className="transition-colors hover:text-white">
+                  {item.label}
                 </Link>
               </span>
             ))}

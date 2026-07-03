@@ -41,6 +41,7 @@ import {
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ApplicantTable } from "@/components/org/ApplicantTable";
 import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 import {
   type MyPostingDto,
   closePosting,
@@ -136,7 +137,7 @@ export default function PostingDetailPage() {
       } catch (err) {
         if (cancelled) return;
         if (err instanceof ApiError && err.status === 404) setNotFound(true);
-        else toast.error(err instanceof Error ? err.message : "Couldn't load the posting.");
+        else handleApiError(err, "Couldn't load the posting.");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -169,7 +170,7 @@ export default function PostingDetailPage() {
       const v = await fn();
       onSuccess?.(v);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong.");
+      handleApiError(err, "Something went wrong.");
     } finally {
       setBusy(false);
     }
@@ -189,7 +190,7 @@ export default function PostingDetailPage() {
       setPosting(updated);
       toast.success(message);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't save changes.");
+      handleApiError(err, "Couldn't save changes.");
     } finally {
       setSaving(false);
     }

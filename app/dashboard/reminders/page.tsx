@@ -58,7 +58,7 @@ import {
   type ReminderChannel,
   type ReminderDto,
 } from "@/lib/api/reminders";
-import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 const DAYS_OPTIONS = [1, 3, 7, 14, 30];
 
@@ -89,7 +89,7 @@ export default function RemindersPage() {
         if (!cancelled) setReminders(items);
       } catch (err) {
         if (!cancelled)
-          toast.error(err instanceof ApiError ? err.message : "Couldn't load reminders.");
+          handleApiError(err, "Couldn't load reminders.");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -105,7 +105,7 @@ export default function RemindersPage() {
       toast.success("Reminder deleted");
     } catch (err) {
       setReminders(prev);
-      toast.error(err instanceof ApiError ? err.message : "Couldn't delete reminder.");
+      handleApiError(err, "Couldn't delete reminder.");
     }
   }
 
@@ -117,7 +117,7 @@ export default function RemindersPage() {
       toast.success(next ? "Reminder resumed" : "Reminder paused");
     } catch (err) {
       setReminders((list) => list.map((x) => (x.id === r.id ? { ...x, isActive: !next } : x)));
-      toast.error(err instanceof ApiError ? err.message : "Couldn't update reminder.");
+      handleApiError(err, "Couldn't update reminder.");
     }
   }
 
@@ -139,7 +139,7 @@ export default function RemindersPage() {
       toast.success("Reminder updated");
       setEditing(null);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't update reminder.");
+      handleApiError(err, "Couldn't update reminder.");
     } finally {
       setSaving(false);
     }

@@ -48,7 +48,7 @@ import {
   type TeamMemberDto,
   type TeamRole,
 } from "@/lib/api/organizations";
-import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 const ROLE_BADGE: Record<TeamRole, string> = {
   owner: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300",
@@ -89,7 +89,7 @@ export default function TeamPage() {
       setMembers(team.members);
       setInvitations(team.invitations);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't load team.");
+      handleApiError(err, "Couldn't load team.");
     } finally {
       setLoading(false);
     }
@@ -106,7 +106,7 @@ export default function TeamPage() {
       setInviteRole("member");
       setInviteOpen(false);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't send invitation.");
+      handleApiError(err, "Couldn't send invitation.");
     } finally {
       setInviting(false);
     }
@@ -119,7 +119,7 @@ export default function TeamPage() {
       setMembers((prev) => prev.filter((m) => m.userId !== userId));
       toast.success("Team member removed");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't remove member.");
+      handleApiError(err, "Couldn't remove member.");
     } finally {
       setBusyId(null);
     }
@@ -132,7 +132,7 @@ export default function TeamPage() {
       setMembers((prev) => prev.map((m) => (m.userId === userId ? updated : m)));
       toast.success("Role updated");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't update role.");
+      handleApiError(err, "Couldn't update role.");
     } finally {
       setBusyId(null);
     }
@@ -145,7 +145,7 @@ export default function TeamPage() {
       setInvitations((prev) => prev.filter((i) => i.id !== id));
       toast.success("Invitation revoked");
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't revoke invitation.");
+      handleApiError(err, "Couldn't revoke invitation.");
     } finally {
       setBusyId(null);
     }

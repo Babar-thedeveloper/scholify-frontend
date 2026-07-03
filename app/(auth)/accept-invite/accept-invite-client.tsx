@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 import {
   acceptInvite,
   getInvitationInfo,
@@ -80,7 +81,7 @@ export function AcceptInviteClient({ token }: Props) {
       toast.success(`You've joined ${info.orgName}!`);
       setTimeout(() => router.replace("/login?welcome=org"), 1800);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't accept the invitation.");
+      handleApiError(err, "Couldn't accept the invitation.");
     } finally {
       setSubmitting(false);
     }

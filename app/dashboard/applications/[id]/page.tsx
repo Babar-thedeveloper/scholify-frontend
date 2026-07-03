@@ -42,6 +42,7 @@ import {
   withdrawApplication,
 } from "@/lib/api/applications";
 import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 // Backend uses snake_case, the dashboard UI types use kebab-case.
 const STATUS_MAP: Record<ApplicationStatusKey, ApplicationStatus> = {
@@ -105,7 +106,7 @@ export default function ApplicationDetailPage() {
       } catch (err) {
         if (cancelled) return;
         if (err instanceof ApiError && err.status === 404) setNotFound(true);
-        else toast.error(err instanceof Error ? err.message : "Couldn't load application");
+        else handleApiError(err, "Couldn't load application");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -128,7 +129,7 @@ export default function ApplicationDetailPage() {
       toast.success(message);
       router.push("/dashboard/applications");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't withdraw.");
+      handleApiError(err, "Couldn't withdraw.");
       setBusy(false);
     }
   }

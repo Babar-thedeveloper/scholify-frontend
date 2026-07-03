@@ -313,24 +313,23 @@ export const footer = {
       heading: "Platform",
       links: [
         { label: "Scholarships", href: "/scholarships" },
-        { label: "Internships", href: "/internships", badge: "Coming soon" },
+        { label: "Internships", href: "/internships" },
         { label: "How it works", href: "#how-it-works" },
-        { label: "For companies", href: "/companies", badge: "Coming soon" },
       ] as FooterLink[],
     },
     {
       heading: "Resources",
       links: [
-        { label: "CV builder", href: "/cv-builder" },
-        { label: "Application tips", href: "/tips" },
-        { label: "Blog", href: "/blog" },
+        { label: "CV builder", href: "/dashboard/cv" },
+        { label: "Application tips", href: "/help" },
+        { label: "Blog", href: "/about" },
         { label: "Help center", href: "/help" },
       ] as FooterLink[],
     },
     {
       heading: "Connect",
       links: [
-        { label: "Contact us", href: "/contact" },
+        { label: "Contact us", href: "/help" },
         { label: "WhatsApp updates", href: "#", icon: "whatsapp" },
         { label: "Instagram", href: "#", icon: "instagram" },
         { label: "LinkedIn", href: "#", icon: "linkedin" },
@@ -338,5 +337,9 @@ export const footer = {
       ] as FooterLink[],
     },
   ],
-  legal: ["Privacy", "Terms", "Submit a missing scholarship"],
+  legal: [
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
+    { label: "Submit a missing scholarship", href: "/help" },
+  ] as FooterLink[],
 };

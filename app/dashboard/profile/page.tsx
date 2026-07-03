@@ -24,7 +24,7 @@ import {
   type ProfileDto,
   type ProvinceKey,
 } from "@/lib/api/users";
-import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 const DEGREE_KEYS: DegreeLevelKey[] = ["undergraduate", "masters", "phd", "diploma"];
 const PROVINCE_KEYS: ProvinceKey[] = [
@@ -97,7 +97,7 @@ export default function ProfilePage() {
         setVerificationEmail(p.user.email);
       } catch (err) {
         if (cancelled) return;
-        toast.error(err instanceof ApiError ? err.message : "Couldn't load your profile");
+        handleApiError(err, "Couldn't load your profile");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -120,7 +120,7 @@ export default function ProfilePage() {
       setProfile(p);
       toast.success(message);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't save.");
+      handleApiError(err, "Couldn't save.");
     } finally {
       setSavingSection(null);
     }
@@ -146,7 +146,7 @@ export default function ProfilePage() {
       setProfile(p);
       toast.success(message);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't save.");
+      handleApiError(err, "Couldn't save.");
     } finally {
       setSavingSection(null);
     }
@@ -166,7 +166,7 @@ export default function ProfilePage() {
       setProfile(p);
       toast.success(message);
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Couldn't save.");
+      handleApiError(err, "Couldn't save.");
     } finally {
       setSavingSection(null);
     }

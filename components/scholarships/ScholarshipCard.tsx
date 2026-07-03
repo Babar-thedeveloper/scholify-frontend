@@ -2,6 +2,7 @@
 
 import {
   ArrowRight,
+  Calendar,
   CalendarClock,
   GraduationCap,
   MapPin,
@@ -16,9 +17,11 @@ import {
 import type { Scholarship } from "./scholarships.types";
 import {
   getCategoryPill,
+  getFundingPill,
   formatDeadline,
   daysUntil,
   deadlineStatus,
+  getDaysAgo,
 } from "./scholarships.utils";
 
 interface ScholarshipCardProps {
@@ -101,7 +104,7 @@ export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) 
           >
             {categoryLabel(scholarship.category)}
           </span>
-          <span className="text-[11px] text-gray-400 dark:text-gray-500">
+          <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ${getFundingPill(scholarship.fundingType)}`}>
             {fundingLabel(scholarship.fundingType)}
           </span>
         </div>
@@ -152,11 +155,17 @@ export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) 
         <div className="mt-3 flex flex-col gap-2.5">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 text-[12px] text-gray-500 dark:text-gray-400">
-              <CalendarClock className="size-3.5" aria-hidden="true" />
-              <span>{formatDeadline(scholarship.deadline)}</span>
+              <Calendar className="size-3.5" aria-hidden="true" />
+              <span>Posted {getDaysAgo(scholarship.postedAt)}</span>
             </div>
             <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${deadlineClass}`}>
               {deadlineText}
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+              <CalendarClock className="size-3.5" aria-hidden="true" />
+              Deadline: {formatDeadline(scholarship.deadline)}
             </span>
           </div>
 

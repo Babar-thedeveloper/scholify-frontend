@@ -26,7 +26,7 @@ import {
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import type { ApplicationType } from "@/components/dashboard/dashboard.types";
 import { createPosting, type CreatePostingInput } from "@/lib/api/postings";
-import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 const DEGREE_LEVELS = ["Undergraduate", "Masters", "PhD"];
 const FIELDS = ["Engineering", "Computer Science", "Business", "Medicine", "Arts"];
@@ -189,8 +189,7 @@ export default function NewPostingPage() {
       toast.success(message);
       router.push("/org/postings");
     } catch (err) {
-      if (err instanceof ApiError) toast.error(err.message);
-      else toast.error("Couldn't save posting. Please try again.");
+      handleApiError(err, "Couldn't save posting. Please try again.");
       setSubmitting(false);
     }
   }

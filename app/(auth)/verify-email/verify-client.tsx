@@ -17,6 +17,7 @@ import { CheckCircle2, Loader2, Mail, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 import { resendVerification, verifyEmail } from "@/lib/api/auth";
 
 interface Props {
@@ -100,7 +101,7 @@ function InboxPendingView({ email }: { email?: string }) {
       const { message } = await resendVerification(email);
       toast.success(message);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't resend the email.");
+      handleApiError(err, "Couldn't resend the email.");
     } finally {
       setSending(false);
     }

@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 import { daysUntil, formatDeadline } from "@/components/dashboard/dashboard.utils";
 import { listSaved, unsavePosting, type SavedItemDto } from "@/lib/api/saved";
 import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 type Filter = "all" | "scholarship" | "internship";
 
@@ -66,7 +67,7 @@ export default function SavedItemsPage() {
       toast.success("Removed from saved items");
     } catch (err) {
       setItems(prev);
-      toast.error(err instanceof ApiError ? err.message : "Couldn't remove.");
+      handleApiError(err, "Couldn't remove.");
     }
   }
 

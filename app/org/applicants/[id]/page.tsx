@@ -23,6 +23,7 @@ import {
   getApplicantForOrg,
 } from "@/lib/api/applications";
 import { ApiError } from "@/lib/api/client";
+import { handleApiError } from "@/lib/api/handle-error";
 
 // backend key → dashboard kebab-case key
 const STATUS_MAP: Record<ApplicationStatusKey, ApplicationStatus> = {
@@ -61,7 +62,7 @@ export default function ApplicantDetailPage() {
       } catch (err) {
         if (cancelled) return;
         if (err instanceof ApiError && err.status === 404) setNotFound(true);
-        else toast.error(err instanceof Error ? err.message : "Couldn't load applicant");
+        else handleApiError(err, "Couldn't load applicant");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -85,7 +86,7 @@ export default function ApplicantDetailPage() {
       setApplicant(updated);
       toast.success(message);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't update status.");
+      handleApiError(err, "Couldn't update status.");
       throw err;
     }
   }

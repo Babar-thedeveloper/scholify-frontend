@@ -1,7 +1,10 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { handleApiError } from "@/lib/api/handle-error";
 import {
   ArrowLeft,
   BriefcaseBusiness,
@@ -104,13 +107,17 @@ const emptyCert = (): CertificationEntry => ({
 });
 
 // ─── Main page ───────────────────────────────────────────────
-export default function CVPage() {
+function CVPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [cv, setCv] = useState<CvDto | null>(null);
   const [draft, setDraft] = useState<CvDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null);
   const [activeTab, setActiveTab] = useState<"work" | "skills" | "languages" | "certs">("work");
   const [previewVisible, setPreviewVisible] = useState(false); // mobile toggle
 
@@ -130,14 +137,46 @@ export default function CVPage() {
   const [skillInput, setSkillInput] = useState("");
 
   useEffect(() => {
+    const reset = searchParams.get("reset") === "true";
     getMyCv()
       .then((data) => {
         setCv(data);
-        setDraft(data);
+        if (reset) {
+          setDraft({ ...data, workExperience: [], skills: [], languages: [], certifications: [] });
+          router.replace("/dashboard/cv");
+          toast.success("Started fresh — your profile is pre-filled, add your extras below.");
+        } else {
+          setDraft(data);
+        }
       })
       .catch(() => setError("Could not load CV data."))
       .finally(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-save every 60 seconds when there are unsaved changes
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (!draft || saving) return;
+      const hasChanges = JSON.stringify(draft) !== JSON.stringify(cv);
+      if (!hasChanges) return;
+      try {
+        const payload: PatchCvInput = {
+          workExperience: draft.workExperience,
+          languages: draft.languages,
+          certifications: draft.certifications,
+          skills: draft.skills,
+          templateKey: draft.templateKey as TemplateKey,
+        };
+        const updated = await patchMyCv(payload);
+        setCv(updated);
+        setLastAutoSave(new Date());
+      } catch {
+        // Silent on auto-save failure — don't disrupt editing
+      }
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, [draft, cv, saving]);
 
   const updateDraft = useCallback((patch: Partial<CvDto>) => {
     setDraft((prev) => prev ? { ...prev, ...patch } : prev);
@@ -162,7 +201,7 @@ export default function CVPage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Save failed.");
+      handleApiError(e, "Could not save your CV.");
     } finally {
       setSaving(false);
     }
@@ -275,6 +314,19 @@ export default function CVPage() {
 
       {/* ── Top action bar ── */}
       <div className="mb-6 flex flex-wrap items-center gap-3">
+        {/* Auto-save status */}
+        <span className="text-xs text-muted-foreground mr-1">
+          {saving
+            ? "Saving…"
+            : saved
+            ? "✓ Saved"
+            : lastAutoSave
+            ? `Draft saved ${lastAutoSave.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+            : draft && JSON.stringify(draft) !== JSON.stringify(cv)
+            ? "Unsaved changes"
+            : null}
+        </span>
+
         <Button onClick={handleSave} disabled={saving}>
           {saving ? (
             <Loader2 className="size-4 animate-spin" />
@@ -559,6 +611,20 @@ export default function CVPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function CVPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-32">
+          <Loader2 className="size-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <CVPageContent />
+    </Suspense>
   );
 }
 

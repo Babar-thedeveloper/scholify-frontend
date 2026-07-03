@@ -14,6 +14,19 @@ function startOfDay(date: Date): Date {
   return d;
 }
 
+export function getDaysAgo(postedAt: string, today = new Date()): string {
+  const posted = startOfDay(new Date(`${postedAt}T00:00:00`));
+  const t = startOfDay(today);
+  const days = Math.floor((t.getTime() - posted.getTime()) / (1000 * 60 * 60 * 24));
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 7) return `${days} days ago`;
+  if (days < 14) return "1 week ago";
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+  if (days < 60) return "1 month ago";
+  return `${Math.floor(days / 30)} months ago`;
+}
+
 export function isPastDeadline(deadline: string | null, today: Date): boolean {
   if (!deadline) return false;
   const date = startOfDay(new Date(`${deadline}T00:00:00`));

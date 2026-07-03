@@ -17,6 +17,8 @@ export interface SidebarItem {
   meta?: string;
   /** Match exactly instead of prefix (for index routes like /dashboard) */
   exact?: boolean;
+  /** Show a golden PRO badge */
+  pro?: boolean;
 }
 
 export interface SidebarSection {
@@ -73,6 +75,11 @@ export function SidebarNav({ sections, topSlot, onNavigate }: SidebarNavProps) {
                     >
                       <item.Icon className="size-[18px] shrink-0" />
                       <span className="flex-1 truncate">{item.label}</span>
+                      {item.pro && (
+                        <span className="ml-auto rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-900 shadow-sm">
+                          PRO
+                        </span>
+                      )}
                       {item.badge != null && (
                         <span className="ml-auto rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
                           {item.badge}
