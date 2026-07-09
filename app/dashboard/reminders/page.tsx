@@ -22,25 +22,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import {
   Select,
   SelectContent,
@@ -210,8 +193,8 @@ export default function RemindersPage() {
                     <Button size="sm" variant="ghost" onClick={() => openEdit(r)}>
                       <Pencil className="size-3.5" /> Edit
                     </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
+                    <ConfirmModal
+                      trigger={
                         <Button
                           size="sm"
                           variant="ghost"
@@ -219,23 +202,12 @@ export default function RemindersPage() {
                         >
                           <Trash2 className="size-3.5" /> Delete
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete this reminder?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            The reminder for &ldquo;{r.postingTitle}&rdquo; will be permanently
-                            removed. You can always create a new one later.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(r.id)}>
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                      }
+                      title="Delete this reminder?"
+                      description={`The reminder for "${r.postingTitle}" will be permanently removed. You can always create a new one later.`}
+                      confirmText="Delete"
+                      onConfirm={() => handleDelete(r.id)}
+                    />
                   </div>
                 </div>
               </div>
@@ -245,55 +217,56 @@ export default function RemindersPage() {
       )}
 
       {/* Edit dialog */}
-      <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
-        <DialogContent className="p-6">
-          <DialogHeader>
-            <DialogTitle>Edit reminder</DialogTitle>
-            <DialogDescription>{editing?.postingTitle}</DialogDescription>
-          </DialogHeader>
+      <Modal
+        open={!!editing}
+        onOpenChange={(o) => !o && setEditing(null)}
+      >
+        <ModalHeader
+          title="Edit reminder"
+          description={editing?.postingTitle}
+        />
 
-          <div className="grid gap-4">
-            <div className="grid gap-1.5">
-              <label className="text-sm font-medium">Remind me</label>
-              <Select value={String(editDays)} onValueChange={(v) => setEditDays(Number(v))}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {DAYS_OPTIONS.map((d) => (
-                    <SelectItem key={d} value={String(d)}>
-                      {d} day{d === 1 ? "" : "s"} before deadline
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-1.5">
-              <label className="text-sm font-medium">Channel</label>
-              <Select value={editChannel} onValueChange={(v) => setEditChannel(v as ReminderChannel)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="email">Email</SelectItem>
-                  <SelectItem value="in_app">In-app only</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        <ModalBody className="grid gap-4">
+          <div className="grid gap-1.5">
+            <label className="text-sm font-medium">Remind me</label>
+            <Select value={String(editDays)} onValueChange={(v) => setEditDays(Number(v))}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {DAYS_OPTIONS.map((d) => (
+                  <SelectItem key={d} value={String(d)}>
+                    {d} day{d === 1 ? "" : "s"} before deadline
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditing(null)} disabled={saving}>
-              Cancel
-            </Button>
-            <Button onClick={saveEdit} disabled={saving}>
-              {saving && <Loader2 className="size-4 animate-spin" />}
-              Save changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <div className="grid gap-1.5">
+            <label className="text-sm font-medium">Channel</label>
+            <Select value={editChannel} onValueChange={(v) => setEditChannel(v as ReminderChannel)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="email">Email</SelectItem>
+                <SelectItem value="in_app">In-app only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </ModalBody>
+
+        <ModalFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="outline" onClick={() => setEditing(null)} disabled={saving}>
+            Cancel
+          </Button>
+          <Button onClick={saveEdit} disabled={saving}>
+            {saving && <Loader2 className="size-4 animate-spin" />}
+            Save changes
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }

@@ -36,12 +36,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
 import {
   Select,
   SelectContent,
@@ -552,64 +547,76 @@ function CVPageContent() {
       </div>
 
       {/* ── Work experience dialog ── */}
-      <Dialog open={weDialog.open} onOpenChange={(o) => !o && setWeDialog({ open: false, entry: null })}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {weDialog.entry && (draft.workExperience.find((e) => e.id === weDialog.entry?.id))
-                ? "Edit experience"
-                : "Add experience"}
-            </DialogTitle>
-          </DialogHeader>
-          {weDialog.entry && (
+      <Modal
+        open={weDialog.open}
+        onOpenChange={(o) => !o && setWeDialog({ open: false, entry: null })}
+        size="md"
+      >
+        <ModalHeader
+          title={
+            weDialog.entry && draft.workExperience.find((e) => e.id === weDialog.entry?.id)
+              ? "Edit experience"
+              : "Add experience"
+          }
+        />
+        {weDialog.entry && (
+          <ModalBody>
             <WorkExpForm
               initial={weDialog.entry}
               onSave={saveWeEntry}
               onCancel={() => setWeDialog({ open: false, entry: null })}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+          </ModalBody>
+        )}
+      </Modal>
 
       {/* ── Language dialog ── */}
-      <Dialog open={langDialog.open} onOpenChange={(o) => !o && setLangDialog({ open: false, entry: null })}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>
-              {langDialog.entry && draft.languages.find((l) => l.id === langDialog.entry?.id)
-                ? "Edit language"
-                : "Add language"}
-            </DialogTitle>
-          </DialogHeader>
-          {langDialog.entry && (
+      <Modal
+        open={langDialog.open}
+        onOpenChange={(o) => !o && setLangDialog({ open: false, entry: null })}
+        size="sm"
+      >
+        <ModalHeader
+          title={
+            langDialog.entry && draft.languages.find((l) => l.id === langDialog.entry?.id)
+              ? "Edit language"
+              : "Add language"
+          }
+        />
+        {langDialog.entry && (
+          <ModalBody>
             <LanguageForm
               initial={langDialog.entry}
               onSave={saveLangEntry}
               onCancel={() => setLangDialog({ open: false, entry: null })}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+          </ModalBody>
+        )}
+      </Modal>
 
       {/* ── Certification dialog ── */}
-      <Dialog open={certDialog.open} onOpenChange={(o) => !o && setCertDialog({ open: false, entry: null })}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>
-              {certDialog.entry && draft.certifications.find((c) => c.id === certDialog.entry?.id)
-                ? "Edit certification"
-                : "Add certification"}
-            </DialogTitle>
-          </DialogHeader>
-          {certDialog.entry && (
+      <Modal
+        open={certDialog.open}
+        onOpenChange={(o) => !o && setCertDialog({ open: false, entry: null })}
+        size="sm"
+      >
+        <ModalHeader
+          title={
+            certDialog.entry && draft.certifications.find((c) => c.id === certDialog.entry?.id)
+              ? "Edit certification"
+              : "Add certification"
+          }
+        />
+        {certDialog.entry && (
+          <ModalBody>
             <CertForm
               initial={certDialog.entry}
               onSave={saveCertEntry}
               onCancel={() => setCertDialog({ open: false, entry: null })}
             />
-          )}
-        </DialogContent>
-      </Dialog>
+          </ModalBody>
+        )}
+      </Modal>
     </div>
   );
 }

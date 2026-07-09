@@ -14,15 +14,7 @@ import { useEffect, useState } from "react";
 import { BellRing, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import {
   Select,
   SelectContent,
@@ -122,8 +114,10 @@ export function RemindMeButton({ postingId, postingSlug, deadlineAt }: Props) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Modal
+      open={open}
+      onOpenChange={setOpen}
+      trigger={
         <Button
           variant={existing ? "secondary" : "outline"}
           size="lg"
@@ -135,70 +129,66 @@ export function RemindMeButton({ postingId, postingSlug, deadlineAt }: Props) {
             ? `Reminder · ${existing.daysBefore} day${existing.daysBefore === 1 ? "" : "s"} before`
             : "Remind me"}
         </Button>
-      </DialogTrigger>
+      }
+    >
+      <ModalHeader
+        title={existing ? "Edit reminder" : "Set a reminder"}
+        description="We'll ping you before this deadline so you don't miss it."
+      />
 
-      <DialogContent className="p-6">
-        <DialogHeader>
-          <DialogTitle>{existing ? "Edit reminder" : "Set a reminder"}</DialogTitle>
-          <DialogDescription>
-            We&apos;ll ping you before this deadline so you don&apos;t miss it.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="grid gap-4">
-          <div className="grid gap-1.5">
-            <label className="text-sm font-medium">Remind me</label>
-            <Select
-              value={String(daysBefore)}
-              onValueChange={(v) => setDaysBefore(Number(v))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {DAYS_OPTIONS.map((d) => (
-                  <SelectItem key={d} value={String(d)}>
-                    {d} day{d === 1 ? "" : "s"} before deadline
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid gap-1.5">
-            <label className="text-sm font-medium">Channel</label>
-            <Select value={channel} onValueChange={(v) => setChannel(v as ReminderChannel)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="email">Email</SelectItem>
-                <SelectItem value="in_app">In-app only</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <ModalBody className="grid gap-4">
+        <div className="grid gap-1.5">
+          <label className="text-sm font-medium">Remind me</label>
+          <Select
+            value={String(daysBefore)}
+            onValueChange={(v) => setDaysBefore(Number(v))}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {DAYS_OPTIONS.map((d) => (
+                <SelectItem key={d} value={String(d)}>
+                  {d} day{d === 1 ? "" : "s"} before deadline
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <DialogFooter>
-          {existing && (
-            <Button
-              variant="ghost"
-              className="text-destructive hover:text-destructive sm:mr-auto"
-              onClick={remove}
-              disabled={busy}
-            >
-              <Trash2 className="size-4" /> Remove
-            </Button>
-          )}
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>
-            Cancel
+        <div className="grid gap-1.5">
+          <label className="text-sm font-medium">Channel</label>
+          <Select value={channel} onValueChange={(v) => setChannel(v as ReminderChannel)}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="email">Email</SelectItem>
+              <SelectItem value="in_app">In-app only</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </ModalBody>
+
+      <ModalFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        {existing && (
+          <Button
+            variant="ghost"
+            className="text-destructive hover:text-destructive sm:mr-auto"
+            onClick={remove}
+            disabled={busy}
+          >
+            <Trash2 className="size-4" /> Remove
           </Button>
-          <Button onClick={save} disabled={busy}>
-            {busy && <Loader2 className="size-4 animate-spin" />}
-            {existing ? "Save changes" : "Set reminder"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        )}
+        <Button variant="outline" onClick={() => setOpen(false)} disabled={busy}>
+          Cancel
+        </Button>
+        <Button onClick={save} disabled={busy}>
+          {busy && <Loader2 className="size-4 animate-spin" />}
+          {existing ? "Save changes" : "Set reminder"}
+        </Button>
+      </ModalFooter>
+    </Modal>
   );
 }

@@ -14,26 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { formatDate } from "@/components/dashboard/dashboard.utils";
@@ -157,55 +139,54 @@ export default function TeamPage() {
         title="Team"
         subtitle="Manage who can post and review on behalf of your organization"
         action={
-          <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-            <DialogTrigger asChild>
+          <Modal
+            open={inviteOpen}
+            onOpenChange={setInviteOpen}
+            trigger={
               <Button>
                 <UserPlus className="size-4" /> Invite member
               </Button>
-            </DialogTrigger>
-            <DialogContent className="p-6">
-              <DialogHeader>
-                <DialogTitle>Invite a team member</DialogTitle>
-                <DialogDescription>
-                  They'll receive an email with a signup link valid for 7 days.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="inviteEmail">Email address</Label>
-                  <Input
-                    id="inviteEmail"
-                    type="email"
-                    placeholder="name@company.com"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendInvite()}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="inviteRole">Role</Label>
-                  <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as InviteRole)}>
-                    <SelectTrigger id="inviteRole" className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Admin — can manage team &amp; settings</SelectItem>
-                      <SelectItem value="member">Member — can post &amp; review applicants</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            }
+          >
+            <ModalHeader
+              title="Invite a team member"
+              description="They'll receive an email with a signup link valid for 7 days."
+            />
+            <ModalBody className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="inviteEmail">Email address</Label>
+                <Input
+                  id="inviteEmail"
+                  type="email"
+                  placeholder="name@company.com"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && sendInvite()}
+                />
               </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setInviteOpen(false)} disabled={inviting}>
-                  Cancel
-                </Button>
-                <Button onClick={sendInvite} disabled={!inviteEmail.trim() || inviting}>
-                  {inviting && <Loader2 className="size-4 animate-spin" />}
-                  Send invite
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              <div className="space-y-1.5">
+                <Label htmlFor="inviteRole">Role</Label>
+                <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as InviteRole)}>
+                  <SelectTrigger id="inviteRole" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Admin — can manage team &amp; settings</SelectItem>
+                    <SelectItem value="member">Member — can post &amp; review applicants</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </ModalBody>
+            <ModalFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button variant="outline" onClick={() => setInviteOpen(false)} disabled={inviting}>
+                Cancel
+              </Button>
+              <Button onClick={sendInvite} disabled={!inviteEmail.trim() || inviting}>
+                {inviting && <Loader2 className="size-4 animate-spin" />}
+                Send invite
+              </Button>
+            </ModalFooter>
+          </Modal>
         }
       />
 
@@ -267,8 +248,8 @@ export default function TeamPage() {
                   )}
 
                   {m.role !== "owner" && (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
+                    <ConfirmModal
+                      trigger={
                         <Button
                           variant="ghost"
                           size="sm"
@@ -279,22 +260,12 @@ export default function TeamPage() {
                             ? <Loader2 className="size-4 animate-spin" />
                             : <Trash2 className="size-4" />}
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Remove {m.fullName ?? m.email}?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            They will lose access to your organization on Scholify. You can invite them again later.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleRemove(m.userId)}>
-                            Remove
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                      }
+                      title={`Remove ${m.fullName ?? m.email}?`}
+                      description="They will lose access to your organization on Scholify. You can invite them again later."
+                      confirmText="Remove"
+                      onConfirm={() => handleRemove(m.userId)}
+                    />
                   )}
                 </div>
               ))}
@@ -322,8 +293,8 @@ export default function TeamPage() {
                     </p>
                   </div>
                   <RoleBadge role={inv.role} />
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
+                  <ConfirmModal
+                    trigger={
                       <Button
                         variant="ghost"
                         size="sm"
@@ -334,20 +305,12 @@ export default function TeamPage() {
                           ? <Loader2 className="size-4 animate-spin" />
                           : <Trash2 className="size-4" />}
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Revoke invitation?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          The invitation sent to {inv.email} will be cancelled. You can send a new one any time.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleRevoke(inv.id)}>Revoke</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                    }
+                    title="Revoke invitation?"
+                    description={`The invitation sent to ${inv.email} will be cancelled. You can send a new one any time.`}
+                    confirmText="Revoke"
+                    onConfirm={() => handleRevoke(inv.id)}
+                  />
                 </div>
               ))}
             </div>

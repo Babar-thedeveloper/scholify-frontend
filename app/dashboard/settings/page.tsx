@@ -7,17 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Save, Trash2 } from "lucide-react";
 
@@ -125,28 +115,17 @@ export default function SettingsPage() {
               <p className="mb-4 text-sm text-muted-foreground">
                 Once deleted, your account and all data cannot be recovered.
               </p>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+              <ConfirmModal
+                trigger={
                   <Button variant="destructive">
                     <Trash2 className="size-4" /> Delete account
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete your account, applications, saved items,
-                      and all associated data. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={deleteAccount}>
-                      Yes, delete my account
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                }
+                title="Are you absolutely sure?"
+                description="This will permanently delete your account, applications, saved items, and all associated data. This action cannot be undone."
+                confirmText="Yes, delete my account"
+                onConfirm={deleteAccount}
+              />
             </div>
           </div>
         </TabsContent>

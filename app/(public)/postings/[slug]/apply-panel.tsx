@@ -6,15 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import { useUser } from "@/components/auth/UserContext";
 import { submitApplication } from "@/lib/api/applications";
 import { ApiError } from "@/lib/api/client";
@@ -165,46 +157,43 @@ export function ApplyPanel({
         You&apos;re signed in as <span className="font-medium text-foreground">{user.email}</span>.
       </p>
 
-      <Dialog>
-        <DialogTrigger asChild>
+      <Modal
+        trigger={
           <Button size="lg" className="mt-3 w-full">
             Apply on Scholify <ArrowRight className="size-4" />
           </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Apply — {postingTitle}</DialogTitle>
-            <DialogDescription>
-              Add a short cover letter to strengthen your application. This is optional.
-            </DialogDescription>
-          </DialogHeader>
+        }
+      >
+        <ModalHeader
+          title={`Apply — ${postingTitle}`}
+          description="Add a short cover letter to strengthen your application. This is optional."
+        />
 
-          <div className="mt-2">
-            <label htmlFor="cover-letter" className="text-sm font-medium">
-              Cover letter <span className="text-muted-foreground">(optional)</span>
-            </label>
-            <textarea
-              id="cover-letter"
-              value={coverLetter}
-              onChange={(e) => setCoverLetter(e.target.value)}
-              rows={6}
-              maxLength={4000}
-              placeholder="Why are you a great fit for this opportunity?"
-              className="mt-1.5 min-h-32 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
-            />
-            <p className="mt-1 text-xs text-muted-foreground">
-              {coverLetter.length}/4000
-            </p>
-          </div>
+        <ModalBody>
+          <label htmlFor="cover-letter" className="text-sm font-medium">
+            Cover letter <span className="text-muted-foreground">(optional)</span>
+          </label>
+          <textarea
+            id="cover-letter"
+            value={coverLetter}
+            onChange={(e) => setCoverLetter(e.target.value)}
+            rows={6}
+            maxLength={4000}
+            placeholder="Why are you a great fit for this opportunity?"
+            className="mt-1.5 min-h-32 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            {coverLetter.length}/4000
+          </p>
+        </ModalBody>
 
-          <DialogFooter>
-            <Button onClick={handleSubmit} disabled={submitting}>
-              {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
-              Submit application
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <ModalFooter className="flex justify-end">
+          <Button onClick={handleSubmit} disabled={submitting}>
+            {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+            Submit application
+          </Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }

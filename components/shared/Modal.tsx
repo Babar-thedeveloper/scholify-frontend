@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
@@ -22,8 +23,9 @@ const sizeClasses = {
 type ModalSize = keyof typeof sizeClasses;
 
 interface ModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  trigger?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
   size?: ModalSize;
@@ -40,9 +42,10 @@ interface ModalSectionProps {
   className?: string;
 }
 
-function Modal({ open, onOpenChange, children, className, size = "md" }: ModalProps) {
+function Modal({ open, onOpenChange, trigger, children, className, size = "md" }: ModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
+      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
         className={cn(
           "max-h-[85vh] overflow-y-auto p-0",

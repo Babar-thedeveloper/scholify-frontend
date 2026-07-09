@@ -16,17 +16,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { ApplicationTimeline } from "@/components/dashboard/ApplicationTimeline";
 import { EmptyState } from "@/components/dashboard/EmptyState";
@@ -308,28 +298,18 @@ export default function ApplicationDetailPage() {
               <Link href={`/postings/${detail.postingSlug}`}>View posting</Link>
             </Button>
             {canWithdraw && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+              <ConfirmModal
+                trigger={
                   <Button variant="destructive" size="lg" className="w-full" disabled={busy}>
                     Withdraw application
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Withdraw this application?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will withdraw your application for &ldquo;{detail.postingTitle}&rdquo;.
-                      This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleWithdraw} disabled={busy}>
-                      {busy ? "Withdrawing…" : "Withdraw"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                }
+                title="Withdraw this application?"
+                description={`This will withdraw your application for "${detail.postingTitle}". This action cannot be undone.`}
+                confirmText={busy ? "Withdrawing…" : "Withdraw"}
+                onConfirm={handleWithdraw}
+                busy={busy}
+              />
             )}
           </div>
         </aside>

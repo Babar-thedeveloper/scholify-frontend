@@ -27,17 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ApplicantTable } from "@/components/org/ApplicantTable";
 import { ApiError } from "@/lib/api/client";
@@ -373,31 +363,17 @@ export default function PostingDetailPage() {
                 </span>
               )}
 
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+              <ConfirmModal
+                trigger={
                   <Button variant="destructive" className="sm:ml-auto" disabled={busy || saving}>
                     <Trash2 className="size-4" /> Delete posting
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete this posting?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will hide &ldquo;{posting.title}&rdquo; from your dashboard and the public
-                      listing. Applicant records stay on file. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleDelete}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                }
+                title="Delete this posting?"
+                description={`This will hide "${posting.title}" from your dashboard and the public listing. Applicant records stay on file. This action cannot be undone.`}
+                confirmText="Delete"
+                onConfirm={handleDelete}
+              />
             </div>
           </div>
         </TabsContent>

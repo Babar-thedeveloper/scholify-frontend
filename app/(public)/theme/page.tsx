@@ -13,15 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -306,23 +298,23 @@ export default function ComponentReferencePage() {
 
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Dialog</h2>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline">Open Dialog</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Are you sure?</DialogTitle>
-              <DialogDescription>
-                This action cannot be undone. This will permanently delete your account.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="ghost">Cancel</Button>
-              <Button variant="destructive">Continue</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Modal
+          trigger={<Button variant="outline">Open Dialog</Button>}
+        >
+          <ModalHeader
+            title="Are you sure?"
+            description="This action cannot be undone. This will permanently delete your account."
+          />
+          <ModalBody>
+            <p className="text-sm text-muted-foreground">
+              Additional confirmation content can go here.
+            </p>
+          </ModalBody>
+          <ModalFooter className="flex justify-end gap-2">
+            <Button variant="ghost">Cancel</Button>
+            <Button variant="destructive">Continue</Button>
+          </ModalFooter>
+        </Modal>
       </section>
 
       <Separator />

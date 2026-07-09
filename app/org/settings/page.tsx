@@ -9,17 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export default function OrgSettingsPage() {
@@ -140,28 +130,17 @@ export default function OrgSettingsPage() {
                 Deactivating will unpublish all your postings and revoke team access. This
                 can be undone by contacting support.
               </p>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
+              <ConfirmModal
+                trigger={
                   <Button variant="destructive">
                     <Trash2 className="size-4" /> Deactivate organization
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Deactivate this organization?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      All postings will be unpublished and team members will lose access.
-                      This action can only be reversed by contacting support.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={deactivate}>
-                      Yes, deactivate
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                }
+                title="Deactivate this organization?"
+                description="All postings will be unpublished and team members will lose access. This action can only be reversed by contacting support."
+                confirmText="Yes, deactivate"
+                onConfirm={deactivate}
+              />
             </div>
           </div>
         </TabsContent>
