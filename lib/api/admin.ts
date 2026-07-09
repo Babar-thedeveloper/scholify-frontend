@@ -1,5 +1,7 @@
 import { apiFetch } from "./client";
 
+const BASE = "/api/v1/admin";
+
 // ─── Types ────────────────────────────────────────────────────
 export interface PlatformStats {
   totalUsers: number;
@@ -53,7 +55,7 @@ export interface PaginatedResponse<T> {
 
 // ─── Stats ────────────────────────────────────────────────────
 export async function getPlatformStats(): Promise<PlatformStats> {
-  const data = await apiFetch<{ stats: PlatformStats }>("/admin/stats");
+  const data = await apiFetch<{ stats: PlatformStats }>(`${BASE}/stats`);
   return data.stats;
 }
 
@@ -72,11 +74,11 @@ export async function listAdminOrgs(params: ListOrgsParams = {}): Promise<Pagina
   if (params.page) qs.set("page", String(params.page));
   if (params.pageSize) qs.set("pageSize", String(params.pageSize));
   const q = qs.toString();
-  return apiFetch<PaginatedResponse<AdminOrg>>(`/admin/orgs${q ? `?${q}` : ""}`);
+  return apiFetch<PaginatedResponse<AdminOrg>>(`${BASE}/orgs${q ? `?${q}` : ""}`);
 }
 
 export async function getAdminOrg(id: string): Promise<AdminOrg> {
-  const data = await apiFetch<{ org: AdminOrg }>(`/admin/orgs/${id}`);
+  const data = await apiFetch<{ org: AdminOrg }>(`${BASE}/orgs/${id}`);
   return data.org;
 }
 
@@ -85,9 +87,9 @@ export async function verifyOrg(
   action: "approved" | "rejected" | "suspended",
   reason?: string,
 ): Promise<AdminOrg> {
-  const data = await apiFetch<{ org: AdminOrg }>(`/admin/orgs/${id}/verify`, {
+  const data = await apiFetch<{ org: AdminOrg }>(`${BASE}/orgs/${id}/verify`, {
     method: "PATCH",
-    body: JSON.stringify({ action, reason }),
+    body: { action, reason },
   });
   return data.org;
 }
@@ -107,19 +109,19 @@ export async function listAdminStudents(params: ListStudentsParams = {}): Promis
   if (params.page) qs.set("page", String(params.page));
   if (params.pageSize) qs.set("pageSize", String(params.pageSize));
   const q = qs.toString();
-  return apiFetch<PaginatedResponse<AdminStudent>>(`/admin/students${q ? `?${q}` : ""}`);
+  return apiFetch<PaginatedResponse<AdminStudent>>(`${BASE}/students${q ? `?${q}` : ""}`);
 }
 
 export async function verifyStudent(id: string, verified: boolean): Promise<{ message: string }> {
-  return apiFetch<{ message: string }>(`/admin/students/${id}/verify`, {
+  return apiFetch<{ message: string }>(`${BASE}/students/${id}/verify`, {
     method: "PATCH",
-    body: JSON.stringify({ verified }),
+    body: { verified },
   });
 }
 
 // ─── Feature flags ────────────────────────────────────────────
 export async function listFeatureFlags(): Promise<FeatureFlag[]> {
-  const data = await apiFetch<{ flags: FeatureFlag[] }>("/admin/feature-flags");
+  const data = await apiFetch<{ flags: FeatureFlag[] }>(`${BASE}/feature-flags`);
   return data.flags;
 }
 
@@ -128,9 +130,9 @@ export async function patchFeatureFlag(
   enabled: boolean,
   payload?: Record<string, unknown> | null,
 ): Promise<FeatureFlag> {
-  const data = await apiFetch<{ flag: FeatureFlag }>(`/admin/feature-flags/${key}`, {
+  const data = await apiFetch<{ flag: FeatureFlag }>(`${BASE}/feature-flags/${key}`, {
     method: "PATCH",
-    body: JSON.stringify({ enabled, payload }),
+    body: { enabled, payload },
   });
   return data.flag;
 }
@@ -168,7 +170,7 @@ export async function listAdminPostings(params: ListAdminPostingsParams = {}): P
   if (params.page) qs.set("page", String(params.page));
   if (params.pageSize) qs.set("pageSize", String(params.pageSize));
   const q = qs.toString();
-  return apiFetch<PaginatedResponse<AdminPosting>>(`/admin/postings${q ? `?${q}` : ""}`);
+  return apiFetch<PaginatedResponse<AdminPosting>>(`${BASE}/postings${q ? `?${q}` : ""}`);
 }
 
 export async function forcePostingStatus(
@@ -176,14 +178,14 @@ export async function forcePostingStatus(
   status: "draft" | "active" | "paused" | "closed",
   reason?: string,
 ): Promise<{ message: string }> {
-  return apiFetch<{ message: string }>(`/admin/postings/${id}/status`, {
+  return apiFetch<{ message: string }>(`${BASE}/postings/${id}/status`, {
     method: "PATCH",
-    body: JSON.stringify({ status, reason }),
+    body: { status, reason },
   });
 }
 
 export async function adminDeletePosting(id: string): Promise<void> {
-  await apiFetch<void>(`/admin/postings/${id}`, { method: "DELETE" });
+  await apiFetch<void>(`${BASE}/postings/${id}`, { method: "DELETE" });
 }
 
 export interface CreatePlatformPostingInput {
@@ -212,9 +214,9 @@ export interface CreatePlatformPostingInput {
 export async function createPlatformPosting(
   input: CreatePlatformPostingInput,
 ): Promise<{ message: string; slug: string }> {
-  return apiFetch<{ message: string; slug: string }>("/admin/postings", {
+  return apiFetch<{ message: string; slug: string }>(`${BASE}/postings`, {
     method: "POST",
-    body: JSON.stringify(input),
+    body: input,
   });
 }
 
@@ -241,7 +243,7 @@ export async function listAdminUsers(params: ListAdminUsersParams = {}): Promise
   if (params.page) qs.set("page", String(params.page));
   if (params.pageSize) qs.set("pageSize", String(params.pageSize));
   const q = qs.toString();
-  return apiFetch<PaginatedResponse<AdminUser>>(`/admin/users${q ? `?${q}` : ""}`);
+  return apiFetch<PaginatedResponse<AdminUser>>(`${BASE}/users${q ? `?${q}` : ""}`);
 }
 
 export async function assignUserRole(
@@ -249,8 +251,8 @@ export async function assignUserRole(
   role: string,
   grant: boolean,
 ): Promise<{ message: string }> {
-  return apiFetch<{ message: string }>(`/admin/users/${userId}/roles`, {
+  return apiFetch<{ message: string }>(`${BASE}/users/${userId}/roles`, {
     method: "PATCH",
-    body: JSON.stringify({ role, grant }),
+    body: { role, grant },
   });
 }
