@@ -29,7 +29,7 @@ const PLANS: Plan[] = [
 
 export default function BillingPage() {
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader title="Billing" subtitle="Manage your plan and payment details" />
 
       {/* Current plan */}

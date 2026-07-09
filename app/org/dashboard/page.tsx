@@ -14,7 +14,7 @@ export default function OrgDashboardPage() {
   const recentApplicants = MOCK_APPLICANTS.slice(0, 5);
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">Welcome, Daraz 👋</h1>
         <p className="mt-1 text-sm text-muted-foreground">

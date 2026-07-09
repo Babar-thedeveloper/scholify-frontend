@@ -8,7 +8,7 @@ import {
 
 export default function OrgNotificationsPage() {
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <NotificationsList
         header={({ hasUnread, onMarkAllRead, marking }) => (
           <PageHeader

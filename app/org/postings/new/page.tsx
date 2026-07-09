@@ -204,7 +204,7 @@ export default function NewPostingPage() {
   ] as const;
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader
         title="Create a posting"
         subtitle="Publish a scholarship or internship on Scholify"

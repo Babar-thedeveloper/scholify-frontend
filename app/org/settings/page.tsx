@@ -59,7 +59,7 @@ export default function OrgSettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader title="Settings" subtitle="Manage your organization account and preferences" />
 
       <Tabs defaultValue="account" className="space-y-6">

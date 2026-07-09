@@ -46,7 +46,7 @@ export default function OrgPostingsPage() {
   const filtered = postings.filter((p) => tab.match(p.status));
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div>
       <PageHeader
         title="My Postings"
         subtitle="Manage your scholarships and internships"

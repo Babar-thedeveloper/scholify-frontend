@@ -12,7 +12,7 @@ export default function DraftsPage() {
   const drafts = MOCK_POSTINGS.filter((p) => p.status === "draft");
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div>
       <PageHeader
         title="Drafts"
         subtitle="Postings you haven't published yet"

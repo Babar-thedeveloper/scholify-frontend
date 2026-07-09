@@ -152,7 +152,7 @@ export default function TeamPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader
         title="Team"
         subtitle="Manage who can post and review on behalf of your organization"

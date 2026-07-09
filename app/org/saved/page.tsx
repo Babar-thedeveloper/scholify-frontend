@@ -5,7 +5,7 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 
 export default function SavedCandidatesPage() {
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader
         title={
           <span className="flex items-center gap-2">

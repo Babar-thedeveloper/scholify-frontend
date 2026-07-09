@@ -237,7 +237,7 @@ export default function PostingDetailPage() {
 
   if (notFound || !posting) {
     return (
-      <div className="mx-auto max-w-3xl">
+      <div>
         <EmptyState
           Icon={FileQuestion}
           title="Posting not found"
@@ -252,7 +252,7 @@ export default function PostingDetailPage() {
   const statusClass = STATUS_STYLES[posting.status] ?? STATUS_STYLES.draft;
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div>
       <Link
         href="/org/postings"
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

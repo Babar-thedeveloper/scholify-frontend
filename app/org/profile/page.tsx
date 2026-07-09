@@ -128,7 +128,7 @@ export default function OrgProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader
         title={
           <span className="flex items-center gap-2">
