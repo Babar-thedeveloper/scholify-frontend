@@ -12,12 +12,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
 import {
   Tooltip,
   TooltipContent,
@@ -89,33 +84,26 @@ export function ScholarshipModal({
       : "text-red-600 dark:text-red-400";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton
-        className="max-h-[85vh] overflow-y-auto sm:max-w-xl"
-      >
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${getCategoryPill(scholarship.category)}`}
-                >
-                  {categoryLabel(scholarship.category)}
-                </span>
-              </div>
-              <DialogTitle className="mt-3 text-lg font-semibold leading-snug text-gray-900 dark:text-gray-100">
-                {scholarship.title}
-              </DialogTitle>
-              <DialogDescription className="mt-1.5 text-[13px] leading-relaxed text-gray-500 dark:text-gray-400">
-                {scholarship.summary}
-              </DialogDescription>
-            </div>
+    <Modal open={open} onOpenChange={onOpenChange} size="xl">
+      <ModalHeader
+        title={
+          <div className="space-y-1">
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${getCategoryPill(scholarship.category)}`}
+            >
+              {categoryLabel(scholarship.category)}
+            </span>
+            <span className="block text-lg font-semibold leading-snug text-gray-900 dark:text-gray-100">
+              {scholarship.title}
+            </span>
           </div>
+        }
+        description={scholarship.summary}
+      />
 
-          {/* Details grid */}
-          <div className="mt-6 grid grid-cols-2 gap-4">
+      <ModalBody>
+        {/* Details grid */}
+        <div className="grid grid-cols-2 gap-4">
             <DetailItem
               icon={<Building2 className="size-4" />}
               label="Provider"
@@ -188,9 +176,8 @@ export function ScholarshipModal({
               </TooltipContent>
             </Tooltip>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+      </ModalBody>
+    </Modal>
   );
 }
 

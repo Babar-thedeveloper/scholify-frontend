@@ -11,12 +11,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
 import {
   Tooltip,
   TooltipContent,
@@ -48,36 +43,31 @@ export function InternshipModal({
   if (!internship) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        showCloseButton
-        className="max-h-[85vh] overflow-y-auto sm:max-w-xl"
-      >
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${getWorkModePill(internship.workMode)}`}
-                >
-                  {workModeLabel(internship.workMode)}
-                </span>
-                <span className="text-[11px] text-gray-400 dark:text-gray-500">
-                  {workTypeLabel(internship.workType)}
-                </span>
-              </div>
-              <DialogTitle className="mt-3 text-lg font-semibold leading-snug text-gray-900 dark:text-gray-100">
-                {internship.title}
-              </DialogTitle>
-              <DialogDescription className="mt-1.5 text-[13px] leading-relaxed text-gray-500 dark:text-gray-400">
-                {internship.summary}
-              </DialogDescription>
+    <Modal open={open} onOpenChange={onOpenChange} size="xl">
+      <ModalHeader
+        title={
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ${getWorkModePill(internship.workMode)}`}
+              >
+                {workModeLabel(internship.workMode)}
+              </span>
+              <span className="text-[11px] text-gray-400 dark:text-gray-500">
+                {workTypeLabel(internship.workType)}
+              </span>
             </div>
+            <span className="block text-lg font-semibold leading-snug text-gray-900 dark:text-gray-100">
+              {internship.title}
+            </span>
           </div>
+        }
+        description={internship.summary}
+      />
 
-          {/* Details grid */}
-          <div className="mt-6 grid grid-cols-2 gap-4">
+      <ModalBody>
+        {/* Details grid */}
+        <div className="grid grid-cols-2 gap-4">
             <DetailItem
               icon={<Building2 className="size-4" />}
               label="Company"
@@ -159,9 +149,8 @@ export function InternshipModal({
               </TooltipContent>
             </Tooltip>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+      </ModalBody>
+    </Modal>
   );
 }
 
