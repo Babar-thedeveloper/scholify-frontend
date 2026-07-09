@@ -85,6 +85,25 @@ export async function patchMyProfile(input: PatchProfileInput): Promise<PatchPro
   });
 }
 
+// ─── Sidebar badge counts ───────────────────────────────────
+export interface SidebarCountsDto {
+  student?: {
+    applications: number;
+    saved: number;
+    reminders: number;
+  };
+  organization?: {
+    postings: number;
+    applicants: number;
+    drafts: number;
+  };
+}
+
+export async function getSidebarCounts(): Promise<SidebarCountsDto> {
+  const { counts } = await apiFetch<{ counts: SidebarCountsDto }>(`${BASE}/me/sidebar-counts`);
+  return counts;
+}
+
 // ─── Frontend-friendly labels ────────────────────────────────
 export const DEGREE_LABEL: Record<DegreeLevelKey, string> = {
   undergraduate: "Undergraduate",
