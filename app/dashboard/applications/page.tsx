@@ -80,7 +80,7 @@ export default function ApplicationsPage() {
   const filtered = useMemo(() => items.filter((a) => tab.match(a.status)), [items, tab]);
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div>
       <PageHeader
         title="My Applications"
         subtitle="Track all your scholarship and internship applications in one place"

@@ -81,7 +81,7 @@ export default function AdminCreatePostingPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6">
       <div className="flex items-center gap-3">
         <button onClick={() => router.back()}
           className="flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted">

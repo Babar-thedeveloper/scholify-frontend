@@ -72,7 +72,7 @@ export default function SavedItemsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <PageHeader
         title="Saved Items"
         subtitle="Scholarships and internships you've bookmarked for later"

@@ -61,7 +61,7 @@ export default async function PublicOrgPage({ params }: Props) {
   const socialEntries = Object.entries(org.social).filter(([, url]) => !!url);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="px-4 py-10 sm:px-6 lg:px-8">
       {/* ─── Header ─── */}
       <div className="flex items-start gap-5 rounded-2xl border border-border bg-white p-6 dark:bg-card">
         <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-2xl font-bold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">

@@ -290,7 +290,7 @@ function CVPageContent() {
 
   if (!draft) {
     return (
-      <div className="mx-auto max-w-4xl">
+      <div>
         <PageHeader title="My CV" subtitle="Auto-generated from your profile data" />
         <p className="text-sm text-destructive mt-4">{error || "Could not load CV."}</p>
       </div>
@@ -300,7 +300,7 @@ function CVPageContent() {
   const templateKey = (draft.templateKey ?? "europass") as TemplateKey;
 
   return (
-    <div className="mx-auto max-w-[1200px]">
+    <div>
       <PageHeader
         title="My CV"
         subtitle="Auto-generated from your profile · add extras below"

@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function AiCvPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className="px-4 py-16 sm:px-6 lg:px-8">
       {/* Hero */}
       <div className="text-center">
         <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-2xl bg-primary/10">

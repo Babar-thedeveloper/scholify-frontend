@@ -8,7 +8,7 @@ export default async function InternshipDetailPage({
   const { id } = await params;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
+    <div className="px-4 py-16">
       <p className="text-sm text-muted-foreground">
         Internship detail page coming soon.
       </p>

@@ -146,7 +146,7 @@ export default function RemindersPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader
         title="Reminders"
         subtitle="Get notified before your scholarship and internship deadlines"

@@ -145,7 +145,7 @@ export default function ApplicationDetailPage() {
 
   if (notFound || !detail) {
     return (
-      <div className="mx-auto max-w-3xl">
+      <div>
         <EmptyState
           Icon={FileQuestion}
           title="Application not found"
@@ -164,7 +164,7 @@ export default function ApplicationDetailPage() {
   const timelineEvents = toTimeline(detail.timeline);
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <Link
         href="/dashboard/applications"
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

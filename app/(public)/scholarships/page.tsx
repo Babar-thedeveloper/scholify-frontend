@@ -24,7 +24,7 @@ export default async function ScholarshipsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 xl:max-w-8xl 2xl:max-w-screen-2xl">
+    <div className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6">
         <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           Every scholarship, one search.{" "}

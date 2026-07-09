@@ -14,7 +14,7 @@ export default function StudentOverviewPage() {
   }).slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div>
       {/* Greeting */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">

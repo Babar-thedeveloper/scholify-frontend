@@ -199,14 +199,14 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <div className="mx-auto max-w-3xl p-6 text-sm text-muted-foreground">
+      <div className="p-6 text-sm text-muted-foreground">
         Couldn&apos;t load your profile. Try refreshing the page.
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader
         title="My Profile"
         subtitle="Keep your profile up to date to get better matches"

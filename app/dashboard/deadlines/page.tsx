@@ -54,7 +54,7 @@ export default function DeadlinesPage() {
   const deadlines = buildDeadlines();
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div>
       <PageHeader title="Deadlines" subtitle="Stay ahead of every closing date" />
 
       {deadlines.length === 0 ? (

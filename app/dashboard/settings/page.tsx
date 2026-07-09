@@ -57,7 +57,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <PageHeader title="Settings" subtitle="Manage your account and preferences" />
 
       <Tabs defaultValue="account" className="space-y-6">
