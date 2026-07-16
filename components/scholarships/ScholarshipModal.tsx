@@ -1,10 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   CalendarClock,
   GraduationCap,
-  MapPin,
   Building2,
   Coins,
   Globe,
@@ -13,11 +13,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { Scholarship } from "./scholarships.types";
 import {
   getCategoryPill,
@@ -62,6 +57,7 @@ export function ScholarshipModal({
   open,
   onOpenChange,
 }: ScholarshipModalProps) {
+  const router = useRouter();
   if (!scholarship) return null;
 
   const daysLeft = daysUntil(scholarship.deadline, new Date());
@@ -142,39 +138,38 @@ export function ScholarshipModal({
 
           {/* Action buttons */}
           <div className="flex flex-col gap-2.5 sm:flex-row">
-            <Button
-              className="flex-1 gap-2"
-              onClick={() => {
-                window.open(
-                  scholarship.applyUrl,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-              }}
-              aria-label={`Direct apply for ${scholarship.title}`}
-            >
-              <ExternalLink className="size-4" aria-hidden="true" />
-              Direct Apply
-              <ArrowRight className="size-3.5" aria-hidden="true" />
-            </Button>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="inline-flex flex-1">
-                  <Button
-                    variant="outline"
-                    disabled
-                    className="w-full cursor-not-allowed gap-2"
-                    aria-label={`Apply with Scholify for ${scholarship.title} - coming soon`}
-                  >
-                    Apply with Scholify
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>Coming soon</p>
-              </TooltipContent>
-            </Tooltip>
+            {scholarship.isExternal ? (
+              <>
+                <Button
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
+                  }}
+                  aria-label={`Direct apply for ${scholarship.title}`}
+                >
+                  <ExternalLink className="size-4" aria-hidden="true" />
+                  Direct Apply
+                  <ArrowRight className="size-3.5" aria-hidden="true" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 gap-2"
+                  onClick={() => router.push(scholarship.detailUrl)}
+                  aria-label={`View full details for ${scholarship.title}`}
+                >
+                  View full details
+                </Button>
+              </>
+            ) : (
+              <Button
+                className="flex-1 gap-2"
+                onClick={() => router.push(scholarship.detailUrl)}
+                aria-label={`Apply with Scholify for ${scholarship.title}`}
+              >
+                Apply with Scholify
+                <ArrowRight className="size-3.5" aria-hidden="true" />
+              </Button>
+            )}
           </div>
       </ModalBody>
     </Modal>

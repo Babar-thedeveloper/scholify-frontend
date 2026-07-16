@@ -30,11 +30,16 @@ export default function AdminCreatePostingPage() {
   const [stipend, setStipend] = useState("");
   const [duration, setDuration] = useState("");
   const [startDate, setStartDate] = useState("");
+  const [skillInput, setSkillInput] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
 
   // Scholarship fields
   const [fundingAmount, setFundingAmount] = useState("");
   const [countryScope, setCountryScope] = useState<"pakistan" | "international" | "specific">("pakistan");
   const [specificCountry, setSpecificCountry] = useState("");
+  const [selectedDegreeLevels, setSelectedDegreeLevels] = useState<string[]>([]);
+  const [fieldOfStudyInput, setFieldOfStudyInput] = useState("");
+  const [fieldsOfStudy, setFieldsOfStudy] = useState<string[]>([]);
 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -62,11 +67,14 @@ export default function AdminCreatePostingPage() {
             stipendCurrency: "PKR",
             durationMonths: duration ? Number(duration) : undefined,
             startDate: startDate || undefined,
+            skillNames: skills.length ? skills : undefined,
           }
         : {
             fundingAmount: fundingAmount.trim() || undefined,
             countryScope,
             specificCountry: countryScope === "specific" ? specificCountry.trim() : undefined,
+            degreeLevelKeys: selectedDegreeLevels.length ? selectedDegreeLevels : undefined,
+            fieldOfStudyNames: fieldsOfStudy.length ? fieldsOfStudy : undefined,
           }),
     };
 
@@ -214,6 +222,42 @@ export default function AdminCreatePostingPage() {
               <Label htmlFor="start" className="mb-1.5 block">Start Date</Label>
               <Input id="start" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
             </div>
+
+            <div>
+              <Label htmlFor="skill" className="mb-1.5 block">Required Skills</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="skill"
+                  value={skillInput}
+                  onChange={(e) => setSkillInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const v = skillInput.trim();
+                      if (v && !skills.includes(v)) setSkills([...skills, v]);
+                      setSkillInput("");
+                    }
+                  }}
+                  placeholder="e.g. React, then press Enter"
+                />
+                <Button type="button" variant="outline" onClick={() => {
+                  const v = skillInput.trim();
+                  if (v && !skills.includes(v)) setSkills([...skills, v]);
+                  setSkillInput("");
+                }}>Add</Button>
+              </div>
+              {skills.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {skills.map((s) => (
+                    <span key={s} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
+                      {s}
+                      <button type="button" onClick={() => setSkills(skills.filter((x) => x !== s))}
+                        className="rounded-full hover:text-destructive">✕</button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </fieldset>
         )}
 
@@ -234,7 +278,7 @@ export default function AdminCreatePostingPage() {
                     className={`rounded-md px-3 py-1.5 text-sm capitalize transition-colors ${
                       countryScope === s ? "bg-foreground text-background" : "border border-border hover:bg-muted"
                     }`}>
-                    {s}
+                    {s === "specific" ? "Specific country" : s}
                   </button>
                 ))}
               </div>
@@ -246,6 +290,62 @@ export default function AdminCreatePostingPage() {
                 <Input id="scountry" value={specificCountry} onChange={(e) => setSpecificCountry(e.target.value)} placeholder="e.g. Turkey" />
               </div>
             )}
+
+            <div>
+              <Label className="mb-2 block">Target Degree Levels</Label>
+              <div className="flex flex-wrap gap-3">
+                {(["undergraduate", "masters", "phd", "postdoc", "diploma"] as const).map((lvl) => (
+                  <label key={lvl} className="flex items-center gap-1.5 text-sm capitalize cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedDegreeLevels.includes(lvl)}
+                      onChange={(e) => {
+                        if (e.target.checked) setSelectedDegreeLevels([...selectedDegreeLevels, lvl]);
+                        else setSelectedDegreeLevels(selectedDegreeLevels.filter((l) => l !== lvl));
+                      }}
+                      className="size-4 rounded border-border"
+                    />
+                    {lvl === "postdoc" ? "Postdoctoral" : lvl}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="fos" className="mb-1.5 block">Fields of Study</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="fos"
+                  value={fieldOfStudyInput}
+                  onChange={(e) => setFieldOfStudyInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const v = fieldOfStudyInput.trim();
+                      if (v && !fieldsOfStudy.includes(v)) setFieldsOfStudy([...fieldsOfStudy, v]);
+                      setFieldOfStudyInput("");
+                    }
+                  }}
+                  placeholder="e.g. Engineering, then press Enter"
+                />
+                <Button type="button" variant="outline" onClick={() => {
+                  const v = fieldOfStudyInput.trim();
+                  if (v && !fieldsOfStudy.includes(v)) setFieldsOfStudy([...fieldsOfStudy, v]);
+                  setFieldOfStudyInput("");
+                }}>Add</Button>
+              </div>
+              {fieldsOfStudy.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {fieldsOfStudy.map((f) => (
+                    <span key={f} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
+                      {f}
+                      <button type="button" onClick={() => setFieldsOfStudy(fieldsOfStudy.filter((x) => x !== f))}
+                        className="rounded-full hover:text-destructive">✕</button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </fieldset>
         )}
 

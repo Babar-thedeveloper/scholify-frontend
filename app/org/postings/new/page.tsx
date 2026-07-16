@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Briefcase,
@@ -8,6 +8,7 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
+  Lock,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ import {
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import type { ApplicationType } from "@/components/dashboard/dashboard.types";
 import { createPosting, type CreatePostingInput } from "@/lib/api/postings";
+import { getMyOrg } from "@/lib/api/organizations";
 import { handleApiError } from "@/lib/api/handle-error";
 
 const DEGREE_LEVELS = ["Undergraduate", "Masters", "PhD"];
@@ -42,6 +44,7 @@ interface FormState {
   degreeLevel: string[];
   fieldOfStudy: string[];
   countryScope: string;
+  specificCountry: string;
   deadline: string;
   // internship
   skills: string[];
@@ -65,6 +68,7 @@ const EMPTY_FORM: FormState = {
   degreeLevel: [],
   fieldOfStudy: [],
   countryScope: "",
+  specificCountry: "",
   deadline: "",
   skills: [],
   field: "",
@@ -88,6 +92,25 @@ export default function NewPostingPage() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [skillInput, setSkillInput] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  // scholarship_provider / internship_provider orgs are locked to their type
+  const [lockedType, setLockedType] = useState<ApplicationType | null>(null);
+
+  useEffect(() => {
+    getMyOrg()
+      .then((org) => {
+        const locked: ApplicationType | null =
+          org.kind === "scholarship_provider" ? "scholarship"
+          : org.kind === "internship_provider" ? "internship"
+          : null;
+        if (locked) {
+          setLockedType(locked);
+          // Skip step 1 entirely — the choice is already made
+          setType(locked);
+          setStep((s) => (s === 1 ? 2 : s));
+        }
+      })
+      .catch(() => { /* fall back to free choice; backend still enforces */ });
+  }, []);
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -155,11 +178,22 @@ export default function NewPostingPage() {
     };
 
     if (type === "scholarship") {
+      // Map display labels ("Undergraduate", "Masters", "PhD") to backend keys
+      const degreeKeyMap: Record<string, string> = {
+        "Undergraduate": "undergraduate",
+        "Masters": "masters",
+        "PhD": "phd",
+      };
       return {
         ...base,
         type: "scholarship",
         fundingAmount: form.fundingAmount.trim() || undefined,
         countryScope: (form.countryScope as "pakistan" | "international" | "specific") || undefined,
+        specificCountry: form.countryScope === "specific" ? form.specificCountry.trim() || undefined : undefined,
+        degreeLevelKeys: form.degreeLevel.length
+          ? form.degreeLevel.map((l) => degreeKeyMap[l] ?? l.toLowerCase())
+          : undefined,
+        fieldOfStudyNames: form.fieldOfStudy.length ? form.fieldOfStudy : undefined,
       };
     }
 
@@ -175,6 +209,8 @@ export default function NewPostingPage() {
       stipendCurrency: "PKR",
       durationMonths: Number.isFinite(durationMonths) && durationMonths > 0 ? durationMonths : undefined,
       startDate: form.startDate || undefined,
+      skillNames: form.skills.length ? form.skills : undefined,
+      fieldOfStudyNames: form.field ? [form.field] : undefined,
     };
   }
 
@@ -385,12 +421,24 @@ export default function NewPostingPage() {
                       <SelectValue placeholder="Select scope" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Pakistan">Pakistan</SelectItem>
-                      <SelectItem value="International">International</SelectItem>
-                      <SelectItem value="Specific country">Specific country</SelectItem>
+                      <SelectItem value="pakistan">Pakistan</SelectItem>
+                      <SelectItem value="international">International</SelectItem>
+                      <SelectItem value="specific">Specific country</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
+
+                {form.countryScope === "specific" && (
+                  <div className="space-y-1.5">
+                    <Label htmlFor="specificCountry">Specific country</Label>
+                    <Input
+                      id="specificCountry"
+                      value={form.specificCountry}
+                      onChange={(e) => set("specificCountry", e.target.value)}
+                      placeholder="e.g. Turkey, Germany"
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-1.5">
                   <Label htmlFor="deadline">Deadline</Label>
@@ -526,9 +574,11 @@ export default function NewPostingPage() {
                   </div>
                   {form.isPaid && (
                     <Input
+                      type="number"
+                      min="0"
                       value={form.stipend}
                       onChange={(e) => set("stipend", e.target.value)}
-                      placeholder="e.g. PKR 45,000 / month"
+                      placeholder="e.g. 45000"
                     />
                   )}
                 </div>
@@ -581,9 +631,16 @@ export default function NewPostingPage() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
-            <Button variant="ghost" onClick={() => setStep(1)}>
-              <ArrowLeft className="size-4" /> Back
-            </Button>
+            {lockedType ? (
+              <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Lock className="size-3.5" />
+                Your organization posts {lockedType}s only
+              </span>
+            ) : (
+              <Button variant="ghost" onClick={() => setStep(1)}>
+                <ArrowLeft className="size-4" /> Back
+              </Button>
+            )}
             <div className="flex gap-3">
               <Button variant="outline" onClick={saveDraft} disabled={submitting}>
                 Save as draft
@@ -622,6 +679,9 @@ export default function NewPostingPage() {
                   <ReviewItem label="Eligibility" value={form.eligibility} full />
                   <ReviewItem label="Funding amount" value={form.fundingAmount} />
                   <ReviewItem label="Country scope" value={form.countryScope} />
+                  {form.countryScope === "specific" && (
+                    <ReviewItem label="Specific country" value={form.specificCountry} />
+                  )}
                   <ReviewItem
                     label="Degree level"
                     value={form.degreeLevel.join(", ")}
@@ -643,7 +703,7 @@ export default function NewPostingPage() {
                   <ReviewItem label="Duration" value={form.duration} />
                   <ReviewItem
                     label="Stipend"
-                    value={form.isPaid ? form.stipend || "Paid" : "Unpaid"}
+                    value={form.isPaid ? (form.stipend ? `PKR ${form.stipend}/month` : "Paid") : "Unpaid"}
                   />
                   <ReviewItem label="Start date" value={form.startDate} />
                 </>

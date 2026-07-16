@@ -27,7 +27,7 @@ export function ReminderNudge({ showNudge = true }: ReminderNudgeProps) {
         </div>
       </div>
       <Button size="sm" asChild className="text-xs">
-        <Link href="/register">Create free account →</Link>
+        <Link href="/signup">Create free account →</Link>
       </Button>
     </div>
   );

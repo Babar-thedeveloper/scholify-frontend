@@ -91,6 +91,7 @@ export interface SidebarCountsDto {
     applications: number;
     saved: number;
     reminders: number;
+    completionPercent: number;
   };
   organization?: {
     postings: number;

@@ -1,15 +1,46 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FileEdit, Plus } from "lucide-react";
+import { FileEdit, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { PostingCard } from "@/components/org/PostingCard";
-import { MOCK_POSTINGS } from "@/components/dashboard/dashboard.mock";
+import { listMyPostings, toDashboardPosting } from "@/lib/api/postings";
+import type { Posting } from "@/components/dashboard/dashboard.types";
 
 export default function DraftsPage() {
-  const drafts = MOCK_POSTINGS.filter((p) => p.status === "draft");
+  const [drafts, setDrafts] = useState<Posting[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await listMyPostings();
+        if (cancelled) return;
+        setDrafts(
+          res.items
+            .map(toDashboardPosting)
+            .filter((p) => p.status === "draft")
+        );
+      } catch {
+        // empty state
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div>

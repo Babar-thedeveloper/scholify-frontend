@@ -1,13 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { Internship } from "./internships.types";
 import {
   getWorkModePill,
@@ -28,6 +24,7 @@ interface InternshipCardProps {
 }
 
 export function InternshipCard({ internship, onClick }: InternshipCardProps) {
+  const router = useRouter();
   const urgency = getDeadlineUrgency(internship.deadline, new Date());
 
   const deadlineClass =
@@ -124,37 +121,47 @@ export function InternshipCard({ internship, onClick }: InternshipCardProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            <Button
-              size="sm"
-              className="relative z-20 gap-1 text-xs"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(internship.applyUrl, "_blank", "noopener,noreferrer");
-              }}
-              aria-label={`Apply on ${internship.company} for ${internship.title}`}
-            >
-              Apply
-              <ArrowRight className="size-3" aria-hidden="true" />
-            </Button>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="inline-flex w-full">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled
-                    className="relative z-20 w-full cursor-not-allowed text-xs"
-                    aria-label={`Apply with Scholify for ${internship.title} - coming soon`}
-                  >
-                    Scholify Apply
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>One-click apply is coming soon</p>
-              </TooltipContent>
-            </Tooltip>
+            {internship.isExternal ? (
+              <>
+                <Button
+                  size="sm"
+                  className="relative z-20 gap-1 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(internship.applyUrl, "_blank", "noopener,noreferrer");
+                  }}
+                  aria-label={`Apply on ${internship.company} for ${internship.title}`}
+                >
+                  Apply
+                  <ArrowRight className="size-3" aria-hidden="true" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="relative z-20 w-full text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(internship.detailUrl);
+                  }}
+                  aria-label={`View full details for ${internship.title}`}
+                >
+                  Details
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                className="relative z-20 col-span-2 gap-1 text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(internship.detailUrl);
+                }}
+                aria-label={`Apply with Scholify for ${internship.title}`}
+              >
+                Apply with Scholify
+                <ArrowRight className="size-3" aria-hidden="true" />
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

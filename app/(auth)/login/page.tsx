@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { LoginForm } from "@/components/auth/LoginForm";
 
@@ -18,7 +19,9 @@ export default function LoginPage() {
         switchHref: "/signup",
       }}
     >
-      <LoginForm />
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </AuthCard>
   );
 }

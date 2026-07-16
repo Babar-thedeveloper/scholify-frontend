@@ -119,6 +119,8 @@ export interface CreateScholarshipInput extends CreatePostingBase {
   fundingAmount?: string;
   countryScope?: "pakistan" | "international" | "specific";
   specificCountry?: string;
+  degreeLevelKeys?: string[];
+  fieldOfStudyNames?: string[];
 }
 
 export interface CreateInternshipInput extends CreatePostingBase {
@@ -130,6 +132,8 @@ export interface CreateInternshipInput extends CreatePostingBase {
   stipendCurrency?: string;   // default "PKR"
   durationMonths?: number;
   startDate?: string;         // YYYY-MM-DD
+  skillNames?: string[];
+  fieldOfStudyNames?: string[];
 }
 
 export type CreatePostingInput = CreateScholarshipInput | CreateInternshipInput;
@@ -287,6 +291,8 @@ export function toInternship(dto: PostingDto): Internship {
       dto.applyMethod === "external" && dto.externalUrl
         ? dto.externalUrl
         : `/postings/${dto.publicSlug}`,
+    detailUrl: `/postings/${dto.publicSlug}`,
+    isExternal: dto.applyMethod === "external" && !!dto.externalUrl,
     deadline: dto.deadlineAt ? dto.deadlineAt.slice(0, 10) : null,
     summary: dto.description ?? "",
     postedAt: (dto.postedAt ?? dto.createdAt).slice(0, 10),
@@ -329,6 +335,8 @@ export function toScholarship(dto: PostingDto): Scholarship {
       dto.applyMethod === "external" && dto.externalUrl
         ? dto.externalUrl
         : `/postings/${dto.publicSlug}`,
+    detailUrl: `/postings/${dto.publicSlug}`,
+    isExternal: dto.applyMethod === "external" && !!dto.externalUrl,
     summary: dto.description ?? "",
     postedAt: (dto.postedAt ?? dto.createdAt).slice(0, 10),
     isFullyFunded: /fully funded|full/i.test(dto.fundingAmount ?? ""),

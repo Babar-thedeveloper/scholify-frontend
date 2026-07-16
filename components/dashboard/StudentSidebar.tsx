@@ -40,7 +40,7 @@ function useSections(): SidebarSection[] {
     {
       label: "Profile",
       items: [
-        { label: "My Profile", href: "/dashboard/profile", Icon: User, meta: "85%" },
+        { label: "My Profile", href: "/dashboard/profile", Icon: User, meta: student?.completionPercent ? `${student.completionPercent}%` : undefined },
         { label: "My CV", href: "/dashboard/cv", Icon: FileText },
         { label: "Settings", href: "/dashboard/settings", Icon: Settings },
       ],

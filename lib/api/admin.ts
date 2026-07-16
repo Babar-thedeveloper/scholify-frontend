@@ -201,6 +201,8 @@ export interface CreatePlatformPostingInput {
   fundingAmount?: string;
   countryScope?: "pakistan" | "international" | "specific";
   specificCountry?: string;
+  degreeLevelKeys?: string[];
+  fieldOfStudyNames?: string[];
   // Internship
   workMode?: "remote" | "onsite" | "hybrid";
   city?: string;
@@ -209,6 +211,7 @@ export interface CreatePlatformPostingInput {
   stipendCurrency?: string;
   durationMonths?: number;
   startDate?: string;
+  skillNames?: string[];
 }
 
 export async function createPlatformPosting(

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Calendar,
@@ -9,11 +10,6 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { Scholarship } from "./scholarships.types";
 import {
   getCategoryPill,
@@ -65,6 +61,7 @@ function providerInitials(provider: string): string {
 }
 
 export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) {
+  const router = useRouter();
   const daysLeft = daysUntil(scholarship.deadline, new Date());
   const status = deadlineStatus(daysLeft);
 
@@ -170,37 +167,47 @@ export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) 
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-            <Button
-              size="sm"
-              className="relative z-20 gap-1 text-xs"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
-              }}
-              aria-label={`Direct apply for ${scholarship.title}`}
-            >
-              Apply
-              <ArrowRight className="size-3" aria-hidden="true" />
-            </Button>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="inline-flex w-full">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled
-                    className="relative z-20 w-full cursor-not-allowed text-xs"
-                    aria-label={`Apply with Scholify for ${scholarship.title} - coming soon`}
-                  >
-                    Scholify Apply
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>Coming soon</p>
-              </TooltipContent>
-            </Tooltip>
+            {scholarship.isExternal ? (
+              <>
+                <Button
+                  size="sm"
+                  className="relative z-20 gap-1 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
+                  }}
+                  aria-label={`Direct apply for ${scholarship.title}`}
+                >
+                  Apply
+                  <ArrowRight className="size-3" aria-hidden="true" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="relative z-20 w-full text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(scholarship.detailUrl);
+                  }}
+                  aria-label={`View full details for ${scholarship.title}`}
+                >
+                  Details
+                </Button>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                className="relative z-20 col-span-2 gap-1 text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(scholarship.detailUrl);
+                }}
+                aria-label={`Apply with Scholify for ${scholarship.title}`}
+              >
+                Apply with Scholify
+                <ArrowRight className="size-3" aria-hidden="true" />
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

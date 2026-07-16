@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   ArrowRight,
   Building2,
@@ -12,11 +13,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { Internship } from "./internships.types";
 import {
   getWorkModePill,
@@ -40,6 +36,7 @@ export function InternshipModal({
   open,
   onOpenChange,
 }: InternshipModalProps) {
+  const router = useRouter();
   if (!internship) return null;
 
   return (
@@ -115,39 +112,38 @@ export function InternshipModal({
 
           {/* Action buttons */}
           <div className="flex flex-col gap-2.5 sm:flex-row">
-            <Button
-              className="flex-1 gap-2"
-              onClick={() => {
-                window.open(
-                  internship.applyUrl,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-              }}
-              aria-label={`Apply on ${internship.company} for ${internship.title}`}
-            >
-              <ExternalLink className="size-4" aria-hidden="true" />
-              Apply on {internship.company}
-              <ArrowRight className="size-3.5" aria-hidden="true" />
-            </Button>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className="inline-flex flex-1">
-                  <Button
-                    variant="outline"
-                    disabled
-                    className="w-full cursor-not-allowed gap-2"
-                    aria-label={`Apply with Scholify for ${internship.title} - coming soon`}
-                  >
-                    Apply with Scholify
-                  </Button>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>One-click apply is coming soon</p>
-              </TooltipContent>
-            </Tooltip>
+            {internship.isExternal ? (
+              <>
+                <Button
+                  className="flex-1 gap-2"
+                  onClick={() => {
+                    window.open(internship.applyUrl, "_blank", "noopener,noreferrer");
+                  }}
+                  aria-label={`Apply on ${internship.company} for ${internship.title}`}
+                >
+                  <ExternalLink className="size-4" aria-hidden="true" />
+                  Apply on {internship.company}
+                  <ArrowRight className="size-3.5" aria-hidden="true" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 gap-2"
+                  onClick={() => router.push(internship.detailUrl)}
+                  aria-label={`View full details for ${internship.title}`}
+                >
+                  View full details
+                </Button>
+              </>
+            ) : (
+              <Button
+                className="flex-1 gap-2"
+                onClick={() => router.push(internship.detailUrl)}
+                aria-label={`Apply with Scholify for ${internship.title}`}
+              >
+                Apply with Scholify
+                <ArrowRight className="size-3.5" aria-hidden="true" />
+              </Button>
+            )}
           </div>
       </ModalBody>
     </Modal>

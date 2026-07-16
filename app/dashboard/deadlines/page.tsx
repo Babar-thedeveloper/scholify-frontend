@@ -1,12 +1,13 @@
-import { CalendarDays } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { CalendarDays, Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
-import {
-  MOCK_SAVED_ITEMS,
-  MOCK_APPLICATIONS,
-} from "@/components/dashboard/dashboard.mock";
 import { daysUntil, formatDeadline } from "@/components/dashboard/dashboard.utils";
 import { cn } from "@/lib/utils";
+import { listSaved, type SavedItemDto } from "@/lib/api/saved";
+import { listMyApplications, type ApplicationDto } from "@/lib/api/applications";
 
 interface DeadlineRow {
   key: string;
@@ -15,43 +16,70 @@ interface DeadlineRow {
   deadlineAt: string;
 }
 
-function buildDeadlines(): DeadlineRow[] {
-  const rows: DeadlineRow[] = [];
-
-  for (const item of MOCK_SAVED_ITEMS) {
-    if (item.deadlineAt) {
-      rows.push({
-        key: `saved-${item.id}`,
-        title: item.title,
-        org: item.organizationName,
-        deadlineAt: item.deadlineAt,
-      });
-    }
-  }
-
-  for (const app of MOCK_APPLICATIONS) {
-    if (app.deadlineAt) {
-      rows.push({
-        key: `app-${app.id}`,
-        title: app.itemTitle,
-        org: app.organizationName,
-        deadlineAt: app.deadlineAt,
-      });
-    }
-  }
-
-  return rows
-    .filter((row) => {
-      const left = daysUntil(row.deadlineAt);
-      return left !== null && left >= 0;
-    })
-    .sort(
-      (a, b) => (daysUntil(a.deadlineAt) ?? 0) - (daysUntil(b.deadlineAt) ?? 0)
-    );
-}
-
 export default function DeadlinesPage() {
-  const deadlines = buildDeadlines();
+  const [deadlines, setDeadlines] = useState<DeadlineRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [savedRes, appsRes] = await Promise.all([
+          listSaved(),
+          listMyApplications({ pageSize: 50 }),
+        ]);
+        if (cancelled) return;
+
+        const rows: DeadlineRow[] = [];
+
+        for (const item of savedRes.items) {
+          if (item.deadlineAt) {
+            rows.push({
+              key: `saved-${item.id}`,
+              title: item.postingTitle,
+              org: item.organizationName,
+              deadlineAt: item.deadlineAt,
+            });
+          }
+        }
+
+        for (const app of appsRes.items) {
+          if (app.deadlineAt) {
+            rows.push({
+              key: `app-${app.publicId}`,
+              title: app.postingTitle,
+              org: app.organizationName,
+              deadlineAt: app.deadlineAt,
+            });
+          }
+        }
+
+        const filtered = rows
+          .filter((row) => {
+            const left = daysUntil(row.deadlineAt);
+            return left !== null && left >= 0;
+          })
+          .sort(
+            (a, b) => (daysUntil(a.deadlineAt) ?? 0) - (daysUntil(b.deadlineAt) ?? 0)
+          );
+
+        setDeadlines(filtered);
+      } catch {
+        // empty state
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div>

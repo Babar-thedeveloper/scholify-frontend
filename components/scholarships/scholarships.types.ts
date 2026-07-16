@@ -12,6 +12,10 @@ export interface Scholarship {
   destination: string;
   deadline: string | null;
   applyUrl: string;
+  /** On-platform detail page (/postings/[slug]) — always available */
+  detailUrl: string;
+  /** True when the org accepts applications on an external site */
+  isExternal: boolean;
   summary: string;
   postedAt: string;
   isFullyFunded: boolean;

@@ -24,6 +24,10 @@ export interface Internship {
   duration: string;
   startDate: string | null;
   applyUrl: string;
+  /** On-platform detail page (/postings/[slug]) — always available */
+  detailUrl: string;
+  /** True when the org accepts applications on an external site */
+  isExternal: boolean;
   deadline: string | null;
   summary: string;
   postedAt: string;

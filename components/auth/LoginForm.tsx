@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ const initial: LoginValues = { email: "", password: "" };
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useUser();
   const [values, setValues] = useState<LoginValues>(initial);
   const [errors, setErrors] = useState<FieldErrors<LoginValues>>({});
@@ -54,7 +55,16 @@ export function LoginForm() {
     try {
       const { user, message } = await login({ email: values.email, password: values.password });
       toast.success(message);
-      router.push(deriveUiRole(user.roles) === "org" ? "/org/dashboard" : "/dashboard");
+      // Honor ?next= for internal paths (e.g. CV Builder from the navbar)
+      const nextPath = searchParams.get("next");
+      if (nextPath && nextPath.startsWith("/") && !nextPath.startsWith("//")) {
+        router.push(nextPath);
+      } else {
+        const uiRole = deriveUiRole(user.roles);
+        router.push(
+          uiRole === "admin" ? "/admin" : uiRole === "org" ? "/org/dashboard" : "/dashboard"
+        );
+      }
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.code === "EMAIL_NOT_VERIFIED") {
