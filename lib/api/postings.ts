@@ -22,6 +22,7 @@ export interface PostingDto {
   id: string;
   publicSlug: string;
   type: "internship" | "scholarship";
+  status: "draft" | "active" | "paused" | "closed" | "archived";
   title: string;
   description: string | null;
   eligibilityCriteria: string | null;

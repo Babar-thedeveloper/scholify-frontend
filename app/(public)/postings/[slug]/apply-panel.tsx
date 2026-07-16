@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
@@ -8,13 +8,15 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import { useUser } from "@/components/auth/UserContext";
-import { submitApplication } from "@/lib/api/applications";
+import { submitApplication, listMyApplications } from "@/lib/api/applications";
 import { ApiError } from "@/lib/api/client";
 import { handleApiError } from "@/lib/api/handle-error";
 
 interface Props {
   postingSlug: string;
   postingTitle: string;
+  postingId: string;
+  postingStatus: "draft" | "active" | "paused" | "closed" | "archived";
   applyMethod: "platform" | "external";
   externalUrl: string | null;
   deadlinePassed: boolean;
@@ -23,6 +25,8 @@ interface Props {
 export function ApplyPanel({
   postingSlug,
   postingTitle,
+  postingId,
+  postingStatus,
   applyMethod,
   externalUrl,
   deadlinePassed,
@@ -32,9 +36,34 @@ export function ApplyPanel({
   const [coverLetter, setCoverLetter] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [alreadyApplied, setAlreadyApplied] = useState(false);
+  const [checkingApplied, setCheckingApplied] = useState(true);
+
+  // ─── Check if student already applied ──────────────────────
+  useEffect(() => {
+    if (!isAuthed || user.role !== "student") {
+      setCheckingApplied(false);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await listMyApplications({ pageSize: 100 });
+        if (!cancelled) {
+          setAlreadyApplied(res.items.some((a) => a.postingId === postingId));
+        }
+      } catch {
+        // ignore — the submit handler will catch duplicates anyway
+      } finally {
+        if (!cancelled) setCheckingApplied(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isAuthed, user, postingId]);
 
   // ─── State-driven CTA copy ─────────────────────────────────
-  if (deadlinePassed) {
+  // Posting not active (closed, paused, draft, archived)
+  if (postingStatus !== "active" || deadlinePassed) {
     return (
       <div className="rounded-2xl border border-border bg-white p-5 text-sm text-muted-foreground dark:bg-card">
         This posting is no longer accepting applications.
@@ -100,6 +129,39 @@ export function ApplyPanel({
       <div className="rounded-2xl border border-border bg-white p-5 text-sm text-muted-foreground dark:bg-card">
         Only student accounts can apply on Scholify. Sign out and use your student account
         to apply.
+      </div>
+    );
+  }
+
+  // Still checking if already applied → show spinner
+  if (checkingApplied) {
+    return (
+      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+        <Loader2 className="size-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  // Already applied → show confirmation + link to track
+  if (alreadyApplied) {
+    return (
+      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-500/25 dark:bg-emerald-500/10">
+        <div className="flex items-start gap-2">
+          <CheckCircle2 className="mt-0.5 size-5 text-emerald-600" />
+          <div>
+            <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+              You&apos;ve already applied
+            </p>
+            <p className="mt-0.5 text-xs text-emerald-700 dark:text-emerald-400">
+              Track the status of your application from your dashboard.
+            </p>
+          </div>
+        </div>
+        <Button size="lg" className="mt-3 w-full" asChild>
+          <Link href="/dashboard/applications">
+            Go to my applications <ArrowRight className="size-4" />
+          </Link>
+        </Button>
       </div>
     );
   }

@@ -150,7 +150,7 @@ export default function ApplicationDetailPage() {
   const uiStatus = STATUS_MAP[detail.status] ?? "submitted";
   const currentStep = statusStepIndex(uiStatus);
   const rejected = uiStatus === "not-selected";
-  const canWithdraw = !["withdrawn", "not-selected", "accepted"].includes(uiStatus);
+  const canWithdraw = !["withdrawn", "not-selected"].includes(uiStatus);
   const timelineEvents = toTimeline(detail.timeline);
 
   return (

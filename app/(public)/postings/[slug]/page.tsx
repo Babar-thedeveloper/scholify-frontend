@@ -203,6 +203,8 @@ export default async function PostingDetailPage({ params }: Props) {
           <ApplyPanel
             postingSlug={posting.publicSlug}
             postingTitle={posting.title}
+            postingId={posting.id}
+            postingStatus={posting.status}
             applyMethod={posting.applyMethod}
             externalUrl={posting.externalUrl}
             deadlinePassed={!!deadlineDate && deadlineDate <= new Date()}
