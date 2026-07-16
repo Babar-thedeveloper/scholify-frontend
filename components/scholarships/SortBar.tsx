@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import type { ScholarshipFilters } from "./scholarships.types";
 
 interface SortBarProps {
@@ -61,12 +62,14 @@ export function SortBar({
         {count === 0 ? (
           <span className="text-gray-700 dark:text-gray-300">
             No scholarships match your filters.{" "}
-            <button
+            <Button
+              variant="link"
+              size="xs"
               onClick={onClearFilters}
-              className="font-medium text-primary underline-offset-2 hover:underline"
+              className="h-auto p-0 font-medium text-primary underline-offset-2 hover:underline"
             >
               Clear filters
-            </button>
+            </Button>
           </span>
         ) : (
           <span>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Download, Loader2, Mail, UserX } from "lucide-react";
+import { ArrowLeft, Download, Mail, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
@@ -12,6 +12,7 @@ import {
   type StatusChangePayload,
 } from "@/components/org/StatusChangeControl";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/components/dashboard/dashboard.utils";
 import type { ApplicationStatus } from "@/components/dashboard/dashboard.types";
@@ -95,7 +96,7 @@ export default function ApplicantDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
-        <Loader2 className="size-5 animate-spin" />
+        <Spinner size="md" />
       </div>
     );
   }

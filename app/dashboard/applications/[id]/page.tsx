@@ -10,12 +10,12 @@ import {
   Check,
   Copy,
   FileQuestion,
-  Loader2,
   MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { ApplicationTimeline } from "@/components/dashboard/ApplicationTimeline";
@@ -128,7 +128,7 @@ export default function ApplicationDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
-        <Loader2 className="size-5 animate-spin" />
+        <Spinner size="md" />
       </div>
     );
   }

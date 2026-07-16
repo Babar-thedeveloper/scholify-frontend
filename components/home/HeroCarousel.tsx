@@ -179,22 +179,24 @@ export function HeroCarousel() {
         })}
 
         {/* prev / next arrows */}
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={prev}
           aria-label="Previous announcement"
-          className="absolute left-3 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/35 md:flex"
+          className="absolute left-3 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/35 md:flex"
         >
           <ChevronLeft className="size-5" />
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={next}
           aria-label="Next announcement"
-          className="absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-center rounded-full bg-white/20 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/35 md:flex"
+          className="absolute right-3 top-1/2 z-10 hidden -translate-y-1/2 rounded-full bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/35 md:flex"
         >
           <ChevronRight className="size-5" />
-        </button>
+        </Button>
 
         {/* indicators */}
         <div className="absolute bottom-5 left-8 z-10 flex items-center gap-2 md:bottom-6">

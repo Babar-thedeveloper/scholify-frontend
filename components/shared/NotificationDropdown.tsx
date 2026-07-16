@@ -18,7 +18,6 @@ import {
   Bell,
   CalendarClock,
   CheckCircle2,
-  Loader2,
   Megaphone,
   UserPlus,
 } from "lucide-react";
@@ -27,6 +26,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { timeAgo } from "@/components/dashboard/dashboard.utils";
 import {
@@ -129,34 +130,38 @@ export function NotificationDropdown({ viewAllHref }: Props) {
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <button
-          className="relative flex size-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative rounded-full"
           aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`}
         >
           <Bell className="size-5" />
           {unread > 0 && (
             <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500 ring-2 ring-background" />
           )}
-        </button>
+        </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-[360px] p-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <p className="text-sm font-semibold text-foreground">Notifications</p>
           {unread > 0 && (
-            <button
+            <Button
+              variant="link"
+              size="xs"
               onClick={handleMarkAllRead}
-              className="text-xs font-medium text-primary hover:underline"
+              className="h-auto p-0 text-xs"
             >
               Mark all as read
-            </button>
+            </Button>
           )}
         </div>
 
         <div className="max-h-[360px] overflow-y-auto">
           {loadingList ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="size-4 animate-spin text-muted-foreground" />
+              <Spinner size="sm" />
             </div>
           ) : items.length === 0 ? (
             <p className="px-4 py-10 text-center text-sm text-muted-foreground">
@@ -207,7 +212,7 @@ export function NotificationDropdown({ viewAllHref }: Props) {
                 <button
                   key={n.id}
                   onClick={() => handleItemClick(n)}
-                  className="block w-full text-left"
+                  className="block w-full cursor-pointer text-left"
                 >
                   {content}
                 </button>

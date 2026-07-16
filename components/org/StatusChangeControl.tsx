@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -110,13 +112,13 @@ export function StatusChangeControl({ current, applicantName, onSubmit }: Props)
             <label className="text-sm font-medium text-foreground">
               Add a note <span className="text-muted-foreground">(optional)</span>
             </label>
-            <textarea
+            <Textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={3}
               disabled={submitting}
               placeholder="Share feedback with the applicant…"
-              className="resize-none rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+              className="resize-none"
             />
           </div>
           <label className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
@@ -127,7 +129,7 @@ export function StatusChangeControl({ current, applicantName, onSubmit }: Props)
       )}
 
       <Button className="mt-4 w-full" size="lg" disabled={!dirty || submitting} onClick={update}>
-        {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+        {submitting ? <Spinner size="sm" /> : null}
         Update status
       </Button>
     </div>

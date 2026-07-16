@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -82,8 +84,7 @@ const EMPTY_FORM: FormState = {
   externalUrl: "",
 };
 
-const textareaClass =
-  "min-h-24 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none placeholder:text-xs placeholder:text-muted-foreground/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+const textareaClass = "min-h-24";
 
 export default function NewPostingPage() {
   const router = useRouter();
@@ -343,7 +344,7 @@ export default function NewPostingPage() {
 
             <div className="space-y-1.5">
               <Label htmlFor="description">Description</Label>
-              <textarea
+              <Textarea
                 id="description"
                 className={textareaClass}
                 value={form.description}
@@ -356,7 +357,7 @@ export default function NewPostingPage() {
               <>
                 <div className="space-y-1.5">
                   <Label htmlFor="eligibility">Eligibility criteria</Label>
-                  <textarea
+                  <Textarea
                     id="eligibility"
                     className={textareaClass}
                     value={form.eligibility}
@@ -550,28 +551,20 @@ export default function NewPostingPage() {
 
                 <div className="space-y-2">
                   <Label>Stipend</Label>
-                  <div className="flex flex-wrap gap-4">
+                  <RadioGroup
+                    value={form.isPaid ? "paid" : "unpaid"}
+                    onValueChange={(v) => set("isPaid", v === "paid")}
+                    className="flex flex-wrap gap-4"
+                  >
                     <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                      <input
-                        type="radio"
-                        name="stipend"
-                        className="accent-emerald-600"
-                        checked={form.isPaid}
-                        onChange={() => set("isPaid", true)}
-                      />
+                      <RadioGroupItem value="paid" id="stipend-paid" />
                       Paid
                     </label>
                     <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                      <input
-                        type="radio"
-                        name="stipend"
-                        className="accent-emerald-600"
-                        checked={!form.isPaid}
-                        onChange={() => set("isPaid", false)}
-                      />
+                      <RadioGroupItem value="unpaid" id="stipend-unpaid" />
                       Unpaid
                     </label>
-                  </div>
+                  </RadioGroup>
                   {form.isPaid && (
                     <Input
                       type="number"
@@ -598,28 +591,20 @@ export default function NewPostingPage() {
             {/* Apply method (shared) */}
             <div className="space-y-2">
               <Label>Apply method</Label>
-              <div className="flex flex-wrap gap-4">
+              <RadioGroup
+                value={form.applyMethod}
+                onValueChange={(v) => set("applyMethod", v as "platform" | "external")}
+                className="flex flex-wrap gap-4"
+              >
                 <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                  <input
-                    type="radio"
-                    name="applyMethod"
-                    className="accent-emerald-600"
-                    checked={form.applyMethod === "platform"}
-                    onChange={() => set("applyMethod", "platform")}
-                  />
+                  <RadioGroupItem value="platform" id="apply-platform" />
                   Apply on Scholify
                 </label>
                 <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                  <input
-                    type="radio"
-                    name="applyMethod"
-                    className="accent-emerald-600"
-                    checked={form.applyMethod === "external"}
-                    onChange={() => set("applyMethod", "external")}
-                  />
+                  <RadioGroupItem value="external" id="apply-external" />
                   Apply externally
                 </label>
-              </div>
+              </RadioGroup>
               {form.applyMethod === "external" && (
                 <Input
                   value={form.externalUrl}

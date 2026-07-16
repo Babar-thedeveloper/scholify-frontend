@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AlertTriangle, Flag, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { listFeatureFlags, patchFeatureFlag, type FeatureFlag } from "@/lib/api/admin";
 
 export default function AdminFeatureFlagsPage() {
@@ -39,13 +40,15 @@ export default function AdminFeatureFlagsPage() {
           <h1 className="text-2xl font-bold text-foreground">Feature Flags</h1>
           <p className="text-sm text-muted-foreground">Toggle platform features without a deploy.</p>
         </div>
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={load}
-          className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-muted"
+          className="gap-1.5"
         >
           <RefreshCw className="size-3.5" />
           Refresh
-        </button>
+        </Button>
       </div>
 
       {error && (

@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   FileQuestion,
-  Loader2,
   Pause,
   Play,
   Send,
@@ -17,8 +16,10 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -89,8 +90,7 @@ const STATUS_STYLES = {
   archived: "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400",
 } as const;
 
-const textareaClass =
-  "min-h-24 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm transition-colors outline-none placeholder:text-xs placeholder:text-muted-foreground/50 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+const textareaClass = "min-h-24";
 
 export default function PostingDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -220,7 +220,7 @@ export default function PostingDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
-        <Loader2 className="size-5 animate-spin" />
+        <Spinner size="md" />
       </div>
     );
   }
@@ -283,7 +283,7 @@ export default function PostingDetailPage() {
 
               <div className="space-y-1.5">
                 <Label htmlFor="description">Description</Label>
-                <textarea
+                <Textarea
                   id="description"
                   className={textareaClass}
                   value={description}
@@ -333,7 +333,7 @@ export default function PostingDetailPage() {
             {/* Action bar — buttons shown depend on current status */}
             <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
               <Button onClick={handleSave} disabled={saving || busy}>
-                {saving ? <Loader2 className="size-4 animate-spin" /> : null}
+                {saving ? <Spinner size="sm" /> : null}
                 Save changes
               </Button>
 
@@ -381,7 +381,7 @@ export default function PostingDetailPage() {
         <TabsContent value="applicants">
           {applicantsLoading ? (
             <div className="flex items-center justify-center py-16 text-muted-foreground">
-              <Loader2 className="size-5 animate-spin" />
+              <Spinner size="md" />
             </div>
           ) : applicants.length === 0 ? (
             <EmptyState

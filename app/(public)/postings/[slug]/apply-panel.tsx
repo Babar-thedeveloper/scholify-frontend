@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import { useUser } from "@/components/auth/UserContext";
 import { submitApplication, listMyApplications } from "@/lib/api/applications";
@@ -91,7 +93,7 @@ export function ApplyPanel({
   if (isLoading) {
     return (
       <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
-        <Loader2 className="size-5 animate-spin text-muted-foreground" />
+        <Spinner size="md" />
       </div>
     );
   }
@@ -137,7 +139,7 @@ export function ApplyPanel({
   if (checkingApplied) {
     return (
       <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
-        <Loader2 className="size-5 animate-spin text-muted-foreground" />
+        <Spinner size="md" />
       </div>
     );
   }
@@ -235,14 +237,14 @@ export function ApplyPanel({
           <label htmlFor="cover-letter" className="text-sm font-medium">
             Cover letter <span className="text-muted-foreground">(optional)</span>
           </label>
-          <textarea
+          <Textarea
             id="cover-letter"
             value={coverLetter}
             onChange={(e) => setCoverLetter(e.target.value)}
             rows={6}
             maxLength={4000}
             placeholder="Why are you a great fit for this opportunity?"
-            className="mt-1.5 min-h-32 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+            className="mt-1.5 min-h-32"
           />
           <p className="mt-1 text-xs text-muted-foreground">
             {coverLetter.length}/4000
@@ -251,7 +253,7 @@ export function ApplyPanel({
 
         <ModalFooter className="flex justify-end">
           <Button onClick={handleSubmit} disabled={submitting}>
-            {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+            {submitting ? <Spinner size="sm" /> : null}
             Submit application
           </Button>
         </ModalFooter>

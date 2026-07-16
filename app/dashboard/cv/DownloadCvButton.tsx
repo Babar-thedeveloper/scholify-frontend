@@ -8,8 +8,9 @@
 // ─────────────────────────────────────────────────────────────
 import { useState } from "react";
 import { pdf } from "@react-pdf/renderer";
-import { Download, Loader2 } from "lucide-react";
+import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import type { CvDto } from "@/lib/api/cv";
 import EuropassPdf from "./EuropassPdf";
 import ModernPdf from "./ModernPdf";
@@ -49,7 +50,7 @@ export default function DownloadCvButton({ cv, templateKey }: Props) {
   return (
     <Button size="lg" onClick={handleDownload} disabled={generating}>
       {generating
-        ? <Loader2 className="size-4 animate-spin" />
+        ? <Spinner size="sm" />
         : <Download className="size-4" />}
       {generating ? "Generating…" : "Download PDF"}
     </Button>

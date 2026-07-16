@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays, Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
+import { CalendarDays } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { daysUntil, formatDeadline } from "@/components/dashboard/dashboard.utils";
@@ -76,7 +77,7 @@ export default function DeadlinesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        <Spinner size="lg" />
       </div>
     );
   }

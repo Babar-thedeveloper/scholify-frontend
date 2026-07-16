@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Briefcase, Loader2 } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
+import { Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { ApplicationCard } from "@/components/dashboard/ApplicationCard";
@@ -108,7 +109,7 @@ export default function ApplicationsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-muted-foreground">
-          <Loader2 className="size-5 animate-spin" />
+          <Spinner size="md" />
         </div>
       ) : error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">

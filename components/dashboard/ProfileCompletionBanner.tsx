@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
 export function ProfileCompletionBanner({ percent = 85 }: { percent?: number }) {
@@ -25,12 +26,11 @@ export function ProfileCompletionBanner({ percent = 85 }: { percent?: number }) 
             </div>
           </div>
         </div>
-        <Link
-          href="/dashboard/profile"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600"
-        >
-          Complete profile <ArrowRight className="size-4" />
-        </Link>
+        <Button asChild className="shrink-0 gap-1.5 bg-amber-500 hover:bg-amber-600">
+          <Link href="/dashboard/profile">
+            Complete profile <ArrowRight className="size-4" />
+          </Link>
+        </Button>
       </div>
     </div>
   );

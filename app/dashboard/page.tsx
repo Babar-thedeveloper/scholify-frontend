@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
-import { ArrowRight, Bookmark, CalendarClock, ListChecks, Loader2, Target } from "lucide-react";
+import { ArrowRight, Bookmark, CalendarClock, ListChecks, Target } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ApplicationCard } from "@/components/dashboard/ApplicationCard";
 import { ProfileCompletionBanner } from "@/components/dashboard/ProfileCompletionBanner";
@@ -93,7 +94,7 @@ export default function StudentOverviewPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        <Spinner size="lg" />
       </div>
     );
   }

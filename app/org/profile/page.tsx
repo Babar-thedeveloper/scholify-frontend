@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { BadgeCheck, Loader2, Save } from "lucide-react";
+import { BadgeCheck, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -21,8 +23,7 @@ import {
 } from "@/lib/api/organizations";
 import { handleApiError } from "@/lib/api/handle-error";
 
-const TEXTAREA_CLASS =
-  "flex w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+const TEXTAREA_CLASS = "";
 
 const ORG_KIND_OPTIONS = [
   { value: "scholarship_provider", label: "Scholarship Provider" },
@@ -122,7 +123,7 @@ export default function OrgProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20 text-muted-foreground">
-        <Loader2 className="mr-2 size-4 animate-spin" /> Loading profile…
+        <Spinner size="sm" className="mr-2" /> Loading profile…
       </div>
     );
   }
@@ -168,7 +169,7 @@ export default function OrgProfilePage() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="orgDescription">Description / about</Label>
-              <textarea
+              <Textarea
                 id="orgDescription"
                 rows={4}
                 value={description}
@@ -199,7 +200,7 @@ export default function OrgProfilePage() {
 
           <div className="mt-5 flex justify-end">
             <Button onClick={() => saveSection("branding")} disabled={saving === "branding"}>
-              {saving === "branding" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              {saving === "branding" ? <Spinner size="sm" /> : <Save className="size-4" />}
               Save changes
             </Button>
           </div>
@@ -229,7 +230,7 @@ export default function OrgProfilePage() {
 
           <div className="mt-5 flex justify-end">
             <Button onClick={() => saveSection("presence")} disabled={saving === "presence"}>
-              {saving === "presence" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              {saving === "presence" ? <Spinner size="sm" /> : <Save className="size-4" />}
               Save changes
             </Button>
           </div>
@@ -252,7 +253,7 @@ export default function OrgProfilePage() {
 
           <div className="mt-5 flex justify-end">
             <Button onClick={() => saveSection("contact")} disabled={saving === "contact"}>
-              {saving === "contact" ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              {saving === "contact" ? <Spinner size="sm" /> : <Save className="size-4" />}
               Save changes
             </Button>
           </div>

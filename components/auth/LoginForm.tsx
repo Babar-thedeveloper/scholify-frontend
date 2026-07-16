@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { FormField } from "./FormField";
 import { PasswordInput } from "./PasswordInput";
@@ -147,7 +148,7 @@ export function LoginForm() {
         <Button type="submit" className="mt-1 h-9 w-full text-sm font-semibold transition-all hover:shadow-lg hover:shadow-emerald-600/25" disabled={submitting}>
           {submitting ? (
             <>
-              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+              <Spinner size="sm" aria-hidden="true" />
               Signing in...
             </>
           ) : (

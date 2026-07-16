@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BriefcaseBusiness, Loader2, ShieldAlert, Sparkles, UserPlus, Users } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, ShieldAlert, Sparkles, UserPlus, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { PostingCard } from "@/components/org/PostingCard";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
@@ -80,7 +82,7 @@ export default function OrgDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -107,12 +109,11 @@ export default function OrgDashboardPage() {
               </p>
             </div>
           </div>
-          <Link
-            href="/org/profile"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"
-          >
-            Speed up verification <ArrowRight className="size-4" />
-          </Link>
+          <Button asChild className="shrink-0 gap-1.5 bg-amber-500 hover:bg-amber-600">
+            <Link href="/org/profile">
+              Speed up verification <ArrowRight className="size-4" />
+            </Link>
+          </Button>
         </div>
       )}
 

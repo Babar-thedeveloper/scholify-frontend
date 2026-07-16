@@ -1,4 +1,11 @@
 import { Users } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ApplicantRow } from "./ApplicantRow";
 import type { Applicant } from "@/components/dashboard/dashboard.types";
 
@@ -22,25 +29,23 @@ export function ApplicantTable({ applicants, showPosting = false }: ApplicantTab
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-white dark:bg-card">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-border bg-muted/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              <th className="px-4 py-3">Student</th>
-              <th className="px-4 py-3">University</th>
-              {showPosting && <th className="hidden px-4 py-3 lg:table-cell">Posting</th>}
-              <th className="px-4 py-3">GPA</th>
-              <th className="hidden px-4 py-3 sm:table-cell">Applied</th>
-              <th className="px-4 py-3">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applicants.map((a) => (
-              <ApplicantRow key={a.id} applicant={a} showPosting={showPosting} />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/40 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <TableHead>Student</TableHead>
+            <TableHead>University</TableHead>
+            {showPosting && <TableHead className="hidden lg:table-cell">Posting</TableHead>}
+            <TableHead>GPA</TableHead>
+            <TableHead className="hidden sm:table-cell">Applied</TableHead>
+            <TableHead>Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {applicants.map((a) => (
+            <ApplicantRow key={a.id} applicant={a} showPosting={showPosting} />
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

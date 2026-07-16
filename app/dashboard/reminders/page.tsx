@@ -13,7 +13,6 @@ import Link from "next/link";
 import {
   Bell,
   CalendarClock,
-  Loader2,
   Mail,
   MessageSquare,
   Pencil,
@@ -22,6 +21,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import {
@@ -137,7 +137,7 @@ export default function RemindersPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20 text-muted-foreground">
-          <Loader2 className="mr-2 size-4 animate-spin" /> Loading…
+          <Spinner size="sm" className="mr-2" /> Loading…
         </div>
       ) : reminders.length === 0 ? (
         <EmptyState
@@ -262,7 +262,7 @@ export default function RemindersPage() {
             Cancel
           </Button>
           <Button onClick={saveEdit} disabled={saving}>
-            {saving && <Loader2 className="size-4 animate-spin" />}
+            {saving && <Spinner size="sm" />}
             Save changes
           </Button>
         </ModalFooter>

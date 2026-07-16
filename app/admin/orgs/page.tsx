@@ -13,6 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   listAdminOrgs,
   type AdminOrg,
   type PaginatedResponse,
@@ -109,59 +117,59 @@ export default function AdminOrgsPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-border bg-white dark:bg-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/40">
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Organization</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Industry</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Country</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Members</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Joined</th>
-              <th className="w-16 px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
+      <div className="overflow-hidden rounded-xl border border-border bg-white dark:bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40">
+              <TableHead>Organization</TableHead>
+              <TableHead>Industry</TableHead>
+              <TableHead>Country</TableHead>
+              <TableHead>Members</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Joined</TableHead>
+              <TableHead className="w-16" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {!data && (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+              <TableRow>
+                <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
                   Loading…
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
             {data?.items.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+              <TableRow>
+                <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
                   No organizations found.
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
             {data?.items.map((org) => (
-              <tr key={org.id} className="border-b border-border last:border-0 hover:bg-muted/30">
-                <td className="px-4 py-3 font-medium text-foreground">
+              <TableRow key={org.id}>
+                <TableCell className="font-medium text-foreground">
                   <div>{org.name}</div>
                   <div className="text-xs text-muted-foreground">{org.slug}</div>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{org.industry ?? "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{org.country}</td>
-                <td className="px-4 py-3 text-muted-foreground">{org.memberCount}</td>
-                <td className="px-4 py-3">{statusBadge(org.verificationStatus)}</td>
-                <td className="px-4 py-3 text-muted-foreground">
+                </TableCell>
+                <TableCell className="text-muted-foreground">{org.industry ?? "—"}</TableCell>
+                <TableCell className="text-muted-foreground">{org.country}</TableCell>
+                <TableCell className="text-muted-foreground">{org.memberCount}</TableCell>
+                <TableCell>{statusBadge(org.verificationStatus)}</TableCell>
+                <TableCell className="text-muted-foreground">
                   {new Date(org.createdAt).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "numeric" })}
-                </td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell>
                   <Link
                     href={`/admin/orgs/${org.id}`}
                     className="text-xs font-medium text-emerald-600 hover:underline dark:text-emerald-400"
                   >
                     Review
                   </Link>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {/* Pagination */}

@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Clock, Loader2, Trash2, UserPlus, Users } from "lucide-react";
+import { Clock, Trash2, UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -182,7 +183,7 @@ export default function TeamPage() {
                 Cancel
               </Button>
               <Button onClick={sendInvite} disabled={!inviteEmail.trim() || inviting}>
-                {inviting && <Loader2 className="size-4 animate-spin" />}
+                {inviting && <Spinner size="sm" />}
                 Send invite
               </Button>
             </ModalFooter>
@@ -192,7 +193,7 @@ export default function TeamPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20 text-muted-foreground">
-          <Loader2 className="mr-2 size-4 animate-spin" /> Loading team…
+          <Spinner size="sm" className="mr-2" /> Loading team…
         </div>
       ) : members.length === 0 && invitations.length === 0 ? (
         <EmptyState
@@ -257,7 +258,7 @@ export default function TeamPage() {
                           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                         >
                           {busyId === m.userId
-                            ? <Loader2 className="size-4 animate-spin" />
+                            ? <Spinner size="sm" />
                             : <Trash2 className="size-4" />}
                         </Button>
                       }
@@ -302,7 +303,7 @@ export default function TeamPage() {
                         className="text-muted-foreground hover:text-destructive"
                       >
                         {busyId === inv.id
-                          ? <Loader2 className="size-4 animate-spin" />
+                          ? <Spinner size="sm" />
                           : <Trash2 className="size-4" />}
                       </Button>
                     }

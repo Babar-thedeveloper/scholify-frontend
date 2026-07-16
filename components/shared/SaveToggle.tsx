@@ -9,9 +9,10 @@
 //   what's in the DB
 // ─────────────────────────────────────────────────────────────
 import { useEffect, useState } from "react";
-import { Bookmark, Loader2 } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useUser } from "@/components/auth/UserContext";
 import { savePosting, savedStatus, unsavePosting } from "@/lib/api/saved";
 import { ApiError } from "@/lib/api/client";
@@ -83,7 +84,7 @@ export function SaveToggle({
       disabled={busy || !hydrated}
     >
       {busy ? (
-        <Loader2 className="size-4 animate-spin" />
+        <Spinner size="sm" />
       ) : (
         <Bookmark className={saved ? "size-4 fill-current" : "size-4"} />
       )}

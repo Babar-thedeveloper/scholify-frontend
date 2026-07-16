@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Loader2 } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 interface ConfirmModalProps {
@@ -65,7 +66,7 @@ export function ConfirmModal({
                   "bg-destructive text-destructive-foreground hover:bg-destructive/90"
               )}
             >
-              {busy && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {busy && <Spinner size="sm" className="mr-2" />}
               {confirmText}
             </Button>
           </AlertDialogAction>

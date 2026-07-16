@@ -11,9 +11,10 @@
 //   remove it (delete → back to "Remind me")
 // ─────────────────────────────────────────────────────────────
 import { useEffect, useState } from "react";
-import { BellRing, Loader2, Trash2 } from "lucide-react";
+import { BellRing, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import {
   Select,
@@ -185,7 +186,7 @@ export function RemindMeButton({ postingId, postingSlug, deadlineAt }: Props) {
           Cancel
         </Button>
         <Button onClick={save} disabled={busy}>
-          {busy && <Loader2 className="size-4 animate-spin" />}
+          {busy && <Spinner size="sm" />}
           {existing ? "Save changes" : "Set reminder"}
         </Button>
       </ModalFooter>

@@ -17,9 +17,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { Building2, CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError } from "@/lib/api/client";
@@ -92,7 +93,7 @@ export function AcceptInviteClient({ token }: Props) {
     return (
       <div className="flex flex-col items-center text-center">
         <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-emerald-100 text-primary dark:bg-emerald-500/15">
-          <Loader2 className="size-6 animate-spin" />
+          <Spinner size="lg" />
         </div>
         <p className="text-sm text-muted-foreground">Loading your invitation…</p>
       </div>
@@ -192,7 +193,7 @@ export function AcceptInviteClient({ token }: Props) {
             onClick={handleAccept}
             disabled={submitting || !fullName.trim() || password.length < 8}
           >
-            {submitting && <Loader2 className="size-4 animate-spin" />}
+            {submitting && <Spinner size="sm" />}
             Create account &amp; join {info.orgName}
           </Button>
         </div>
@@ -206,7 +207,7 @@ export function AcceptInviteClient({ token }: Props) {
           </p>
 
           <Button className="w-full" onClick={handleAccept} disabled={submitting}>
-            {submitting && <Loader2 className="size-4 animate-spin" />}
+            {submitting && <Spinner size="sm" />}
             Accept &amp; join {info?.orgName}
           </Button>
 

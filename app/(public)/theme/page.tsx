@@ -11,6 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
@@ -42,7 +43,6 @@ import {
   Check,
   ChevronRight,
   Italic,
-  Loader2,
   Mail,
   Plus,
   Underline,
@@ -79,7 +79,7 @@ export default function ComponentReferencePage() {
             <Plus />
           </Button>
           <Button disabled>
-            <Loader2 className="animate-spin" />
+            <Spinner />
             Loading
           </Button>
         </div>

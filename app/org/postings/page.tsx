@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FileText, Loader2, Plus } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { PostingCard } from "@/components/org/PostingCard";
@@ -81,7 +82,7 @@ export default function OrgPostingsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-muted-foreground">
-          <Loader2 className="size-5 animate-spin" />
+          <Spinner size="md" />
         </div>
       ) : error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">

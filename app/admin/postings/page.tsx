@@ -3,7 +3,16 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   adminDeletePosting,
   forcePostingStatus,
@@ -87,12 +96,11 @@ export default function AdminPostingsPage() {
           <h1 className="text-2xl font-bold text-foreground">All Postings</h1>
           <p className="text-sm text-muted-foreground">Manage every posting across all organizations + platform posts.</p>
         </div>
-        <Link
-          href="/admin/postings/create"
-          className="flex items-center gap-1.5 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-        >
-          <Plus className="size-4" /> New Platform Post
-        </Link>
+        <Button asChild size="sm" className="gap-1.5">
+          <Link href="/admin/postings/create">
+            <Plus className="size-4" /> New Platform Post
+          </Link>
+        </Button>
       </div>
 
       {/* Filters */}
@@ -130,87 +138,95 @@ export default function AdminPostingsPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-xl border border-border bg-white dark:bg-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/40">
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Title</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Org</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Type</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Deadline</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Applicants</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!data && <tr><td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>}
-            {data?.items.length === 0 && <tr><td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">No postings found.</td></tr>}
+      <div className="overflow-hidden rounded-xl border border-border bg-white dark:bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40">
+              <TableHead>Title</TableHead>
+              <TableHead>Org</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Deadline</TableHead>
+              <TableHead>Applicants</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {!data && <TableRow><TableCell colSpan={7} className="py-8 text-center text-muted-foreground">Loading…</TableCell></TableRow>}
+            {data?.items.length === 0 && <TableRow><TableCell colSpan={7} className="py-8 text-center text-muted-foreground">No postings found.</TableCell></TableRow>}
             {data?.items.map((p) => (
-              <tr key={p.id} className="border-b border-border last:border-0 hover:bg-muted/30">
-                <td className="px-4 py-3">
+              <TableRow key={p.id}>
+                <TableCell>
                   <div className="font-medium text-foreground max-w-[220px] truncate">{p.title}</div>
                   {p.isPlatformPost && (
                     <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Platform post</span>
                   )}
-                </td>
-                <td className="px-4 py-3 text-muted-foreground text-xs max-w-[120px] truncate">{p.orgName}</td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell className="text-muted-foreground text-xs max-w-[120px] truncate">{p.orgName}</TableCell>
+                <TableCell>
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${TYPE_COLORS[p.type] ?? ""}`}>
                     {p.type}
                   </span>
-                </td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell>
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${STATUS_COLORS[p.status] ?? ""}`}>
                     {p.status}
                   </span>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground text-xs">
+                </TableCell>
+                <TableCell className="text-muted-foreground text-xs">
                   {p.deadlineAt ? new Date(p.deadlineAt).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "numeric" }) : "—"}
-                </td>
-                <td className="px-4 py-3 text-muted-foreground tabular-nums">{p.applicantCount}</td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell className="text-muted-foreground tabular-nums">{p.applicantCount}</TableCell>
+                <TableCell>
                   <div className="flex items-center gap-1">
                     {p.status !== "active" && (
-                      <button
+                      <Button
+                        variant="outline"
+                        size="xs"
                         onClick={() => handleForceStatus(p, "active")}
                         disabled={!!actionPending}
-                        className="rounded px-2 py-1 text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 disabled:opacity-50"
+                        className="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400"
                       >
                         Publish
-                      </button>
+                      </Button>
                     )}
                     {p.status === "active" && (
-                      <button
+                      <Button
+                        variant="outline"
+                        size="xs"
                         onClick={() => handleForceStatus(p, "paused")}
                         disabled={!!actionPending}
-                        className="rounded px-2 py-1 text-xs font-medium bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400 disabled:opacity-50"
+                        className="bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400"
                       >
                         Pause
-                      </button>
+                      </Button>
                     )}
                     {p.status !== "closed" && (
-                      <button
+                      <Button
+                        variant="outline"
+                        size="xs"
                         onClick={() => handleForceStatus(p, "closed")}
                         disabled={!!actionPending}
-                        className="rounded px-2 py-1 text-xs font-medium bg-slate-50 text-slate-600 hover:bg-slate-100 dark:bg-slate-500/10 dark:text-slate-400 disabled:opacity-50"
+                        className="bg-slate-50 text-slate-600 hover:bg-slate-100 dark:bg-slate-500/10 dark:text-slate-400"
                       >
                         Close
-                      </button>
+                      </Button>
                     )}
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
                       onClick={() => handleDelete(p)}
                       disabled={!!actionPending}
-                      className="flex items-center justify-center size-7 rounded hover:bg-red-50 text-muted-foreground hover:text-red-600 dark:hover:bg-red-500/10 disabled:opacity-50"
+                      className="text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
                     >
                       <Trash2 className="size-3.5" />
-                    </button>
+                    </Button>
                   </div>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {data && data.totalPages > 1 && (

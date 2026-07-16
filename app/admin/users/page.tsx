@@ -2,7 +2,15 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle, ChevronLeft, ChevronRight, Search, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { assignUserRole, listAdminUsers, type AdminUser, type PaginatedResponse } from "@/lib/api/admin";
 
 const ALL_ROLES = [
@@ -55,7 +63,7 @@ export default function AdminUsersPage() {
     setError(null);
     listAdminUsers({
       search: debouncedSearch || undefined,
-      role: roleFilter || undefined,
+      role: roleFilter && roleFilter !== "all" ? roleFilter : undefined,
       page,
       pageSize: 25,
     }).then(setData).catch((e) => setError(e?.message ?? "Failed to load"));
@@ -88,16 +96,20 @@ export default function AdminUsersPage() {
           <Input className="pl-9" placeholder="Search email…" value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
         </div>
-        <select
+        <Select
           value={roleFilter}
-          onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-          className="h-9 rounded-md border border-border bg-white px-3 text-sm text-foreground dark:bg-card"
+          onValueChange={(v) => { setRoleFilter(v); setPage(1); }}
         >
-          <option value="">All Roles</option>
-          {ALL_ROLES.map((r) => (
-            <option key={r} value={r}>{r.replace(/_/g, " ")}</option>
-          ))}
-        </select>
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="All Roles" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Roles</SelectItem>
+            {ALL_ROLES.map((r) => (
+              <SelectItem key={r} value={r}>{r.replace(/_/g, " ")}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {error && (

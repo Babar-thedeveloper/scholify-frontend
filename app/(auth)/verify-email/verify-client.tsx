@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, Mail, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { ApiError } from "@/lib/api/client";
 import { handleApiError } from "@/lib/api/handle-error";
 import { resendVerification, verifyEmail } from "@/lib/api/auth";
@@ -125,7 +126,7 @@ function InboxPendingView({ email }: { email?: string }) {
         <Button variant="ghost" size="sm" onClick={handleResend} disabled={sending} className="text-sm">
           {sending ? (
             <>
-              <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+              <Spinner size="sm" className="size-3.5" aria-hidden="true" />
               Resending…
             </>
           ) : (

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Loader2, Users } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
+import { Users } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ApplicantTable } from "@/components/org/ApplicantTable";
@@ -203,7 +204,7 @@ export default function ApplicantsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-muted-foreground">
-          <Loader2 className="size-5 animate-spin" />
+          <Spinner size="md" />
         </div>
       ) : error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">

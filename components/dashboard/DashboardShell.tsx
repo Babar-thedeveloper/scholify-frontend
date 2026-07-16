@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScholifyLogo } from "@/components/scholify-logo";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -35,12 +36,13 @@ export function DashboardShell({ variant, sidebar, children }: DashboardShellPro
           <div className="flex items-center gap-2">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <button
-                  className="flex size-9 items-center justify-center rounded-md text-foreground hover:bg-muted"
+                <Button
+                  variant="ghost"
+                  size="icon"
                   aria-label="Open menu"
                 >
                   <Menu className="size-5" />
-                </button>
+                </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-72 p-0" showCloseButton={false}>
                 <SheetTitle className="sr-only">Navigation</SheetTitle>

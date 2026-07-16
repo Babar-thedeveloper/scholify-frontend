@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BadgeCheck, Camera, Check, Loader2, Save, ShieldCheck } from "lucide-react";
+import { BadgeCheck, Camera, Check, Save, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -192,7 +193,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
-        <Loader2 className="size-5 animate-spin" />
+        <Spinner size="md" />
       </div>
     );
   }
@@ -234,13 +235,15 @@ export default function ProfilePage() {
             <span className="flex size-20 items-center justify-center rounded-full bg-emerald-100 text-2xl font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
               {initialsStr}
             </span>
-            <button
-              className="absolute -bottom-1 -right-1 flex size-8 items-center justify-center rounded-full border-2 border-white bg-primary text-primary-foreground shadow-sm dark:border-card"
+            <Button
+              variant="default"
+              size="icon-sm"
+              className="absolute -bottom-1 -right-1 rounded-full border-2 border-white shadow-sm dark:border-card"
               aria-label="Upload photo"
               onClick={() => toast.info("Photo upload — coming soon")}
             >
               <Camera className="size-4" />
-            </button>
+            </Button>
           </div>
           <div>
             <p className="text-sm font-medium text-foreground">Profile photo</p>
@@ -279,7 +282,7 @@ export default function ProfilePage() {
         <div className="mt-5 flex justify-end">
           <Button onClick={savePersonal} disabled={savingSection === "personal"}>
             {savingSection === "personal" ? (
-              <Loader2 className="size-4 animate-spin" />
+              <Spinner size="sm" />
             ) : (
               <Save className="size-4" />
             )}
@@ -369,7 +372,7 @@ export default function ProfilePage() {
         <div className="mt-5 flex justify-end">
           <Button onClick={saveAcademic} disabled={savingSection === "academic"}>
             {savingSection === "academic" ? (
-              <Loader2 className="size-4 animate-spin" />
+              <Spinner size="sm" />
             ) : (
               <Save className="size-4" />
             )}
@@ -420,7 +423,7 @@ export default function ProfilePage() {
         <div className="mt-5 flex justify-end">
           <Button onClick={saveAddress} disabled={savingSection === "address"}>
             {savingSection === "address" ? (
-              <Loader2 className="size-4 animate-spin" />
+              <Spinner size="sm" />
             ) : (
               <Save className="size-4" />
             )}
@@ -450,7 +453,7 @@ export default function ProfilePage() {
             className="shrink-0"
           >
             {verifying ? (
-              <Loader2 className="size-4 animate-spin" />
+              <Spinner size="sm" />
             ) : verified ? (
               <Check className="size-4" />
             ) : (

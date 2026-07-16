@@ -2,7 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { listAdminStudents, verifyStudent, type AdminStudent, type PaginatedResponse } from "@/lib/api/admin";
 
 export default function AdminStudentsPage() {
@@ -85,31 +94,31 @@ export default function AdminStudentsPage() {
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-xl border border-border bg-white dark:bg-card">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/40">
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Student</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Profile</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Verified</th>
-              <th className="px-4 py-3 text-left font-medium text-muted-foreground">Since</th>
-              <th className="w-24 px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
+      <div className="overflow-hidden rounded-xl border border-border bg-white dark:bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40">
+              <TableHead>Student</TableHead>
+              <TableHead>Profile</TableHead>
+              <TableHead>Verified</TableHead>
+              <TableHead>Since</TableHead>
+              <TableHead className="w-24" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {!data && (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">Loading…</td></tr>
+              <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">Loading…</TableCell></TableRow>
             )}
             {data?.items.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">No students found.</td></tr>
+              <TableRow><TableCell colSpan={5} className="py-8 text-center text-muted-foreground">No students found.</TableCell></TableRow>
             )}
             {data?.items.map((s) => (
-              <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/30">
-                <td className="px-4 py-3">
+              <TableRow key={s.id}>
+                <TableCell>
                   <div className="font-medium text-foreground">{s.fullName ?? "—"}</div>
                   <div className="text-xs text-muted-foreground">{s.email}</div>
-                </td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell>
                   <div className="flex items-center gap-2">
                     <div className="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
                       <div
@@ -119,8 +128,8 @@ export default function AdminStudentsPage() {
                     </div>
                     <span className="text-xs text-muted-foreground">{s.completionPercent}%</span>
                   </div>
-                </td>
-                <td className="px-4 py-3">
+                </TableCell>
+                <TableCell>
                   {s.isVerifiedStudent ? (
                     <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
                       Verified
@@ -130,27 +139,28 @@ export default function AdminStudentsPage() {
                       Unverified
                     </span>
                   )}
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">
+                </TableCell>
+                <TableCell className="text-muted-foreground">
                   {new Date(s.createdAt).toLocaleDateString("en-PK", { year: "numeric", month: "short" })}
-                </td>
-                <td className="px-4 py-3">
-                  <button
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="xs"
                     disabled={toggling === s.id}
                     onClick={() => toggle(s)}
-                    className={`rounded-md px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
-                      s.isVerifiedStudent
-                        ? "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400"
-                        : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400"
-                    }`}
+                    className={s.isVerifiedStudent
+                      ? "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400"
+                      : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400"
+                    }
                   >
                     {toggling === s.id ? "…" : s.isVerifiedStudent ? "Revoke" : "Verify"}
-                  </button>
-                </td>
-              </tr>
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {data && data.totalPages > 1 && (

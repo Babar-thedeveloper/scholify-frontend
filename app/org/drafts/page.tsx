@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FileEdit, Loader2, Plus } from "lucide-react";
+import { FileEdit, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { PostingCard } from "@/components/org/PostingCard";
@@ -37,7 +38,7 @@ export default function DraftsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        <Spinner size="lg" />
       </div>
     );
   }

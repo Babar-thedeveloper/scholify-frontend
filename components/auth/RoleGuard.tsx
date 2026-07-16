@@ -3,8 +3,9 @@
 // Client-side role gate for the mock auth. When real auth lands,
 // replace the redirect logic with a server-side session check.
 import { useEffect } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import {} from "lucide-react";
 import { useUser, type UserRole } from "./UserContext";
 
 interface RoleGuardProps {
@@ -29,7 +30,7 @@ export function RoleGuard({ allow, children }: RoleGuardProps) {
   if (isLoading || role !== allow) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        <Spinner size="lg" />
       </div>
     );
   }

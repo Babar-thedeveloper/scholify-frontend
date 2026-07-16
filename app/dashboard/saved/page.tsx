@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
 import {
   Bookmark,
   Briefcase,
   CalendarClock,
   GraduationCap,
-  Loader2,
   MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -104,7 +104,7 @@ export default function SavedItemsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-muted-foreground">
-          <Loader2 className="size-5 animate-spin" />
+          <Spinner size="md" />
         </div>
       ) : error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">

@@ -8,12 +8,12 @@ import {
   CalendarClock,
   CheckCheck,
   CheckCircle2,
-  Loader2,
   Megaphone,
   UserPlus,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { timeAgo } from "@/components/dashboard/dashboard.utils";
 import { cn } from "@/lib/utils";
@@ -103,7 +103,7 @@ export function NotificationsList({ header }: Props) {
 
       {loading ? (
         <div className="flex items-center justify-center py-16 text-muted-foreground">
-          <Loader2 className="size-5 animate-spin" />
+          <Spinner size="md" />
         </div>
       ) : error ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">
@@ -182,7 +182,7 @@ export function MarkAllReadButton({
 }) {
   return (
     <Button variant="outline" onClick={onClick} disabled={!hasUnread || marking}>
-      {marking ? <Loader2 className="size-4 animate-spin" /> : <CheckCheck className="size-4" />}
+      {marking ? <Spinner size="sm" /> : <CheckCheck className="size-4" />}
       Mark all as read
     </Button>
   );

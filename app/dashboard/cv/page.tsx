@@ -10,7 +10,6 @@ import {
   BriefcaseBusiness,
   GraduationCap,
   Languages,
-  Loader2,
   Pencil,
   Plus,
   Save,
@@ -19,20 +18,18 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 // @react-pdf/renderer uses browser-only APIs — must be no-SSR.
 const DownloadCvButton = dynamic(() => import("./DownloadCvButton"), {
   ssr: false,
   loading: () => (
-    <button
-      disabled
-      className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground opacity-70 cursor-not-allowed"
-    >
-      <Loader2 className="size-4 animate-spin" /> Loading…
-    </button>
+    <Button disabled size="lg" className="opacity-70">
+      <Spinner size="sm" className="mr-1" /> Loading…
+    </Button>
   ),
 });
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -278,7 +275,7 @@ function CVPageContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-32">
-        <Loader2 className="size-8 animate-spin text-muted-foreground" />
+        <Spinner size="xl" />
       </div>
     );
   }
@@ -324,7 +321,7 @@ function CVPageContent() {
 
         <Button onClick={handleSave} disabled={saving}>
           {saving ? (
-            <Loader2 className="size-4 animate-spin" />
+            <Spinner size="sm" />
           ) : (
             <Save className="size-4" />
           )}
@@ -626,7 +623,7 @@ export default function CVPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center py-32">
-          <Loader2 className="size-8 animate-spin text-muted-foreground" />
+          <Spinner size="xl" />
         </div>
       }
     >

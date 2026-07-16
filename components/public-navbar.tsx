@@ -85,13 +85,15 @@ export function PublicNavbar() {
 
             {/* CV Builder — shown for students and guests, hidden for orgs */}
             {role !== "org" && (
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleCvBuilderClick}
-                className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
               >
                 <Sparkles className="size-3.5 text-amber-500" />
                 <span>CV Builder</span>
-              </button>
+              </Button>
             )}
           </nav>
 
