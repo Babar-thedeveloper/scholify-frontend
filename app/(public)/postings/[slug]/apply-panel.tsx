@@ -48,7 +48,7 @@ export function ApplyPanel({
     let cancelled = false;
     (async () => {
       try {
-        const res = await listMyApplications({ pageSize: 100 });
+        const res = await listMyApplications({ pageSize: 50 });
         if (!cancelled) {
           setAlreadyApplied(res.items.some((a) => a.postingId === postingId));
         }
