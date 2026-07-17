@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { AlertTriangle, ArrowLeft, Building2, CheckCircle2, ExternalLink, XCircle } from "lucide-react";
 import { getAdminOrg, verifyOrg, type AdminOrg } from "@/lib/api/admin";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 function statusColor(status: AdminOrg["verificationStatus"]) {
@@ -64,12 +66,9 @@ export default function AdminOrgDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button
-          onClick={() => router.back()}
-          className="flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted"
-        >
+        <Button variant="outline" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="size-4" />
-        </button>
+        </Button>
         <div>
           <h1 className="text-2xl font-bold text-foreground">{org.name}</h1>
           <p className="text-sm text-muted-foreground">{org.slug}</p>
@@ -77,7 +76,7 @@ export default function AdminOrgDetailPage() {
       </div>
 
       {/* Info card */}
-      <div className="grid gap-4 rounded-xl border border-border bg-white p-5 dark:bg-card sm:grid-cols-2 lg:grid-cols-3">
+      <Card className="grid gap-4 border-border p-5 sm:grid-cols-2 lg:grid-cols-3">
         <Detail label="Industry" value={org.industry ?? "—"} />
         <Detail label="Country" value={org.country} />
         <Detail label="Members" value={String(org.memberCount)} />
@@ -102,15 +101,15 @@ export default function AdminOrgDetailPage() {
             )}
           </p>
         </div>
-      </div>
+      </Card>
 
       {/* Action panel */}
-      <div className="rounded-xl border border-border bg-white p-5 dark:bg-card space-y-4">
+      <Card className="border-border p-5 space-y-4 gap-0">
         <h2 className="font-semibold text-foreground">Verification Action</h2>
         <div>
-          <label className="mb-1.5 block text-sm text-muted-foreground">
+          <Label className="mb-1.5 block text-sm text-muted-foreground">
             Reason <span className="text-xs">(optional, visible in audit log)</span>
-          </label>
+          </Label>
           <Textarea
             rows={3}
             placeholder="e.g. Missing registration certificate…"
@@ -148,7 +147,7 @@ export default function AdminOrgDetailPage() {
             {pending === "suspended" ? "Suspending…" : "Suspend"}
           </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

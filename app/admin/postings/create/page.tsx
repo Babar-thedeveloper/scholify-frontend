@@ -6,6 +6,7 @@ import { AlertTriangle, ArrowLeft, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { createPlatformPosting, type CreatePlatformPostingInput } from "@/lib/api/admin";
 
@@ -91,10 +92,9 @@ export default function AdminCreatePostingPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <button onClick={() => router.back()}
-          className="flex size-8 items-center justify-center rounded-md border border-border hover:bg-muted">
+        <Button variant="outline" size="icon" onClick={() => router.back()}>
           <ArrowLeft className="size-4" />
-        </button>
+        </Button>
         <div>
           <h1 className="text-2xl font-bold text-foreground">New Platform Posting</h1>
           <p className="text-sm text-muted-foreground">Create a posting on behalf of the Scholify platform (scraped content, curated listings).</p>
@@ -113,12 +113,10 @@ export default function AdminCreatePostingPage() {
           <Label className="mb-2 block">Posting Type</Label>
           <div className="flex gap-2">
             {(["internship", "scholarship"] as PostingType[]).map((t) => (
-              <button key={t} type="button" onClick={() => setType(t)}
-                className={`rounded-md px-4 py-2 text-sm font-medium capitalize transition-colors ${
-                  type === t ? "bg-foreground text-background" : "border border-border hover:bg-muted"
-                }`}>
+              <Button key={t} type="button" variant={type === t ? "default" : "outline"} onClick={() => setType(t)}
+                className="capitalize">
                 {t}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -155,12 +153,10 @@ export default function AdminCreatePostingPage() {
           <Label className="mb-2 block">Apply Method</Label>
           <div className="flex gap-2">
             {(["external", "platform"] as const).map((m) => (
-              <button key={m} type="button" onClick={() => setApplyMethod(m)}
-                className={`rounded-md px-4 py-2 text-sm font-medium capitalize transition-colors ${
-                  applyMethod === m ? "bg-foreground text-background" : "border border-border hover:bg-muted"
-                }`}>
+              <Button key={m} type="button" variant={applyMethod === m ? "default" : "outline"} onClick={() => setApplyMethod(m)}
+                className="capitalize">
                 {m === "external" ? "External (link out)" : "Platform (in-app)"}
-              </button>
+              </Button>
             ))}
           </div>
           {applyMethod === "external" && (
@@ -182,12 +178,10 @@ export default function AdminCreatePostingPage() {
               <Label className="mb-2 block">Work Mode <span className="text-destructive">*</span></Label>
               <div className="flex gap-2">
                 {(["remote", "onsite", "hybrid"] as WorkMode[]).map((m) => (
-                  <button key={m} type="button" onClick={() => setWorkMode(m)}
-                    className={`rounded-md px-3 py-1.5 text-sm capitalize transition-colors ${
-                      workMode === m ? "bg-foreground text-background" : "border border-border hover:bg-muted"
-                    }`}>
+                  <Button key={m} type="button" variant={workMode === m ? "default" : "outline"} size="sm" onClick={() => setWorkMode(m)}
+                    className="capitalize">
                     {m}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -200,8 +194,7 @@ export default function AdminCreatePostingPage() {
             )}
 
             <div className="flex items-center gap-3">
-              <input type="checkbox" id="paid" checked={isPaid} onChange={(e) => setIsPaid(e.target.checked)}
-                className="size-4 rounded border-border" />
+              <Checkbox id="paid" checked={isPaid} onCheckedChange={(v) => setIsPaid(!!v)} />
               <Label htmlFor="paid">Paid internship</Label>
             </div>
 
@@ -251,8 +244,8 @@ export default function AdminCreatePostingPage() {
                   {skills.map((s) => (
                     <span key={s} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
                       {s}
-                      <button type="button" onClick={() => setSkills(skills.filter((x) => x !== s))}
-                        className="rounded-full hover:text-destructive">✕</button>
+                      <Button type="button" variant="ghost" size="icon-xs" onClick={() => setSkills(skills.filter((x) => x !== s))}
+                        className="rounded-full hover:text-destructive">✕</Button>
                     </span>
                   ))}
                 </div>
@@ -274,12 +267,10 @@ export default function AdminCreatePostingPage() {
               <Label className="mb-2 block">Country Scope</Label>
               <div className="flex gap-2">
                 {(["pakistan", "international", "specific"] as const).map((s) => (
-                  <button key={s} type="button" onClick={() => setCountryScope(s)}
-                    className={`rounded-md px-3 py-1.5 text-sm capitalize transition-colors ${
-                      countryScope === s ? "bg-foreground text-background" : "border border-border hover:bg-muted"
-                    }`}>
+                  <Button key={s} type="button" variant={countryScope === s ? "default" : "outline"} size="sm" onClick={() => setCountryScope(s)}
+                    className="capitalize">
                     {s === "specific" ? "Specific country" : s}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -295,18 +286,16 @@ export default function AdminCreatePostingPage() {
               <Label className="mb-2 block">Target Degree Levels</Label>
               <div className="flex flex-wrap gap-3">
                 {(["undergraduate", "masters", "phd", "postdoc", "diploma"] as const).map((lvl) => (
-                  <label key={lvl} className="flex items-center gap-1.5 text-sm capitalize cursor-pointer">
-                    <input
-                      type="checkbox"
+                  <Label key={lvl} className="flex items-center gap-1.5 text-sm capitalize cursor-pointer">
+                    <Checkbox
                       checked={selectedDegreeLevels.includes(lvl)}
-                      onChange={(e) => {
-                        if (e.target.checked) setSelectedDegreeLevels([...selectedDegreeLevels, lvl]);
+                      onCheckedChange={(v) => {
+                        if (v) setSelectedDegreeLevels([...selectedDegreeLevels, lvl]);
                         else setSelectedDegreeLevels(selectedDegreeLevels.filter((l) => l !== lvl));
                       }}
-                      className="size-4 rounded border-border"
                     />
                     {lvl === "postdoc" ? "Postdoctoral" : lvl}
-                  </label>
+                  </Label>
                 ))}
               </div>
             </div>
@@ -339,8 +328,8 @@ export default function AdminCreatePostingPage() {
                   {fieldsOfStudy.map((f) => (
                     <span key={f} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
                       {f}
-                      <button type="button" onClick={() => setFieldsOfStudy(fieldsOfStudy.filter((x) => x !== f))}
-                        className="rounded-full hover:text-destructive">✕</button>
+                      <Button type="button" variant="ghost" size="icon-xs" onClick={() => setFieldsOfStudy(fieldsOfStudy.filter((x) => x !== f))}
+                        className="rounded-full hover:text-destructive">✕</Button>
                     </span>
                   ))}
                 </div>
@@ -351,8 +340,7 @@ export default function AdminCreatePostingPage() {
 
         {/* Publish toggle */}
         <div className="flex items-center gap-3 rounded-lg bg-muted/50 px-4 py-3">
-          <input type="checkbox" id="publish" checked={publish} onChange={(e) => setPublish(e.target.checked)}
-            className="size-4 rounded border-border" />
+          <Checkbox id="publish" checked={publish} onCheckedChange={(v) => setPublish(!!v)} />
           <Label htmlFor="publish" className="cursor-pointer">
             <span className="font-medium">Publish immediately</span>
             <span className="ml-2 text-xs text-muted-foreground">(uncheck to save as draft)</span>

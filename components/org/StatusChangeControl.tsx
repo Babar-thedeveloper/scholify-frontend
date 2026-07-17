@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -87,7 +88,7 @@ export function StatusChangeControl({ current, applicantName, onSubmit }: Props)
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
-        <label className="text-sm font-medium text-foreground">Change status to</label>
+        <Label className="text-sm font-medium text-foreground">Change status to</Label>
         <Select
           value={next}
           onValueChange={(v) => setNext(v as ApplicationStatus)}
@@ -109,9 +110,9 @@ export function StatusChangeControl({ current, applicantName, onSubmit }: Props)
       {dirty && (
         <div className="mt-4 flex flex-col gap-3 border-t border-border pt-4 duration-200 animate-in fade-in-0">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-foreground">
+            <Label className="text-sm font-medium text-foreground">
               Add a note <span className="text-muted-foreground">(optional)</span>
-            </label>
+            </Label>
             <Textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -121,10 +122,10 @@ export function StatusChangeControl({ current, applicantName, onSubmit }: Props)
               className="resize-none"
             />
           </div>
-          <label className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
+          <Label className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
             <span className="text-sm text-foreground">Send email notification to applicant</span>
             <Switch checked={notify} onCheckedChange={setNotify} disabled={submitting} />
-          </label>
+          </Label>
         </div>
       )}
 

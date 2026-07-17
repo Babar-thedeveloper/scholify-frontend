@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -41,9 +42,9 @@ const ROLE_BADGE: Record<TeamRole, string> = {
 
 function RoleBadge({ role }: { role: TeamRole }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${ROLE_BADGE[role]}`}>
+    <Badge variant="secondary" className={`rounded-full capitalize ${ROLE_BADGE[role]}`}>
       {role}
-    </span>
+    </Badge>
   );
 }
 
@@ -210,9 +211,9 @@ export default function TeamPage() {
                 Members ({members.length})
               </h3>
               {members.map((m) => (
-                <div
+                <Card
                   key={m.userId}
-                  className="flex items-center gap-4 rounded-xl border border-border bg-white p-4 dark:bg-card"
+                  className="flex items-center gap-4 border-border p-4"
                 >
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-violet-100 text-sm font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
                     {initials(m.email, m.fullName)}
@@ -268,7 +269,7 @@ export default function TeamPage() {
                       onConfirm={() => handleRemove(m.userId)}
                     />
                   )}
-                </div>
+                </Card>
               ))}
             </div>
           )}

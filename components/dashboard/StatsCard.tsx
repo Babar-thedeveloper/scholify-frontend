@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 interface StatsCardProps {
   value: string | number;
@@ -11,7 +12,7 @@ interface StatsCardProps {
 
 export function StatsCard({ value, label, Icon, accent = "text-emerald-600" }: StatsCardProps) {
   return (
-    <div className="dash-card rounded-xl border border-border bg-white p-5 dark:bg-card">
+    <Card hover className="gap-0 p-5">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-3xl font-bold tracking-tight text-foreground">{value}</p>
@@ -23,6 +24,6 @@ export function StatsCard({ value, label, Icon, accent = "text-emerald-600" }: S
           </span>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

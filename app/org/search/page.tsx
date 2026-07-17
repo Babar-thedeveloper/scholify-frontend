@@ -1,6 +1,7 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 
@@ -39,7 +40,7 @@ export default function SearchStudentsPage() {
         description="Soon you'll be able to proactively discover students who match your roles and invite them to apply."
       />
 
-      <div className="mt-6 rounded-xl border border-border bg-white p-5 dark:bg-card">
+      <Card className="mt-6 border-border gap-0 p-5">
         <p className="mb-3 text-sm font-medium text-foreground">What's coming</p>
         <ul className="space-y-2">
           {TEASERS.map((t) => (
@@ -49,7 +50,7 @@ export default function SearchStudentsPage() {
             </li>
           ))}
         </ul>
-      </div>
+      </Card>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
 interface Plan {
@@ -33,7 +34,7 @@ export default function BillingPage() {
       <PageHeader title="Billing" subtitle="Manage your plan and payment details" />
 
       {/* Current plan */}
-      <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+      <Card className="border-border gap-0 p-5">
         <div className="flex flex-wrap items-center gap-3">
           <h3 className="text-xl font-semibold text-foreground">Free — Beta</h3>
           <Badge variant="secondary">Current plan</Badge>
@@ -44,15 +45,15 @@ export default function BillingPage() {
         <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
           All features are free during our beta. No card required.
         </p>
-      </div>
+      </Card>
 
       {/* Plans coming soon */}
       <h3 className="mb-4 mt-8 font-semibold text-muted-foreground">Plans (coming soon)</h3>
       <div className="grid gap-4 sm:grid-cols-3">
         {PLANS.map((plan) => (
-          <div
+          <Card
             key={plan.name}
-            className="rounded-xl border border-border bg-white p-5 opacity-60 dark:bg-card"
+            className="border-border gap-0 p-5 opacity-60"
           >
             <p className="font-semibold text-foreground">{plan.name}</p>
             <p className="mt-1 text-sm text-muted-foreground">{plan.price}</p>
@@ -67,7 +68,7 @@ export default function BillingPage() {
             <Button className="mt-5 w-full" variant="outline" disabled>
               Coming soon
             </Button>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

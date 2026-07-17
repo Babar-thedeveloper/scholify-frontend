@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import type { WorkMode } from "./internships.types";
 
 interface InternshipCategoryTabsProps {
@@ -28,20 +28,17 @@ export function InternshipCategoryTabs({
       {tabs.map((tab) => {
         const active = value === tab.value;
         return (
-          <button
+          <Button
             key={tab.value}
+            variant={active ? "default" : "ghost"}
+            size="sm"
             role="tab"
             aria-selected={active}
             onClick={() => onChange(tab.value)}
-            className={cn(
-              "rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              active
-                ? "bg-foreground text-background"
-                : "text-gray-500 hover:text-foreground hover:bg-muted dark:text-gray-400"
-            )}
+            className="rounded-full"
           >
             {tab.label}
-          </button>
+          </Button>
         );
       })}
     </div>

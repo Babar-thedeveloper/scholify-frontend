@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { GoogleButton } from "./GoogleButton";
 import { OrgSignupFields } from "./OrgSignupFields";
 import { StudentSignupFields } from "./StudentSignupFields";
@@ -214,7 +215,7 @@ export function SignupForm() {
 
         {/* Terms */}
         <div className="flex flex-col gap-1">
-          <label className="flex items-start gap-2 text-xs text-muted-foreground">
+          <Label className="flex items-start gap-2 text-xs text-muted-foreground">
             <Checkbox
               id="terms"
               checked={termsAccepted}
@@ -241,7 +242,7 @@ export function SignupForm() {
                 Privacy Policy
               </Link>
             </span>
-          </label>
+          </Label>
           {termsError && (
             <p className="text-xs font-medium text-destructive" role="alert">
               {termsError}

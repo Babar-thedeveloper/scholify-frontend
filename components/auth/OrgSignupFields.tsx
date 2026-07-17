@@ -2,6 +2,7 @@
 
 import { Briefcase, GraduationCap } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -75,7 +76,7 @@ export function OrgSignupFields({
 
       {/* Row 2: Org type toggle (compact) */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-foreground">Organization type</label>
+        <Label className="text-sm font-medium text-foreground">Organization type</Label>
         <div
           role="radiogroup"
           aria-label="Organization type"
@@ -137,9 +138,9 @@ export function OrgSignupFields({
 
       {/* Row 4: Password (full width) */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-foreground">
+        <Label htmlFor="password" className="text-sm font-medium text-foreground">
           Create password
-        </label>
+        </Label>
         <PasswordInput
           id="password"
           autoComplete="new-password"

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 import { Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/dashboard/PageHeader";
@@ -91,18 +92,15 @@ export default function ApplicationsPage() {
         {TABS.map((t) => {
           const count = items.filter((a) => t.match(a.status)).length;
           return (
-            <button
+            <Button
               key={t.key}
+              variant={active === t.key ? "default" : "outline"}
+              size="sm"
               onClick={() => setActive(t.key)}
-              className={cn(
-                "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
-                active === t.key
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-white text-muted-foreground hover:text-foreground dark:bg-card"
-              )}
+              className="rounded-full"
             >
               {t.label} ({count})
-            </button>
+            </Button>
           );
         })}
       </div>

@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle, ChevronLeft, ChevronRight, Search, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -35,12 +37,12 @@ const ROLE_COLORS: Record<string, string> = {
 
 function RoleChip({ role, onRemove }: { role: string; onRemove?: () => void }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${ROLE_COLORS[role] ?? "bg-muted text-muted-foreground"}`}>
+    <Badge variant="secondary" className={`rounded-full ${ROLE_COLORS[role] ?? "bg-muted text-muted-foreground"}`}>
       {role.replace(/_/g, " ")}
       {onRemove && (
-        <button onClick={onRemove} className="ml-0.5 hover:opacity-70 leading-none" aria-label={`Remove ${role}`}>×</button>
+        <Button variant="ghost" size="icon-xs" onClick={onRemove} className="ml-0.5 hover:opacity-70 leading-none" aria-label={`Remove ${role}`}>×</Button>
       )}
-    </span>
+    </Badge>
   );
 }
 
@@ -118,7 +120,7 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      <div className="divide-y divide-border rounded-xl border border-border bg-white dark:bg-card">
+      <Card className="divide-y divide-border border-border gap-0 py-0">
         {!data && <div className="px-4 py-8 text-center text-muted-foreground text-sm">Loading…</div>}
         {data?.items.length === 0 && <div className="px-4 py-8 text-center text-muted-foreground text-sm">No users found.</div>}
         {data?.items.map((user) => {
@@ -153,12 +155,13 @@ export default function AdminUsersPage() {
                   <span className="text-xs text-muted-foreground hidden sm:block">
                     {new Date(user.createdAt).toLocaleDateString("en-PK", { year: "numeric", month: "short" })}
                   </span>
-                  <button
+                  <Button
+                    variant="outline"
+                    size="xs"
                     onClick={() => setExpandedUser(isExpanded ? null : user.id)}
-                    className="rounded-md border border-border px-3 py-1 text-xs font-medium hover:bg-muted"
                   >
                     {isExpanded ? "Done" : "Manage Roles"}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
@@ -167,14 +170,16 @@ export default function AdminUsersPage() {
                   <p className="mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Grant a role</p>
                   <div className="flex flex-wrap gap-1.5">
                     {ALL_ROLES.filter((r) => !user.roles.includes(r)).map((r) => (
-                      <button
+                      <Button
                         key={r}
+                        variant="outline"
+                        size="xs"
                         disabled={!!pendingAction}
                         onClick={() => handleRoleToggle(user, r, true)}
-                        className="rounded-md border border-border bg-white px-2.5 py-1 text-xs font-medium hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-700 dark:bg-card disabled:opacity-50 transition-colors"
+                        className="hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-700"
                       >
                         + {r.replace(/_/g, " ")}
-                      </button>
+                      </Button>
                     ))}
                     {ALL_ROLES.every((r) => user.roles.includes(r)) && (
                       <span className="text-xs text-muted-foreground italic">All roles already granted</span>
@@ -185,20 +190,18 @@ export default function AdminUsersPage() {
             </div>
           );
         })}
-      </div>
+      </Card>
 
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>{(page - 1) * 25 + 1}–{Math.min(page * 25, data.total)} of {data.total}</span>
           <div className="flex gap-1">
-            <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted">
+            <Button variant="outline" size="icon" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
               <ChevronLeft className="size-4" />
-            </button>
-            <button disabled={page === data.totalPages} onClick={() => setPage((p) => p + 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted">
+            </Button>
+            <Button variant="outline" size="icon" disabled={page === data.totalPages} onClick={() => setPage((p) => p + 1)}>
               <ChevronRight className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
       )}

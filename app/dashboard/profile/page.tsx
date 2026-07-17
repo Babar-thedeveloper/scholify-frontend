@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck, Camera, Check, Save, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -214,7 +215,7 @@ export default function ProfilePage() {
       />
 
       {/* Completion bar */}
-      <div className="mb-8 rounded-xl border border-border bg-white p-5 dark:bg-card">
+      <Card className="mb-8 gap-0 border-border p-5">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-foreground">Profile completion</p>
           <span className="text-sm font-bold text-emerald-600">{completion}%</span>
@@ -223,10 +224,10 @@ export default function ProfilePage() {
         <p className="mt-2 text-xs text-muted-foreground">
           Complete all fields to reach 100% and improve your chances.
         </p>
-      </div>
+      </Card>
 
       {/* Section 1 — Personal Info */}
-      <section className="mb-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
+      <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Personal Information</h2>
 
         {/* Avatar */}
@@ -289,10 +290,10 @@ export default function ProfilePage() {
             Save changes
           </Button>
         </div>
-      </section>
+      </Card>
 
       {/* Section 2 — Academic */}
-      <section className="mb-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
+      <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Academic Details</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -379,10 +380,10 @@ export default function ProfilePage() {
             Save changes
           </Button>
         </div>
-      </section>
+      </Card>
 
       {/* Section 3 — Address */}
-      <section className="mb-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
+      <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Address & Contact</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -430,10 +431,10 @@ export default function ProfilePage() {
             Save changes
           </Button>
         </div>
-      </section>
+      </Card>
 
       {/* Section 4 — Verification (real .edu.pk flow ships later) */}
-      <section className="mb-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
+      <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Verification</h2>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="flex-1 space-y-1.5">
@@ -467,7 +468,7 @@ export default function ProfilePage() {
             <BadgeCheck className="size-4" /> Verified student
           </div>
         )}
-      </section>
+      </Card>
     </div>
   );
 }

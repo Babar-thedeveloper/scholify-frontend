@@ -1,3 +1,5 @@
+import { Card } from "@/components/ui/card";
+
 export default function AdminGuidePage() {
   return (
     <div className="space-y-8">
@@ -152,7 +154,7 @@ function GuideItem({
   tip?: string;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-white dark:bg-card p-4 space-y-1.5">
+    <Card className="rounded-lg border-border p-4 space-y-1.5 gap-0">
       <div className="flex items-baseline gap-2 flex-wrap">
         <span className="font-semibold text-sm text-foreground">{label}</span>
         <code className="text-xs text-muted-foreground bg-muted rounded px-1.5 py-0.5">{path}</code>
@@ -164,6 +166,6 @@ function GuideItem({
           <span>{tip}</span>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

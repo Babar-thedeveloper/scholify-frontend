@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import {
   Bookmark,
@@ -86,18 +89,15 @@ export default function SavedItemsPage() {
               ? items.length
               : items.filter((s) => s.type === c.key).length;
           return (
-            <button
+            <Button
               key={c.key}
+              variant={filter === c.key ? "default" : "outline"}
+              size="sm"
               onClick={() => setFilter(c.key)}
-              className={cn(
-                "rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
-                filter === c.key
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-white text-muted-foreground hover:text-foreground dark:bg-card"
-              )}
+              className="rounded-full"
             >
               {c.label} ({count})
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -135,27 +135,29 @@ export default function SavedItemsPage() {
                   ? `PKR ${Number(item.stipendAmount).toLocaleString()}/month`
                   : null;
             return (
-              <div
+              <Card
                 key={item.postingId}
-                className="group relative rounded-xl border border-border bg-white p-5 transition-shadow hover:shadow-sm dark:bg-card"
+                className="group relative gap-0 border-border p-5 transition-shadow hover:shadow-sm"
               >
                 {/* Bookmark toggle */}
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
                   onClick={() => unsave(item.postingId)}
-                  className="absolute right-3 top-3 rounded-md p-1.5 text-emerald-600 transition-colors hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
+                  className="absolute right-3 top-3 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-500/10"
                   aria-label="Remove from saved"
                 >
                   <Bookmark className="size-4 fill-current" />
-                </button>
+                </Button>
 
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                <Badge variant="secondary" className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
                   {item.type === "scholarship" ? (
                     <GraduationCap className="size-3" />
                   ) : (
                     <Briefcase className="size-3" />
                   )}
                   {item.type === "scholarship" ? "Scholarship" : "Internship"}
-                </span>
+                </Badge>
 
                 <h3 className="mt-3 pr-6 text-sm font-semibold leading-snug text-foreground">
                   {item.postingTitle}
@@ -193,7 +195,7 @@ export default function SavedItemsPage() {
                 >
                   View details →
                 </Link>
-              </div>
+              </Card>
             );
           })}
         </div>

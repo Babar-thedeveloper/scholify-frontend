@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatStatus } from "./dashboard.utils";
 import type { ApplicationStatus } from "./dashboard.types";
@@ -23,15 +24,16 @@ interface StatusBadgeProps {
 
 export function StatusBadge({ status, className, size = "sm" }: StatusBadgeProps) {
   return (
-    <span
+    <Badge
+      variant="secondary"
       className={cn(
-        "inline-flex items-center rounded-full font-medium whitespace-nowrap",
+        "border-transparent rounded-full",
         size === "sm" ? "px-2.5 py-0.5 text-xs" : "px-3 py-1 text-sm",
         STATUS_STYLES[status],
         className
       )}
     >
       {formatStatus(status)}
-    </span>
+    </Badge>
   );
 }

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Save, Trash2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -62,7 +63,7 @@ export default function OrgSettingsPage() {
         <TabsContent value="account">
           <div className="space-y-6">
             {/* Change email */}
-            <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+            <Card className="border-border gap-0 p-5">
               <h3 className="mb-4 font-semibold text-foreground">Email address</h3>
               <div className="space-y-1.5">
                 <Label htmlFor="orgEmail">Email</Label>
@@ -78,10 +79,10 @@ export default function OrgSettingsPage() {
                   <Save className="size-4" /> Save
                 </Button>
               </div>
-            </div>
+            </Card>
 
             {/* Change password */}
-            <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+            <Card className="border-border gap-0 p-5">
               <h3 className="mb-4 font-semibold text-foreground">Change password</h3>
               <div className="space-y-4">
                 <div className="space-y-1.5">
@@ -119,12 +120,12 @@ export default function OrgSettingsPage() {
                   <Save className="size-4" /> Save
                 </Button>
               </div>
-            </div>
+            </Card>
 
             <Separator />
 
             {/* Deactivate */}
-            <div className="rounded-xl border border-destructive/30 bg-white p-5 dark:bg-card">
+            <Card className="border-destructive/30 gap-0 p-5">
               <h3 className="mb-1 font-semibold text-destructive">Deactivate organization</h3>
               <p className="mb-4 text-sm text-muted-foreground">
                 Deactivating will unpublish all your postings and revoke team access. This
@@ -141,13 +142,13 @@ export default function OrgSettingsPage() {
                 confirmText="Yes, deactivate"
                 onConfirm={deactivate}
               />
-            </div>
+            </Card>
           </div>
         </TabsContent>
 
         {/* ─── NOTIFICATIONS ────────────────────────────── */}
         <TabsContent value="notifications">
-          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="border-border gap-0 p-5">
             <h3 className="mb-6 font-semibold text-foreground">Notification preferences</h3>
             <div className="space-y-5">
               <ToggleRow
@@ -180,7 +181,7 @@ export default function OrgSettingsPage() {
                 <Save className="size-4" /> Save preferences
               </Button>
             </div>
-          </div>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
@@ -200,12 +201,12 @@ function ToggleRow({
   onCheckedChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
+    <Label className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
       <div>
         <p className="text-sm font-medium text-foreground">{label}</p>
         <p className="text-xs text-muted-foreground">{description}</p>
       </div>
       <Switch checked={checked} onCheckedChange={onCheckedChange} />
-    </label>
+    </Label>
   );
 }

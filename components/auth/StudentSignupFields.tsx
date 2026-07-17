@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { FormField } from "./FormField";
 import { PasswordInput } from "./PasswordInput";
@@ -62,9 +63,9 @@ export function StudentSignupFields({
 
       {/* Row 2: Password (full width) */}
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-foreground">
+        <Label htmlFor="password" className="text-sm font-medium text-foreground">
           Create password
-        </label>
+        </Label>
         <PasswordInput
           id="password"
           autoComplete="new-password"
@@ -98,7 +99,7 @@ export function StudentSignupFields({
         </FormField>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-foreground">Degree level</label>
+          <Label className="text-sm font-medium text-foreground">Degree level</Label>
           <div
             role="radiogroup"
             aria-label="Degree level"

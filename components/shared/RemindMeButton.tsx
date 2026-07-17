@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { BellRing, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
 import {
@@ -139,7 +140,7 @@ export function RemindMeButton({ postingId, postingSlug, deadlineAt }: Props) {
 
       <ModalBody className="grid gap-4">
         <div className="grid gap-1.5">
-          <label className="text-sm font-medium">Remind me</label>
+          <Label className="text-sm font-medium">Remind me</Label>
           <Select
             value={String(daysBefore)}
             onValueChange={(v) => setDaysBefore(Number(v))}
@@ -158,7 +159,7 @@ export function RemindMeButton({ postingId, postingSlug, deadlineAt }: Props) {
         </div>
 
         <div className="grid gap-1.5">
-          <label className="text-sm font-medium">Channel</label>
+          <Label className="text-sm font-medium">Channel</Label>
           <Select value={channel} onValueChange={(v) => setChannel(v as ReminderChannel)}>
             <SelectTrigger>
               <SelectValue />

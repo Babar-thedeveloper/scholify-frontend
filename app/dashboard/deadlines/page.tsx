@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Card } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { EmptyState } from "@/components/dashboard/EmptyState";
@@ -100,9 +101,10 @@ export default function DeadlinesPage() {
                   : "bg-muted text-muted-foreground";
 
             return (
-              <div
+              <Card
                 key={row.key}
-                className="dash-card flex items-center justify-between gap-4 rounded-xl border border-border bg-white p-5 dark:bg-card"
+                hover
+                className="flex items-center justify-between gap-4 border-border p-5"
               >
                 <div className="min-w-0">
                   <h3 className="truncate font-medium text-foreground">{row.title}</h3>
@@ -121,7 +123,7 @@ export default function DeadlinesPage() {
                     ? "Today"
                     : `${left} ${left === 1 ? "day" : "days"} left`}
                 </span>
-              </div>
+              </Card>
             );
           })}
         </div>

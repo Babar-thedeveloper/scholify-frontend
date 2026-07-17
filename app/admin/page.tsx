@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Building2, Users, Briefcase, FileText, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { getPlatformStats, type PlatformStats } from "@/lib/api/admin";
 
 function StatCard({
@@ -16,7 +17,7 @@ function StatCard({
   highlight?: boolean;
 }) {
   return (
-    <div className={`rounded-xl border p-5 ${highlight ? "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-500/10" : "border-border bg-white dark:bg-card"}`}>
+    <Card className={`p-5 gap-0 ${highlight ? "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-500/10" : "border-border"}`}>
       <div className="mb-3 flex items-center gap-2">
         <Icon className={`size-4 ${highlight ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"}`} />
         <p className="text-sm text-muted-foreground">{label}</p>
@@ -24,7 +25,7 @@ function StatCard({
       <p className={`text-3xl font-bold tabular-nums ${highlight ? "text-amber-700 dark:text-amber-300" : "text-foreground"}`}>
         {value ?? "—"}
       </p>
-    </div>
+    </Card>
   );
 }
 

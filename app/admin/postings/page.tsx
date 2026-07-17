@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -112,22 +114,18 @@ export default function AdminPostingsPage() {
         </div>
         <div className="flex gap-1 flex-wrap">
           {STATUS_OPTIONS.map((s) => (
-            <button key={s} onClick={() => { setStatus(s); setPage(1); }}
-              className={`rounded-md px-3 py-1.5 text-sm capitalize transition-colors ${
-                status === s ? "bg-foreground text-background" : "border border-border bg-white hover:bg-muted dark:bg-card text-foreground"
-              }`}>
+            <Button key={s} variant={status === s ? "default" : "outline"} size="sm" onClick={() => { setStatus(s); setPage(1); }}
+              className="capitalize">
               {s || "All Status"}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="flex gap-1">
           {TYPE_OPTIONS.map((t) => (
-            <button key={t} onClick={() => { setType(t); setPage(1); }}
-              className={`rounded-md px-3 py-1.5 text-sm capitalize transition-colors ${
-                type === t ? "bg-foreground text-background" : "border border-border bg-white hover:bg-muted dark:bg-card text-foreground"
-              }`}>
+            <Button key={t} variant={type === t ? "default" : "outline"} size="sm" onClick={() => { setType(t); setPage(1); }}
+              className="capitalize">
               {t || "All Types"}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -138,7 +136,7 @@ export default function AdminPostingsPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-border bg-white dark:bg-card">
+      <Card className="overflow-hidden border-border gap-0 py-0">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
@@ -164,14 +162,14 @@ export default function AdminPostingsPage() {
                 </TableCell>
                 <TableCell className="text-muted-foreground text-xs max-w-[120px] truncate">{p.orgName}</TableCell>
                 <TableCell>
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${TYPE_COLORS[p.type] ?? ""}`}>
+                  <Badge variant="secondary" className={`rounded-full capitalize ${TYPE_COLORS[p.type] ?? ""}`}>
                     {p.type}
-                  </span>
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${STATUS_COLORS[p.status] ?? ""}`}>
+                  <Badge variant="secondary" className={`rounded-full capitalize ${STATUS_COLORS[p.status] ?? ""}`}>
                     {p.status}
-                  </span>
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground text-xs">
                   {p.deadlineAt ? new Date(p.deadlineAt).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "numeric" }) : "—"}
@@ -227,20 +225,18 @@ export default function AdminPostingsPage() {
             ))}
           </TableBody>
         </Table>
-      </div>
+      </Card>
 
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>{(page - 1) * 20 + 1}–{Math.min(page * 20, data.total)} of {data.total}</span>
           <div className="flex gap-1">
-            <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted">
+            <Button variant="outline" size="icon" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
               <ChevronLeft className="size-4" />
-            </button>
-            <button disabled={page === data.totalPages} onClick={() => setPage((p) => p + 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted">
+            </Button>
+            <Button variant="outline" size="icon" disabled={page === data.totalPages} onClick={() => setPage((p) => p + 1)}>
               <ChevronRight className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
       )}

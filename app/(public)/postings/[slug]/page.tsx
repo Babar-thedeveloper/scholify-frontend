@@ -10,6 +10,8 @@ import {
   MapPin,
 } from "lucide-react";
 import { getPostingBySlug } from "@/lib/api/postings";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { ApplyPanel } from "./apply-panel";
 import { SaveToggle } from "@/components/shared/SaveToggle";
 import { RemindMeButton } from "@/components/shared/RemindMeButton";
@@ -60,20 +62,20 @@ export default async function PostingDetailPage({ params }: Props) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* ─── Main content ─── */}
         <div className="lg:col-span-2">
-          <div className="rounded-2xl border border-border bg-white p-6 dark:bg-card">
+          <Card className="gap-0 rounded-2xl border-border p-6">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold capitalize text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+              <Badge variant="secondary" className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold capitalize text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
                 {isInternship ? (
                   <Building2 className="size-3" />
                 ) : (
                   <GraduationCap className="size-3" />
                 )}
                 {posting.type}
-              </span>
+              </Badge>
               {posting.organization.verified && (
-                <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
+                <Badge variant="secondary" className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">
                   Verified organization
-                </span>
+                </Badge>
               )}
             </div>
 
@@ -106,13 +108,13 @@ export default async function PostingDetailPage({ params }: Props) {
                 </p>
               </div>
             )}
-          </div>
+          </Card>
         </div>
 
         {/* ─── Right rail: quick facts + apply ─── */}
         <aside className="space-y-4">
           {/* Quick facts */}
-          <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="gap-0 rounded-2xl border-border p-5">
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               At a glance
             </h2>
@@ -197,7 +199,7 @@ export default async function PostingDetailPage({ params }: Props) {
                 </div>
               )}
             </dl>
-          </div>
+          </Card>
 
           {/* Apply panel — handles both external URL + platform apply */}
           <ApplyPanel

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { AlertTriangle, Flag, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { listFeatureFlags, patchFeatureFlag, type FeatureFlag } from "@/lib/api/admin";
 
 export default function AdminFeatureFlagsPage() {
@@ -70,7 +72,7 @@ export default function AdminFeatureFlagsPage() {
       )}
 
       {flags && flags.length > 0 && (
-        <div className="divide-y divide-border rounded-xl border border-border bg-white dark:bg-card">
+        <Card className="divide-y divide-border border-border gap-0 py-0">
           {flags.map((flag) => (
             <div key={flag.key} className="flex items-center justify-between px-5 py-4">
               <div className="min-w-0 flex-1">
@@ -84,25 +86,16 @@ export default function AdminFeatureFlagsPage() {
                   </pre>
                 )}
               </div>
-              <button
+              <Switch
                 disabled={toggling === flag.key}
-                onClick={() => toggle(flag)}
-                className={`ml-6 shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${
-                  flag.enabled ? "bg-emerald-500" : "bg-muted-foreground/30"
-                }`}
-                role="switch"
-                aria-checked={flag.enabled}
+                onCheckedChange={() => toggle(flag)}
+                checked={flag.enabled}
                 aria-label={`Toggle ${flag.key}`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
-                    flag.enabled ? "translate-x-6" : "translate-x-1"
-                  }`}
-                />
-              </button>
+                className="ml-6 shrink-0"
+              />
             </div>
           ))}
-        </div>
+        </Card>
       )}
     </div>
   );

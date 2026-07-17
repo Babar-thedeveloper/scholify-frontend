@@ -12,6 +12,8 @@ import {
   type StatusChangePayload,
 } from "@/components/org/StatusChangeControl";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/components/dashboard/dashboard.utils";
@@ -131,7 +133,7 @@ export default function ApplicantDetailPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
           {/* Profile card */}
-          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="border-border gap-0 p-5">
             <div className="flex items-start gap-4">
               <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-violet-100 text-lg font-semibold text-violet-700 dark:bg-violet-500/20 dark:text-violet-300">
                 {applicant.student.initials}
@@ -140,9 +142,9 @@ export default function ApplicantDetailPage() {
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-xl font-semibold text-foreground">{displayName}</h2>
                   {applicant.student.isVerifiedStudent && (
-                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                    <Badge variant="secondary" className="rounded-full border-transparent bg-emerald-50 text-[10px] text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
                       Verified student
-                    </span>
+                    </Badge>
                   )}
                 </div>
                 <p className="mt-0.5 text-sm text-muted-foreground">
@@ -192,10 +194,10 @@ export default function ApplicantDetailPage() {
                 </a>
               </Button>
             </div>
-          </div>
+          </Card>
 
           {/* Application card */}
-          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="border-border gap-0 p-5">
             <h3 className="text-base font-semibold text-foreground">Application</h3>
 
             <dl className="mt-4 flex flex-col gap-3 text-sm">
@@ -231,7 +233,7 @@ export default function ApplicantDetailPage() {
                 </p>
               </>
             )}
-          </div>
+          </Card>
         </div>
 
         <div className="lg:col-span-1">

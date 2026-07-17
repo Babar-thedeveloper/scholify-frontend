@@ -14,6 +14,8 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -326,7 +328,7 @@ export default function NewPostingPage() {
 
       {/* Step 2: Details */}
       {step === 2 && type && (
-        <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <Card className="border-border gap-0 p-5">
           <div className="space-y-5">
             <div className="space-y-1.5">
               <Label htmlFor="title">Title</Label>
@@ -380,7 +382,7 @@ export default function NewPostingPage() {
                   <Label>Degree level</Label>
                   <div className="flex flex-wrap gap-4">
                     {DEGREE_LEVELS.map((lvl) => (
-                      <label
+                      <Label
                         key={lvl}
                         className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
                       >
@@ -389,7 +391,7 @@ export default function NewPostingPage() {
                           onCheckedChange={() => toggleInArray("degreeLevel", lvl)}
                         />
                         {lvl}
-                      </label>
+                      </Label>
                     ))}
                   </div>
                 </div>
@@ -398,7 +400,7 @@ export default function NewPostingPage() {
                   <Label>Field of study</Label>
                   <div className="flex flex-wrap gap-4">
                     {FIELDS.map((field) => (
-                      <label
+                      <Label
                         key={field}
                         className="flex cursor-pointer items-center gap-2 text-sm text-foreground"
                       >
@@ -407,7 +409,7 @@ export default function NewPostingPage() {
                           onCheckedChange={() => toggleInArray("fieldOfStudy", field)}
                         />
                         {field}
-                      </label>
+                      </Label>
                     ))}
                   </div>
                 </div>
@@ -480,14 +482,16 @@ export default function NewPostingPage() {
                           className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-primary dark:bg-emerald-500/10"
                         >
                           {skill}
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-xs"
                             onClick={() => removeSkill(skill)}
                             aria-label={`Remove ${skill}`}
                             className="rounded-full hover:text-primary/70"
                           >
                             <X className="size-3" />
-                          </button>
+                          </Button>
                         </span>
                       ))}
                     </div>
@@ -556,14 +560,14 @@ export default function NewPostingPage() {
                     onValueChange={(v) => set("isPaid", v === "paid")}
                     className="flex flex-wrap gap-4"
                   >
-                    <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                    <Label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
                       <RadioGroupItem value="paid" id="stipend-paid" />
                       Paid
-                    </label>
-                    <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                    </Label>
+                    <Label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
                       <RadioGroupItem value="unpaid" id="stipend-unpaid" />
                       Unpaid
-                    </label>
+                    </Label>
                   </RadioGroup>
                   {form.isPaid && (
                     <Input
@@ -596,14 +600,14 @@ export default function NewPostingPage() {
                 onValueChange={(v) => set("applyMethod", v as "platform" | "external")}
                 className="flex flex-wrap gap-4"
               >
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                <Label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
                   <RadioGroupItem value="platform" id="apply-platform" />
                   Apply on Scholify
-                </label>
-                <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
+                </Label>
+                <Label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
                   <RadioGroupItem value="external" id="apply-external" />
                   Apply externally
-                </label>
+                </Label>
               </RadioGroup>
               {form.applyMethod === "external" && (
                 <Input
@@ -635,22 +639,22 @@ export default function NewPostingPage() {
               </Button>
             </div>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Step 3: Review */}
       {step === 3 && type && (
         <div>
-          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="border-border gap-0 p-5">
             <div className="mb-4 border-b border-border pb-4">
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold capitalize text-primary dark:bg-emerald-500/10">
+              <Badge variant="secondary" className="gap-1 rounded-full border-transparent bg-emerald-50 px-2.5 font-semibold capitalize text-primary dark:bg-emerald-500/10">
                 {type === "scholarship" ? (
                   <GraduationCap className="size-3" />
                 ) : (
                   <Briefcase className="size-3" />
                 )}
                 {type}
-              </span>
+              </Badge>
               <h2 className="mt-2 text-xl font-semibold text-foreground">
                 {form.title || "Untitled posting"}
               </h2>
@@ -704,7 +708,7 @@ export default function NewPostingPage() {
                 full
               />
             </dl>
-          </div>
+          </Card>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <Button variant="ghost" onClick={() => setStep(2)}>

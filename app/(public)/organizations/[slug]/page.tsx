@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { getPublicOrg } from "@/lib/api/organizations";
 import { listPostings } from "@/lib/api/postings";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 
 export const dynamic = "force-dynamic";
 
@@ -63,7 +65,7 @@ export default async function PublicOrgPage({ params }: Props) {
   return (
     <div className="px-4 py-10 sm:px-6 lg:px-8">
       {/* ─── Header ─── */}
-      <div className="flex items-start gap-5 rounded-2xl border border-border bg-white p-6 dark:bg-card">
+      <Card className="flex items-start gap-5 rounded-2xl border-border p-6">
         <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-2xl font-bold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
           {initials}
         </span>
@@ -71,9 +73,9 @@ export default async function PublicOrgPage({ params }: Props) {
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-bold text-foreground">{org.name}</h1>
             {org.verified && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+              <Badge variant="secondary" className="rounded-full border-transparent bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
                 <BadgeCheck className="size-3.5" /> Verified
-              </span>
+              </Badge>
             )}
           </div>
 
@@ -119,24 +121,24 @@ export default async function PublicOrgPage({ params }: Props) {
             </div>
           )}
         </div>
-      </div>
+      </Card>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* ─── About ─── */}
         <div className="lg:col-span-2 space-y-4">
           {org.description && (
-            <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+            <Card className="gap-0 rounded-2xl border-border p-5">
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 About
               </h2>
               <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">
                 {org.description}
               </p>
-            </div>
+            </Card>
           )}
 
           {/* Active postings */}
-          <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="gap-0 rounded-2xl border-border p-5">
             <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Active opportunities ({postings.length})
             </h2>
@@ -181,12 +183,12 @@ export default async function PublicOrgPage({ params }: Props) {
                 })}
               </div>
             )}
-          </div>
+          </Card>
         </div>
 
         {/* ─── Stats sidebar ─── */}
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="gap-0 rounded-2xl border-border p-5">
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Quick facts
             </h2>
@@ -212,7 +214,7 @@ export default async function PublicOrgPage({ params }: Props) {
                 </dd>
               </div>
             </dl>
-          </div>
+          </Card>
         </aside>
       </div>
     </div>

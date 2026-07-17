@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -61,7 +62,7 @@ export default function SettingsPage() {
         <TabsContent value="account">
           <div className="space-y-6">
             {/* Change email */}
-            <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
+            <Card className="gap-0 border-border p-6">
               <h3 className="mb-4 font-semibold text-foreground">Email address</h3>
               <div className="space-y-1.5">
                 <Label htmlFor="settingsEmail">Email</Label>
@@ -77,10 +78,10 @@ export default function SettingsPage() {
                   <Save className="size-4" /> Save
                 </Button>
               </div>
-            </div>
+            </Card>
 
             {/* Change password */}
-            <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
+            <Card className="gap-0 border-border p-6">
               <h3 className="mb-4 font-semibold text-foreground">Change password</h3>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
@@ -107,10 +108,10 @@ export default function SettingsPage() {
                   <Save className="size-4" /> Update password
                 </Button>
               </div>
-            </div>
+            </Card>
 
             {/* Delete account */}
-            <div className="rounded-xl border border-destructive/30 bg-white p-6 dark:bg-card">
+            <Card className="gap-0 border-destructive/30 p-6">
               <h3 className="mb-1 font-semibold text-destructive">Danger zone</h3>
               <p className="mb-4 text-sm text-muted-foreground">
                 Once deleted, your account and all data cannot be recovered.
@@ -126,13 +127,13 @@ export default function SettingsPage() {
                 confirmText="Yes, delete my account"
                 onConfirm={deleteAccount}
               />
-            </div>
+            </Card>
           </div>
         </TabsContent>
 
         {/* ─── NOTIFICATIONS TAB ───────────────────────── */}
         <TabsContent value="notifications">
-          <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
+          <Card className="gap-0 border-border p-6">
             <h3 className="mb-6 font-semibold text-foreground">Notification preferences</h3>
             <div className="space-y-5">
               <ToggleRow
@@ -165,12 +166,12 @@ export default function SettingsPage() {
                 <Save className="size-4" /> Save preferences
               </Button>
             </div>
-          </div>
+          </Card>
         </TabsContent>
 
         {/* ─── PRIVACY TAB ─────────────────────────────── */}
         <TabsContent value="privacy">
-          <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
+          <Card className="gap-0 border-border p-6">
             <h3 className="mb-6 font-semibold text-foreground">Privacy settings</h3>
             <ToggleRow
               label="Allow companies to discover my profile"
@@ -183,7 +184,7 @@ export default function SettingsPage() {
                 <Save className="size-4" /> Save
               </Button>
             </div>
-          </div>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
@@ -203,12 +204,12 @@ function ToggleRow({
   onCheckedChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
+    <Label className="flex items-center justify-between gap-4 rounded-lg bg-muted/40 px-4 py-3">
       <div>
         <p className="text-sm font-medium text-foreground">{label}</p>
         <p className="text-xs text-muted-foreground">{description}</p>
       </div>
       <Switch checked={checked} onCheckedChange={onCheckedChange} />
-    </label>
+    </Label>
   );
 }

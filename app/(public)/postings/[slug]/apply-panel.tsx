@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, CheckCircle2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
@@ -67,16 +69,16 @@ export function ApplyPanel({
   // Posting not active (closed, paused, draft, archived)
   if (postingStatus !== "active" || deadlinePassed) {
     return (
-      <div className="rounded-2xl border border-border bg-white p-5 text-sm text-muted-foreground dark:bg-card">
+      <Card className="gap-0 rounded-2xl border-border p-5 text-sm text-muted-foreground">
         This posting is no longer accepting applications.
-      </div>
+      </Card>
     );
   }
 
   // External-apply → route the CTA to the org's own site
   if (applyMethod === "external") {
     return (
-      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+      <Card className="gap-0 rounded-2xl border-border p-5">
         <p className="text-sm text-muted-foreground">
           This organization accepts applications on their own site.
         </p>
@@ -85,23 +87,23 @@ export function ApplyPanel({
             Apply on their site <ExternalLink className="size-4" />
           </a>
         </Button>
-      </div>
+      </Card>
     );
   }
 
   // Platform-apply flow ------------------------------------------------
   if (isLoading) {
     return (
-      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+      <Card className="gap-0 rounded-2xl border-border p-5">
         <Spinner size="md" />
-      </div>
+      </Card>
     );
   }
 
   // Not signed in → prompt to log in
   if (!isAuthed) {
     return (
-      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+      <Card className="gap-0 rounded-2xl border-border p-5">
         <p className="text-sm text-muted-foreground">
           Sign in to apply through Scholify — we&apos;ll track your application status for you.
         </p>
@@ -121,26 +123,26 @@ export function ApplyPanel({
             </Link>
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   // Logged in as org — can't apply as an org
   if (user.role === "org") {
     return (
-      <div className="rounded-2xl border border-border bg-white p-5 text-sm text-muted-foreground dark:bg-card">
+      <Card className="gap-0 rounded-2xl border-border p-5 text-sm text-muted-foreground">
         Only student accounts can apply on Scholify. Sign out and use your student account
         to apply.
-      </div>
+      </Card>
     );
   }
 
   // Still checking if already applied → show spinner
   if (checkingApplied) {
     return (
-      <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+      <Card className="gap-0 rounded-2xl border-border p-5">
         <Spinner size="md" />
-      </div>
+      </Card>
     );
   }
 
@@ -216,7 +218,7 @@ export function ApplyPanel({
 
   // Signed in as student → primary apply CTA + optional cover letter dialog
   return (
-    <div className="rounded-2xl border border-border bg-white p-5 dark:bg-card">
+    <Card className="gap-0 rounded-2xl border-border p-5">
       <p className="text-sm text-muted-foreground">
         You&apos;re signed in as <span className="font-medium text-foreground">{user.email}</span>.
       </p>
@@ -234,9 +236,9 @@ export function ApplyPanel({
         />
 
         <ModalBody>
-          <label htmlFor="cover-letter" className="text-sm font-medium">
+          <Label htmlFor="cover-letter" className="text-sm font-medium">
             Cover letter <span className="text-muted-foreground">(optional)</span>
-          </label>
+          </Label>
           <Textarea
             id="cover-letter"
             value={coverLetter}
@@ -258,6 +260,6 @@ export function ApplyPanel({
           </Button>
         </ModalFooter>
       </Modal>
-    </div>
+    </Card>
   );
 }

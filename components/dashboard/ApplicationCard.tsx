@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 import { StatusBadge } from "./StatusBadge";
 import { formatDeadline, timeAgo } from "./dashboard.utils";
 import type { Application } from "./dashboard.types";
@@ -10,9 +11,10 @@ export function ApplicationCard({ application }: { application: Application }) {
   const external = a.isExternal;
 
   return (
-    <div
+    <Card
+      hover
       className={cn(
-        "dash-card rounded-xl border bg-white p-4 dark:bg-card sm:p-5",
+        "gap-0 p-4 sm:p-5",
         external ? "border-dashed border-border/80" : "border-border"
       )}
     >
@@ -62,6 +64,6 @@ export function ApplicationCard({ application }: { application: Application }) {
           </a>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

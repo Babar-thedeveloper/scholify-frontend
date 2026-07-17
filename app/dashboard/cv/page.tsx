@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 // @react-pdf/renderer uses browser-only APIs — must be no-SSR.
@@ -32,6 +33,7 @@ const DownloadCvButton = dynamic(() => import("./DownloadCvButton"), {
 });
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
 import {
@@ -364,14 +366,15 @@ function CVPageContent() {
           </div>
 
           {/* Template picker */}
-          <div className="rounded-xl border border-border bg-card p-4">
+          <Card className="gap-0 border-border p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
               Template
             </p>
             <div className="grid grid-cols-2 gap-2">
               {(["europass", "modern"] as TemplateKey[]).map((t) => (
-                <button
+                <Button
                   key={t}
+                  variant={templateKey === t ? "default" : "outline"}
                   onClick={() => updateDraft({ templateKey: t })}
                   className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
                     templateKey === t
@@ -380,13 +383,13 @@ function CVPageContent() {
                   }`}
                 >
                   {t === "europass" ? "Europass" : "Modern"}
-                </button>
+                </Button>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Section tabs */}
-          <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <Card className="gap-0 border-border overflow-hidden">
             <div className="flex border-b border-border">
               {([
                 { key: "work",      label: "Work",         Icon: BriefcaseBusiness },
@@ -394,10 +397,11 @@ function CVPageContent() {
                 { key: "languages", label: "Languages",    Icon: Languages },
                 { key: "certs",     label: "Certs",        Icon: ScrollText },
               ] as const).map(({ key, label, Icon }) => (
-                <button
+                <Button
                   key={key}
+                  variant="ghost"
                   onClick={() => setActiveTab(key)}
-                  className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition-colors ${
+                  className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition-colors rounded-none ${
                     activeTab === key
                       ? "bg-emerald-50 text-emerald-700 border-b-2 border-emerald-500 dark:bg-emerald-500/10 dark:text-emerald-400"
                       : "text-muted-foreground hover:text-foreground"
@@ -405,7 +409,7 @@ function CVPageContent() {
                 >
                   <Icon className="size-3.5" />
                   {label}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -453,9 +457,9 @@ function CVPageContent() {
                           className="flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium"
                         >
                           {s}
-                          <button onClick={() => removeSkill(s)} className="text-muted-foreground hover:text-destructive ml-0.5">
+                          <Button variant="ghost" size="icon-xs" onClick={() => removeSkill(s)} className="text-muted-foreground hover:text-destructive ml-0.5">
                             <X className="size-3" />
-                          </button>
+                          </Button>
                         </span>
                       ))}
                     </div>
@@ -522,7 +526,7 @@ function CVPageContent() {
                 </div>
               )}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* ── Preview pane ── */}
@@ -710,12 +714,10 @@ function WorkExpForm({ initial, onSave, onCancel }: {
         </div>
 
         <div className="col-span-2 flex items-center gap-2">
-          <input
-            type="checkbox"
+          <Checkbox
             id="isCurrent"
             checked={form.isCurrent}
-            onChange={(e) => set({ isCurrent: e.target.checked })}
-            className="rounded"
+            onCheckedChange={(v) => set({ isCurrent: !!v })}
           />
           <Label htmlFor="isCurrent" className="cursor-pointer font-normal">Currently working here</Label>
         </div>

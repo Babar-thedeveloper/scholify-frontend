@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, ShieldAlert, Sparkles, UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { PostingCard } from "@/components/org/PostingCard";
@@ -140,12 +141,12 @@ export default function OrgDashboardPage() {
                 <PostingCard key={p.id} posting={p} />
               ))
             ) : (
-              <div className="rounded-xl border border-border bg-white p-6 text-center dark:bg-card">
+              <Card className="border-border gap-0 p-6 text-center">
                 <p className="text-sm text-muted-foreground">No active postings yet.</p>
                 <Link href="/org/postings/new" className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
                   Create a posting →
                 </Link>
-              </div>
+              </Card>
             )}
           </div>
         </section>
@@ -158,7 +159,7 @@ export default function OrgDashboardPage() {
               View all <ArrowRight className="size-3.5" />
             </Link>
           </div>
-          <div className="rounded-xl border border-border bg-white dark:bg-card">
+          <Card className="border-border gap-0">
             {applicants.length > 0 ? (
               applicants.map((a) => (
                 <Link
@@ -183,7 +184,7 @@ export default function OrgDashboardPage() {
                 <p className="text-sm text-muted-foreground">No applicants yet.</p>
               </div>
             )}
-          </div>
+          </Card>
         </section>
       </div>
     </div>

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BadgeCheck, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -135,9 +137,9 @@ export default function OrgProfilePage() {
           <span className="flex items-center gap-2">
             Organization profile
             {profile?.verified && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
+              <Badge variant="secondary" className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
                 <BadgeCheck className="size-3.5" /> Verified
-              </span>
+              </Badge>
             )}
           </span>
         }
@@ -146,7 +148,7 @@ export default function OrgProfilePage() {
 
       <div className="space-y-6">
         {/* ─── Branding ─────────────────────────────────── */}
-        <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <Card className="border-border gap-0 p-5">
           <h3 className="mb-4 font-semibold text-foreground">Branding</h3>
 
           <div className="mb-5 flex items-center gap-4">
@@ -204,10 +206,10 @@ export default function OrgProfilePage() {
               Save changes
             </Button>
           </div>
-        </section>
+        </Card>
 
         {/* ─── Online presence ──────────────────────────── */}
-        <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <Card className="border-border gap-0 p-5">
           <h3 className="mb-4 font-semibold text-foreground">Online presence</h3>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -234,10 +236,10 @@ export default function OrgProfilePage() {
               Save changes
             </Button>
           </div>
-        </section>
+        </Card>
 
         {/* ─── Contact / address ────────────────────────── */}
-        <section className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+        <Card className="border-border gap-0 p-5">
           <h3 className="mb-4 font-semibold text-foreground">Office address</h3>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -257,7 +259,7 @@ export default function OrgProfilePage() {
               Save changes
             </Button>
           </div>
-        </section>
+        </Card>
       </div>
     </div>
   );

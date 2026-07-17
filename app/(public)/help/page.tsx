@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Accordion,
@@ -69,7 +70,7 @@ export default function HelpPage() {
       </div>
 
       {/* Still need help */}
-      <div className="mt-12 rounded-xl border border-border bg-white p-6 text-center dark:bg-card">
+      <Card className="mt-12 gap-0 border-border p-6 text-center">
         <h3 className="font-semibold text-foreground">Still need help?</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           Our team is here for you. We usually reply within one business day.
@@ -80,7 +81,7 @@ export default function HelpPage() {
         >
           hello@scholify.pk
         </a>
-      </div>
+      </Card>
     </div>
   );
 }

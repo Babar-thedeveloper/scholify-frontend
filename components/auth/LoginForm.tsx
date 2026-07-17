@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { FormField } from "./FormField";
 import { PasswordInput } from "./PasswordInput";
 import { GoogleButton } from "./GoogleButton";
@@ -122,9 +123,9 @@ export function LoginForm() {
 
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
-            <label htmlFor="password" className="text-sm font-medium text-foreground">
+            <Label htmlFor="password" className="text-sm font-medium text-foreground">
               Password
-            </label>
+            </Label>
             <Link href="/forgot-password" className="text-xs text-primary hover:underline">
               Forgot password?
             </Link>

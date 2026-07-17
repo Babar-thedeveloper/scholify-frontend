@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -73,17 +75,14 @@ export default function AdminStudentsPage() {
         </div>
         <div className="flex gap-1">
           {[{ v: "", label: "All" }, { v: "true", label: "Verified" }, { v: "false", label: "Unverified" }].map((opt) => (
-            <button
+            <Button
               key={opt.v}
+              variant={verifiedFilter === opt.v ? "default" : "outline"}
+              size="sm"
               onClick={() => { setVerifiedFilter(opt.v); setPage(1); }}
-              className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                verifiedFilter === opt.v
-                  ? "bg-foreground text-background"
-                  : "border border-border bg-white text-foreground hover:bg-muted dark:bg-card"
-              }`}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -94,7 +93,7 @@ export default function AdminStudentsPage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-border bg-white dark:bg-card">
+      <Card className="overflow-hidden border-border gap-0 py-0">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
@@ -131,13 +130,13 @@ export default function AdminStudentsPage() {
                 </TableCell>
                 <TableCell>
                   {s.isVerifiedStudent ? (
-                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+                    <Badge variant="secondary" className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
                       Verified
-                    </span>
+                    </Badge>
                   ) : (
-                    <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                    <Badge variant="secondary" className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
                       Unverified
-                    </span>
+                    </Badge>
                   )}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
@@ -161,7 +160,7 @@ export default function AdminStudentsPage() {
             ))}
           </TableBody>
         </Table>
-      </div>
+      </Card>
 
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -169,20 +168,12 @@ export default function AdminStudentsPage() {
             {(page - 1) * 25 + 1}–{Math.min(page * 25, data.total)} of {data.total}
           </span>
           <div className="flex gap-1">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted"
-            >
+            <Button variant="outline" size="icon" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
               <ChevronLeft className="size-4" />
-            </button>
-            <button
-              disabled={page === data.totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted"
-            >
+            </Button>
+            <Button variant="outline" size="icon" disabled={page === data.totalPages} onClick={() => setPage((p) => p + 1)}>
               <ChevronRight className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
       )}

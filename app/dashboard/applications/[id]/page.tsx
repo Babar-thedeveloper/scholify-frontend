@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
@@ -165,7 +166,7 @@ export default function ApplicationDetailPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Main */}
         <div className="lg:col-span-2">
-          <div className="rounded-xl border border-border bg-white p-6 dark:bg-card">
+          <Card className="gap-0 border-border p-6">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h1 className="text-xl font-semibold text-foreground">{detail.postingTitle}</h1>
@@ -176,13 +177,15 @@ export default function ApplicationDetailPage() {
 
             <div className="mt-3 flex items-center gap-2">
               <span className="font-mono text-xs text-muted-foreground">{detail.publicId}</span>
-              <button
+              <Button
+                variant="ghost"
+                size="icon-xs"
                 onClick={copyId}
                 className="text-muted-foreground hover:text-foreground"
                 aria-label="Copy application ID"
               >
                 {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
-              </button>
+              </Button>
             </div>
 
             {/* Status stepper */}
@@ -215,32 +218,32 @@ export default function ApplicationDetailPage() {
                 );
               })}
             </div>
-          </div>
+          </Card>
 
           {/* Timeline */}
-          <div className="mt-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
+          <Card className="mt-6 gap-0 border-border p-6">
             <h2 className="mb-4 font-semibold text-foreground">Timeline</h2>
             {timelineEvents.length === 0 ? (
               <p className="text-sm text-muted-foreground">No events yet.</p>
             ) : (
               <ApplicationTimeline events={timelineEvents} />
             )}
-          </div>
+          </Card>
 
           {/* Cover letter (if student wrote one) */}
           {detail.coverLetter && (
-            <div className="mt-6 rounded-xl border border-border bg-white p-6 dark:bg-card">
+            <Card className="mt-6 gap-0 border-border p-6">
               <h2 className="mb-3 font-semibold text-foreground">Your cover letter</h2>
               <p className="whitespace-pre-line text-sm leading-relaxed text-foreground">
                 {detail.coverLetter}
               </p>
-            </div>
+            </Card>
           )}
         </div>
 
         {/* Sidebar */}
         <aside className="space-y-4">
-          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="gap-0 border-border p-5">
             <h2 className="mb-3 text-sm font-semibold text-foreground">Quick info</h2>
             <dl className="space-y-3 text-sm">
               {detail.deadlineAt && (
@@ -291,7 +294,7 @@ export default function ApplicationDetailPage() {
                 </div>
               )}
             </dl>
-          </div>
+          </Card>
 
           <div className="flex flex-col gap-2">
             <Button variant="outline" size="lg" asChild className="w-full">

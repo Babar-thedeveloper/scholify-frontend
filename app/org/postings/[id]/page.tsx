@@ -16,6 +16,8 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -256,9 +258,9 @@ export default function PostingDetailPage() {
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
               {posting.title}
             </h1>
-            <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium capitalize", statusClass)}>
+            <Badge variant="secondary" className={cn("rounded-full border-transparent capitalize", statusClass)}>
               {posting.status}
-            </span>
+            </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
             {posting.applicantCount} applicant{posting.applicantCount === 1 ? "" : "s"}
@@ -273,7 +275,7 @@ export default function PostingDetailPage() {
         </TabsList>
 
         <TabsContent value="details">
-          <div className="rounded-xl border border-border bg-white p-5 dark:bg-card">
+          <Card className="border-border gap-0 p-5">
             <h2 className="mb-4 font-semibold text-foreground">Edit posting</h2>
             <div className="space-y-5">
               <div className="space-y-1.5">
@@ -375,7 +377,7 @@ export default function PostingDetailPage() {
                 onConfirm={handleDelete}
               />
             </div>
-          </div>
+          </Card>
         </TabsContent>
 
         <TabsContent value="applicants">

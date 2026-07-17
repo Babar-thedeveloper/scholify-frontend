@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowRight, Bookmark, CalendarClock, ListChecks, Target } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
@@ -138,12 +139,12 @@ export default function StudentOverviewPage() {
                 <ApplicationCard key={a.id} application={a} />
               ))
             ) : (
-              <div className="rounded-xl border border-border bg-white p-6 text-center dark:bg-card">
+              <Card className="gap-0 border-border p-6 text-center">
                 <p className="text-sm text-muted-foreground">No applications yet.</p>
                 <Link href="/scholarships" className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
                   Browse scholarships →
                 </Link>
-              </div>
+              </Card>
             )}
           </div>
         </section>
@@ -165,9 +166,9 @@ export default function StudentOverviewPage() {
                 const left = daysUntil(s.deadlineAt ?? undefined) ?? 0;
                 const urgent = left <= 3;
                 return (
-                  <div
+                  <Card
                     key={s.id}
-                    className="rounded-xl border border-border bg-white p-4 dark:bg-card"
+                    className="gap-0 border-border p-4"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="text-sm font-semibold text-foreground">{s.postingTitle}</h3>
@@ -190,16 +191,16 @@ export default function StudentOverviewPage() {
                         Apply now →
                       </Link>
                     </div>
-                  </div>
+                  </Card>
                 );
               })
             ) : (
-              <div className="rounded-xl border border-border bg-white p-6 text-center dark:bg-card">
+              <Card className="gap-0 border-border p-6 text-center">
                 <p className="text-sm text-muted-foreground">Nothing closing soon.</p>
                 <Link href="/internships" className="mt-2 inline-block text-sm font-medium text-primary hover:underline">
                   Browse internships →
                 </Link>
-              </div>
+              </Card>
             )}
           </div>
         </section>

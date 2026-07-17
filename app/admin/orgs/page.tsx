@@ -10,8 +10,10 @@ import {
   Search,
   XCircle,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -42,9 +44,9 @@ function statusBadge(status: AdminOrg["verificationStatus"]) {
     suspended: "bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-400",
   };
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${map[status] ?? ""}`}>
+    <Badge variant="secondary" className={`rounded-full capitalize ${map[status] ?? ""}`}>
       {status}
-    </span>
+    </Badge>
   );
 }
 
@@ -95,17 +97,14 @@ export default function AdminOrgsPage() {
         </div>
         <div className="flex gap-1">
           {STATUS_OPTIONS.map((opt) => (
-            <button
+            <Button
               key={opt.value}
+              variant={status === opt.value ? "default" : "outline"}
+              size="sm"
               onClick={() => { setStatus(opt.value); setPage(1); }}
-              className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                status === opt.value
-                  ? "bg-foreground text-background"
-                  : "border border-border bg-white text-foreground hover:bg-muted dark:bg-card"
-              }`}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -117,7 +116,7 @@ export default function AdminOrgsPage() {
       )}
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-border bg-white dark:bg-card">
+      <Card className="overflow-hidden border-border gap-0 py-0">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
@@ -170,7 +169,7 @@ export default function AdminOrgsPage() {
             ))}
           </TableBody>
         </Table>
-      </div>
+      </Card>
 
       {/* Pagination */}
       {data && data.totalPages > 1 && (
@@ -179,20 +178,12 @@ export default function AdminOrgsPage() {
             {(page - 1) * 20 + 1}–{Math.min(page * 20, data.total)} of {data.total}
           </span>
           <div className="flex gap-1">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted"
-            >
+            <Button variant="outline" size="icon" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
               <ChevronLeft className="size-4" />
-            </button>
-            <button
-              disabled={page === data.totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="flex size-8 items-center justify-center rounded-md border border-border disabled:opacity-40 hover:bg-muted"
-            >
+            </Button>
+            <Button variant="outline" size="icon" disabled={page === data.totalPages} onClick={() => setPage((p) => p + 1)}>
               <ChevronRight className="size-4" />
-            </button>
+            </Button>
           </div>
         </div>
       )}
