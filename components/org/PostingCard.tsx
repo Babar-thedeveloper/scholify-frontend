@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Eye, MoreHorizontal, Pause, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { formatDeadline, timeAgo } from "@/components/dashboard/dashboard.utils";
 import type { Posting } from "@/components/dashboard/dashboard.types";
 
@@ -24,7 +26,7 @@ export function PostingCard({ posting }: { posting: Posting }) {
       : ["Scholarship", p.fundingAmount, p.countryScope];
 
   return (
-    <div className="dash-card rounded-xl border border-border bg-white p-5 dark:bg-card">
+    <Card hover className="gap-0 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <Link
@@ -37,22 +39,23 @@ export function PostingCard({ posting }: { posting: Posting }) {
             {meta.filter(Boolean).join(" · ")}
           </p>
         </div>
-        <span
+        <Badge
+          variant="secondary"
           className={cn(
-            "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium capitalize",
+            "shrink-0 rounded-full border-transparent capitalize",
             POSTING_STATUS_STYLES[p.status]
           )}
         >
           {p.status}
-        </span>
+        </Badge>
       </div>
 
       <p className="mt-3 text-sm text-muted-foreground">
         <span className="font-medium text-foreground">{p.applicantCount}</span> applicants
         {p.newApplicantCount > 0 && (
-          <span className="ml-1.5 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+          <Badge size="xs" className="ml-1.5 rounded-full border-transparent bg-emerald-100 font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
             {p.newApplicantCount} new
-          </span>
+          </Badge>
         )}
         {" · "}Posted {timeAgo(p.postedAt)}
       </p>
@@ -78,6 +81,6 @@ export function PostingCard({ posting }: { posting: Posting }) {
           <MoreHorizontal className="size-4" />
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }

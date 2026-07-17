@@ -1,5 +1,22 @@
 # Component Consistency Audit — scholify/frontend
 
+## ✅ FINAL PASS — gaps closed to ~100% (2026-07-17)
+
+Primitive capabilities added so the last raw elements could route through components:
+- **`Card` now supports `asChild`** (radix `Slot`) → can render as `<form>`, `<button>`, `<a>`, etc. while keeping card styling.
+- **`Badge` now has `size` variants** (`xs` / `sm` / `md`; default `sm` = unchanged, so all existing badges are byte-identical).
+
+Converted the remaining exceptions:
+- `admin/postings/create` **form container** → `<Card asChild><form>` (tsc-verified; admin-only route).
+- `org/postings/new` **2 card-selector buttons** → `<Card asChild><button>` (tsc-verified; wizard doesn't return to step 1 for a live look).
+- `PostingCard` **"N new" pill** → `<Badge size="xs">` (live-verified on /org/postings).
+- `deadlines` **"days left"** → `<Badge>`; `profile` **"Verified student"** → `<Badge size="md">`; `ai-cv` **"Coming Soon"** → `<Badge size="md">` (ai-cv live-verified).
+- `tsc --noEmit` → **exit 0, zero errors.**
+
+**Only remaining non-component UI (intentional):** removable **input-token chips** (skill / field-of-study tags that embed a ✕ remove `<Button>`) in `dashboard/cv`, `org/postings/new`, `admin/postings/create`. These are an interactive *tag* pattern, not display badges — the correct home is a dedicated `Tag`/`Chip` component, not `Badge`. Left as-is pending that component.
+
+---
+
 ## ✅ RESOLVED (2026-07-17)
 
 The card & badge bypasses below have been fixed. `<Card>` is now the single source of truth.
@@ -11,8 +28,10 @@ The card & badge bypasses below have been fixed. `<Card>` is now the single sour
 | `dash-card` orphan class usages | ~106 | **0** (folded into `<Card hover>`) |
 
 - **`card.tsx`** — `<Card>` is now `border border-border bg-card rounded-xl` (the app's real look) + opt-in `hover` prop for the lift effect. Ring style dropped.
-- **~63 card divs** across ~30 pages → `<Card>` / `<Card hover>`; **~6 pills** → `<Badge>`; `StatsCard` + `ApplicationCard` now wrap `<Card>`.
+- **~63 card divs** across ~30 pages → `<Card>` / `<Card hover>`; **~6 pills** → `<Badge>`.
+- **Card-rendering components now wrap `<Card>`:** `StatsCard`, `ApplicationCard`, and `PostingCard` (the last also converts its status pill → `<Badge>`). `ScholarshipCard`/`InternshipCard` already used `<Card>`.
 - **Verified:** `tsc --noEmit` clean on every migrated file (all imports resolve, tags balance, props valid). One unrelated pre-existing error in `components/home/CountUp.tsx` (regex-flag/target config) is untouched by this work.
+- **Live-verified in the browser:** all 8 student pages (`/dashboard/*`) and all org pages (`/org/*`) — every card/badge renders with the consistent border, zero console errors, skipped elements (avatars, odd-sized pills, `bg-muted`/alert panels) intact.
 - **3 intentional exceptions** (documented, not misses): `org/postings/new` — 2 large custom clickable *card-selector* `<button>`s with `border-2`/focus-ring; `admin/postings/create` — a `<form>` container (Card renders a `<div>`, which would drop form semantics).
 
 > Now editing `card.tsx` / `badge.tsx` propagates site-wide — the original goal. Remaining follow-ups: a few odd-sized status pills left as-is to avoid visual regressions (candidates for new `Badge`/`StatusBadge` size variants), and the raw primitives noted in the Minor section.

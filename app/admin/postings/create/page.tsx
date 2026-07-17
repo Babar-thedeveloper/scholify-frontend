@@ -6,6 +6,7 @@ import { AlertTriangle, ArrowLeft, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { createPlatformPosting, type CreatePlatformPostingInput } from "@/lib/api/admin";
@@ -106,7 +107,8 @@ export default function AdminCreatePostingPage() {
         <span>Platform postings appear under the <strong>Scholify Platform</strong> org. For scraped content, set Apply Method to <strong>External</strong> and paste the original source URL.</span>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-5 rounded-xl border border-border bg-white dark:bg-card p-6">
+      <Card asChild className="gap-0 space-y-5 p-6">
+      <form onSubmit={handleSubmit}>
 
         {/* Type selector */}
         <div>
@@ -360,6 +362,7 @@ export default function AdminCreatePostingPage() {
           <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
         </div>
       </form>
+      </Card>
     </div>
   );
 }

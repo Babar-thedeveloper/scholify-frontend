@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck, Camera, Check, Save, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
@@ -464,9 +465,9 @@ export default function ProfilePage() {
           </Button>
         </div>
         {verified && (
-          <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+          <Badge size="md" className="mt-4 gap-1.5 rounded-full border-transparent bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
             <BadgeCheck className="size-4" /> Verified student
-          </div>
+          </Badge>
         )}
       </Card>
     </div>

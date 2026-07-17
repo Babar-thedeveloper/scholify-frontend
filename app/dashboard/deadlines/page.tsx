@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
@@ -113,16 +114,16 @@ export default function DeadlinesPage() {
                     {formatDeadline(row.deadlineAt)}
                   </p>
                 </div>
-                <span
+                <Badge
                   className={cn(
-                    "shrink-0 rounded-full px-3 py-1 text-xs font-semibold",
+                    "shrink-0 rounded-full border-transparent px-3 py-1 text-xs font-semibold",
                     badgeClass
                   )}
                 >
                   {left === 0
                     ? "Today"
                     : `${left} ${left === 1 ? "day" : "days"} left`}
-                </span>
+                </Badge>
               </Card>
             );
           })}

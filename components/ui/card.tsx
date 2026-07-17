@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
@@ -6,10 +7,16 @@ function Card({
   className,
   size = "default",
   hover = false,
+  asChild = false,
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm"; hover?: boolean }) {
+}: React.ComponentProps<"div"> & {
+  size?: "default" | "sm"
+  hover?: boolean
+  asChild?: boolean
+}) {
+  const Comp = asChild ? Slot.Root : "div"
   return (
-    <div
+    <Comp
       data-slot="card"
       data-size={size}
       className={cn(

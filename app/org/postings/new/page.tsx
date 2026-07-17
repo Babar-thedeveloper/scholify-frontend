@@ -289,39 +289,41 @@ export default function NewPostingPage() {
             What are you posting?
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => selectType("scholarship")}
-              className="flex flex-col items-center rounded-xl border-2 border-border bg-white p-8 text-center transition-all hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-card"
+            <Card
+              asChild
+              className="items-center gap-0 border-2 border-border p-8 text-center transition-all hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <span className="flex size-14 items-center justify-center rounded-full bg-emerald-50 text-primary dark:bg-emerald-500/10">
-                <GraduationCap className="size-7" />
-              </span>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">Scholarship</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Academic grants, fellowships, or financial aid for students.
-              </p>
-              <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                Continue <ArrowRight className="size-4" />
-              </span>
-            </button>
+              <button type="button" onClick={() => selectType("scholarship")}>
+                <span className="flex size-14 items-center justify-center rounded-full bg-emerald-50 text-primary dark:bg-emerald-500/10">
+                  <GraduationCap className="size-7" />
+                </span>
+                <h3 className="mt-4 text-lg font-semibold text-foreground">Scholarship</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Academic grants, fellowships, or financial aid for students.
+                </p>
+                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                  Continue <ArrowRight className="size-4" />
+                </span>
+              </button>
+            </Card>
 
-            <button
-              type="button"
-              onClick={() => selectType("internship")}
-              className="flex flex-col items-center rounded-xl border-2 border-border bg-white p-8 text-center transition-all hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-card"
+            <Card
+              asChild
+              className="items-center gap-0 border-2 border-border p-8 text-center transition-all hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              <span className="flex size-14 items-center justify-center rounded-full bg-emerald-50 text-primary dark:bg-emerald-500/10">
-                <Briefcase className="size-7" />
-              </span>
-              <h3 className="mt-4 text-lg font-semibold text-foreground">Internship</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Software, design, marketing, finance, or operations roles.
-              </p>
-              <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                Continue <ArrowRight className="size-4" />
-              </span>
-            </button>
+              <button type="button" onClick={() => selectType("internship")}>
+                <span className="flex size-14 items-center justify-center rounded-full bg-emerald-50 text-primary dark:bg-emerald-500/10">
+                  <Briefcase className="size-7" />
+                </span>
+                <h3 className="mt-4 text-lg font-semibold text-foreground">Internship</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Software, design, marketing, finance, or operations roles.
+                </p>
+                <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                  Continue <ArrowRight className="size-4" />
+                </span>
+              </button>
+            </Card>
           </div>
         </div>
       )}

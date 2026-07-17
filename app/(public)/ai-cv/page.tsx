@@ -1,5 +1,6 @@
 import { Sparkles, FileText, Zap, Target, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 export const metadata = {
@@ -49,10 +50,10 @@ export default function AiCvPage() {
 
       {/* CTA */}
       <div className="mt-16 rounded-2xl bg-muted/30 p-8 text-center shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
-        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-[12px] font-semibold text-primary">
+        <Badge size="md" className="gap-2 rounded-full border-transparent bg-primary/10 text-[12px] font-semibold text-primary">
           <Sparkles className="size-3.5" />
           Coming Soon
-        </div>
+        </Badge>
         <h2 className="mt-4 text-xl font-semibold text-foreground">
           We&apos;re building something incredible.
         </h2>
