@@ -39,9 +39,9 @@ export function SidebarNav({ sections, topSlot, onNavigate }: SidebarNavProps) {
   const isOrg = user.role === "org";
 
   return (
-    <div className="flex h-full flex-col bg-white dark:bg-card">
+    <div className="flex h-full flex-col bg-white/60 backdrop-blur-xl dark:bg-card/50">
       {/* Logo */}
-      <div className="flex h-14 shrink-0 items-center border-b border-border px-5">
+      <div className="flex h-16 shrink-0 items-center border-b border-border px-5">
         <Link href="/" aria-label="Scholify home">
           <ScholifyLogo className="h-8 w-auto" />
         </Link>
@@ -67,9 +67,9 @@ export function SidebarNav({ sections, topSlot, onNavigate }: SidebarNavProps) {
                       href={item.href}
                       onClick={onNavigate}
                       className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
+                        "relative flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
                         active
-                          ? "bg-emerald-50 font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                          ? "bg-emerald-50 font-medium text-emerald-700 before:absolute before:-left-3 before:top-1/2 before:h-6 before:-translate-y-1/2 before:w-1 before:rounded-r-full before:bg-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300 dark:before:bg-emerald-400"
                           : "text-foreground/70 hover:bg-muted hover:text-foreground"
                       )}
                     >

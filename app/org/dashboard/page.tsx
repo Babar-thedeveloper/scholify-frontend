@@ -7,13 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { StatsCard } from "@/components/dashboard/StatsCard";
+import { ChartCard } from "@/components/charts/ChartCard";
+import { DonutChart } from "@/components/charts/DonutChart";
+import { TrendBarChart } from "@/components/charts/TrendBarChart";
+import { orgApplicantStatusData, orgApplicationsData, orgPostingStatusData, toDonutData } from "@/lib/dashboard/chart-data";
 import { PostingCard } from "@/components/org/PostingCard";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { timeAgo } from "@/components/dashboard/dashboard.utils";
 import type { Posting, ApplicationStatus } from "@/components/dashboard/dashboard.types";
 import { listMyPostings, toDashboardPosting } from "@/lib/api/postings";
 import { listOrgApplicants, type ApplicationStatusKey } from "@/lib/api/applications";
-import { getMyOrg, type OrgProfileDto } from "@/lib/api/organizations";
+import { getMyOrg, getOrgCharts, type OrgProfileDto, type OrgCharts } from "@/lib/api/organizations";
 
 const STATUS_MAP: Record<ApplicationStatusKey, ApplicationStatus> = {
   draft: "draft",
@@ -40,6 +44,12 @@ export default function OrgDashboardPage() {
   const [applicants, setApplicants] = useState<RecentApplicant[]>([]);
   const [org, setOrg] = useState<OrgProfileDto | null>(null);
   const [loading, setLoading] = useState(true);
+  const [charts, setCharts] = useState<OrgCharts | null>(null);
+
+  // Charts fall back to dummy data if the endpoint is unreachable.
+  useEffect(() => {
+    getOrgCharts().then(setCharts).catch(() => {});
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -120,10 +130,29 @@ export default function OrgDashboardPage() {
 
       {/* Stats */}
       <div className="dash-stagger grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatsCard value={activePostings.length} label="Active postings" Icon={BriefcaseBusiness} />
+        <StatsCard value={activePostings.length} label="Active postings" Icon={BriefcaseBusiness} featured />
         <StatsCard value={totalApplicants} label="Total applicants" Icon={Users} accent="text-blue-600" />
         <StatsCard value={newThisWeek} label="New this week" Icon={UserPlus} accent="text-violet-600" />
         <StatsCard value={shortlisted} label="Shortlisted" Icon={Sparkles} accent="text-purple-600" />
+      </div>
+
+      {/* Charts */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <ChartCard title="Applicants by status" subtitle="Across all your postings">
+          <DonutChart
+            data={charts && charts.applicantsByStatus.length > 0 ? toDonutData(charts.applicantsByStatus) : orgApplicantStatusData}
+            centerLabel="Applicants"
+          />
+        </ChartCard>
+        <ChartCard title="Postings by status" subtitle="Your current postings">
+          <DonutChart
+            data={charts && charts.postingsByStatus.length > 0 ? toDonutData(charts.postingsByStatus) : orgPostingStatusData}
+            centerLabel="Postings"
+          />
+        </ChartCard>
+        <ChartCard title="Applications received" subtitle="Per month">
+          <TrendBarChart data={charts?.applicationsMonthly ?? orgApplicationsData} />
+        </ChartCard>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">

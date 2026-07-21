@@ -43,12 +43,16 @@ const ORG_ITEMS = [
   { label: "Organization profile", href: "/org/profile", Icon: Building2 },
 ];
 
-export function AvatarDropdown() {
+export function AvatarDropdown({ showDetails = false }: { showDetails?: boolean }) {
   const { user, logout } = useUser();
   const router = useRouter();
   const isOrg = user.role === "org";
   const items = isOrg ? ORG_ITEMS : STUDENT_ITEMS;
   const verified = user.organization?.verified;
+
+  const avatarColor = isOrg
+    ? "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300"
+    : "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300";
 
   function handleLogout() {
     logout();
@@ -60,14 +64,31 @@ export function AvatarDropdown() {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex size-9 items-center justify-center rounded-full text-sm font-semibold transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            isOrg
-              ? "bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300"
-              : "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
+            "flex items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+            showDetails
+              ? "gap-2.5 py-1 pl-1 pr-3 hover:bg-muted aria-expanded:bg-muted"
+              : "transition-transform hover:scale-105"
           )}
           aria-label="Account menu"
         >
-          {user.initials}
+          <span
+            className={cn(
+              "flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
+              avatarColor
+            )}
+          >
+            {user.initials}
+          </span>
+          {showDetails && (
+            <span className="hidden text-left leading-tight lg:flex lg:flex-col">
+              <span className="max-w-[9rem] truncate text-sm font-medium text-foreground">
+                {user.name}
+              </span>
+              <span className="max-w-[9rem] truncate text-xs text-muted-foreground">
+                {user.email}
+              </span>
+            </span>
+          )}
         </button>
       </DropdownMenuTrigger>
 

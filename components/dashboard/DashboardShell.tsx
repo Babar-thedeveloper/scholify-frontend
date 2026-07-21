@@ -10,6 +10,7 @@ import { ScholifyLogo } from "@/components/scholify-logo";
 import { ModeToggle } from "@/components/mode-toggle";
 import { AvatarDropdown } from "@/components/shared/AvatarDropdown";
 import { NotificationDropdown } from "@/components/shared/NotificationDropdown";
+import { TopbarSearch } from "@/components/dashboard/TopbarSearch";
 
 interface DashboardShellProps {
   variant: "student" | "org" | "admin";
@@ -23,7 +24,7 @@ export function DashboardShell({ variant, sidebar, children }: DashboardShellPro
   const notifHref = variant === "org" ? "/org/notifications" : variant === "admin" ? "/dashboard/notifications" : "/dashboard/notifications";
 
   return (
-    <div className="flex min-h-screen bg-emerald-50/30 dark:bg-background">
+    <div className="dash-bg flex min-h-screen">
       {/* Desktop sidebar */}
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 border-r border-border md:block">
         {sidebar({})}
@@ -32,7 +33,7 @@ export function DashboardShell({ variant, sidebar, children }: DashboardShellPro
       {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile top bar */}
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-white px-4 dark:bg-card md:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-white/70 px-4 backdrop-blur-xl dark:bg-card/60 md:hidden">
           <div className="flex items-center gap-2">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
@@ -60,11 +61,14 @@ export function DashboardShell({ variant, sidebar, children }: DashboardShellPro
           </div>
         </header>
 
-        {/* Desktop top bar (notifications + avatar) */}
-        <header className="sticky top-0 z-30 hidden h-14 items-center justify-end gap-1 border-b border-border bg-white/80 px-6 backdrop-blur dark:bg-card/80 md:flex">
-          <ModeToggle />
-          <NotificationDropdown viewAllHref={notifHref} />
-          <AvatarDropdown />
+        {/* Desktop top bar (search + notifications + avatar) */}
+        <header className="sticky top-0 z-30 hidden h-16 items-center justify-between gap-4 border-b border-border bg-white/60 px-6 backdrop-blur-xl dark:bg-card/50 md:flex">
+          <TopbarSearch variant={variant} />
+          <div className="flex items-center gap-1">
+            <ModeToggle />
+            <NotificationDropdown viewAllHref={notifHref} />
+            <AvatarDropdown showDetails />
+          </div>
         </header>
 
         <main key={pathname} className="page-enter flex-1 p-4 sm:p-6 lg:p-8">

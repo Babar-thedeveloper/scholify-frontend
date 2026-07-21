@@ -437,6 +437,21 @@
     box-shadow: 0 10px 30px -12px oklch(0.596 0.127 163 / 0.25);
   }
 
+  /* Glassmorphism backdrop — soft emerald mesh so frosted surfaces read as glass. */
+  .dash-bg {
+    background-color: #ecfdf5;
+    background-image:
+      radial-gradient(48rem 30rem at 92% -8%, rgba(52, 211, 153, 0.28), transparent 60%),
+      radial-gradient(42rem 26rem at -6% 6%, rgba(16, 185, 129, 0.18), transparent 55%);
+    background-attachment: fixed;
+  }
+  .dark .dash-bg {
+    background-color: var(--background);
+    background-image:
+      radial-gradient(48rem 30rem at 92% -8%, rgba(16, 185, 129, 0.14), transparent 60%),
+      radial-gradient(42rem 26rem at -6% 6%, rgba(5, 150, 105, 0.10), transparent 55%);
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .page-enter,
     .dash-stagger > * { animation: none; opacity: 1; transform: none; }

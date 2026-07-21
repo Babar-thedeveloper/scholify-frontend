@@ -59,6 +59,30 @@ export async function getPlatformStats(): Promise<PlatformStats> {
   return data.stats;
 }
 
+// ─── Dashboard charts ─────────────────────────────────────────
+export interface AdminChartGroup {
+  key: string;
+  name: string;
+  value: number;
+}
+export interface AdminChartSeriesPoint {
+  label: string;
+  value: number;
+}
+export interface AdminCharts {
+  usersByRole: AdminChartGroup[];
+  orgsByVerification: AdminChartGroup[];
+  postingsByStatus: AdminChartGroup[];
+  signupsMonthly: AdminChartSeriesPoint[];
+  applicationsMonthly: AdminChartSeriesPoint[];
+  postingsMonthly: AdminChartSeriesPoint[];
+}
+
+export async function getAdminCharts(): Promise<AdminCharts> {
+  const data = await apiFetch<{ charts: AdminCharts }>(`${BASE}/stats/charts`);
+  return data.charts;
+}
+
 // ─── Orgs ─────────────────────────────────────────────────────
 export interface ListOrgsParams {
   status?: "pending" | "approved" | "rejected" | "suspended";

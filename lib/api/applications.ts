@@ -92,6 +92,26 @@ export async function listMyApplications(
   return apiFetch<ListMyApplicationsResponse>(`${BASE}${suffix ? `?${suffix}` : ""}`);
 }
 
+// ─── Dashboard charts ────────────────────────────────────────
+export interface ChartGroup {
+  key: string;
+  name: string;
+  value: number;
+}
+export interface ChartSeriesPoint {
+  label: string;
+  value: number;
+}
+export interface StudentCharts {
+  statusBreakdown: ChartGroup[];
+  monthly: ChartSeriesPoint[];
+}
+
+export async function getStudentCharts(): Promise<StudentCharts> {
+  const { charts } = await apiFetch<{ charts: StudentCharts }>(`${BASE}/me/charts`);
+  return charts;
+}
+
 /** Full detail + chronological timeline for one of MY applications. */
 export async function getApplicationDetail(publicId: string): Promise<ApplicationDetailDto> {
   const { application } = await apiFetch<{ application: ApplicationDetailDto }>(

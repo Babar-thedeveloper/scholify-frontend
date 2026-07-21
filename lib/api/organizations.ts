@@ -5,6 +5,27 @@ import { apiFetch } from "./client";
 
 const BASE = "/api/v1/organizations";
 
+// ─── Dashboard charts ─────────────────────────────────────────
+export interface OrgChartGroup {
+  key: string;
+  name: string;
+  value: number;
+}
+export interface OrgChartSeriesPoint {
+  label: string;
+  value: number;
+}
+export interface OrgCharts {
+  applicantsByStatus: OrgChartGroup[];
+  postingsByStatus: OrgChartGroup[];
+  applicationsMonthly: OrgChartSeriesPoint[];
+}
+
+export async function getOrgCharts(): Promise<OrgCharts> {
+  const { charts } = await apiFetch<{ charts: OrgCharts }>(`${BASE}/me/charts`);
+  return charts;
+}
+
 // ─── Profile ─────────────────────────────────────────────────
 
 export interface OrgAddress {

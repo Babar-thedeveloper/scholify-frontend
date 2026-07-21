@@ -3,7 +3,19 @@
 import { useEffect, useState } from "react";
 import { Building2, Users, Briefcase, FileText, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { getPlatformStats, type PlatformStats } from "@/lib/api/admin";
+import { ChartCard } from "@/components/charts/ChartCard";
+import { DonutChart } from "@/components/charts/DonutChart";
+import { TrendBarChart } from "@/components/charts/TrendBarChart";
+import {
+  adminUsersByRoleData,
+  adminOrgVerificationData,
+  adminPostingStatusData,
+  adminSignupsData,
+  adminApplicationsData,
+  adminPostingsCreatedData,
+  toDonutData,
+} from "@/lib/dashboard/chart-data";
+import { getPlatformStats, getAdminCharts, type PlatformStats, type AdminCharts } from "@/lib/api/admin";
 
 function StatCard({
   label,
@@ -31,13 +43,23 @@ function StatCard({
 
 export default function AdminOverviewPage() {
   const [stats, setStats] = useState<PlatformStats | null>(null);
+  const [charts, setCharts] = useState<AdminCharts | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getPlatformStats()
       .then(setStats)
       .catch((e) => setError(e?.message ?? "Failed to load stats"));
+    // Charts fall back to dummy data if the endpoint isn't reachable.
+    getAdminCharts().then(setCharts).catch(() => {});
   }, []);
+
+  const usersByRole = charts ? toDonutData(charts.usersByRole) : adminUsersByRoleData;
+  const orgsByVerification = charts ? toDonutData(charts.orgsByVerification) : adminOrgVerificationData;
+  const postingsByStatus = charts ? toDonutData(charts.postingsByStatus) : adminPostingStatusData;
+  const signups = charts?.signupsMonthly ?? adminSignupsData;
+  const applications = charts?.applicationsMonthly ?? adminApplicationsData;
+  const newPostings = charts?.postingsMonthly ?? adminPostingsCreatedData;
 
   if (error) {
     return (
@@ -68,6 +90,28 @@ export default function AdminOverviewPage() {
         <StatCard label="Active Postings" value={stats?.activePostings} icon={CheckCircle2} />
         <StatCard label="Applications" value={stats?.totalApplications} icon={FileText} />
         <StatCard label="Verified Students" value={stats?.verifiedStudents} icon={Users} />
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+        <ChartCard title="Users by role" subtitle="Platform composition">
+          <DonutChart data={usersByRole} centerLabel="Users" />
+        </ChartCard>
+        <ChartCard title="Organizations by status" subtitle="Verification pipeline">
+          <DonutChart data={orgsByVerification} centerLabel="Orgs" />
+        </ChartCard>
+        <ChartCard title="Postings by status" subtitle="Platform-wide">
+          <DonutChart data={postingsByStatus} centerLabel="Postings" />
+        </ChartCard>
+        <ChartCard title="New signups" subtitle="Per month">
+          <TrendBarChart data={signups} />
+        </ChartCard>
+        <ChartCard title="Applications" subtitle="Platform-wide, per month">
+          <TrendBarChart data={applications} />
+        </ChartCard>
+        <ChartCard title="New postings" subtitle="Per month">
+          <TrendBarChart data={newPostings} />
+        </ChartCard>
       </div>
     </div>
   );

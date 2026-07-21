@@ -6,11 +6,15 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { ArrowRight, Bookmark, CalendarClock, ListChecks, Target } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
+import { ChartCard } from "@/components/charts/ChartCard";
+import { DonutChart } from "@/components/charts/DonutChart";
+import { TrendBarChart } from "@/components/charts/TrendBarChart";
+import { studentStatusData, studentActivityData, toDonutData } from "@/lib/dashboard/chart-data";
 import { ApplicationCard } from "@/components/dashboard/ApplicationCard";
 import { ProfileCompletionBanner } from "@/components/dashboard/ProfileCompletionBanner";
 import { daysUntil } from "@/components/dashboard/dashboard.utils";
 import type { Application, ApplicationStatus } from "@/components/dashboard/dashboard.types";
-import { listMyApplications, type ApplicationDto } from "@/lib/api/applications";
+import { listMyApplications, getStudentCharts, type ApplicationDto, type StudentCharts } from "@/lib/api/applications";
 import { listSaved, type SavedItemDto } from "@/lib/api/saved";
 import { getMyProfile } from "@/lib/api/users";
 import { useUser } from "@/components/auth/UserContext";
@@ -51,6 +55,12 @@ export default function StudentOverviewPage() {
   const [savedItems, setSavedItems] = useState<SavedItemDto[]>([]);
   const [profilePercent, setProfilePercent] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [charts, setCharts] = useState<StudentCharts | null>(null);
+
+  // Dashboard charts fall back to dummy data if the endpoint is unreachable.
+  useEffect(() => {
+    getStudentCharts().then(setCharts).catch(() => {});
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -114,10 +124,23 @@ export default function StudentOverviewPage() {
 
       {/* Stats */}
       <div className="dash-stagger grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatsCard value={activeCount} label="Active applications" Icon={ListChecks} />
+        <StatsCard value={activeCount} label="Active applications" Icon={ListChecks} featured />
         <StatsCard value={savedItems.length} label="Saved items" Icon={Bookmark} accent="text-blue-600" />
         <StatsCard value={closingThisWeek} label="Closing this week" Icon={CalendarClock} accent="text-red-600" />
         <StatsCard value={`${profilePercent}%`} label="Profile complete" Icon={Target} accent="text-amber-600" />
+      </div>
+
+      {/* Charts */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <ChartCard title="Applications by status" subtitle="Where your applications stand">
+          <DonutChart
+            data={charts && charts.statusBreakdown.length > 0 ? toDonutData(charts.statusBreakdown) : studentStatusData}
+            centerLabel="Applications"
+          />
+        </ChartCard>
+        <ChartCard title="Application activity" subtitle="Submitted per month">
+          <TrendBarChart data={charts?.monthly ?? studentActivityData} />
+        </ChartCard>
       </div>
 
       {/* Two columns */}
