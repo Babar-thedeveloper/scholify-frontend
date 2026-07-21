@@ -13,7 +13,14 @@ Converted the remaining exceptions:
 - `deadlines` **"days left"** → `<Badge>`; `profile` **"Verified student"** → `<Badge size="md">`; `ai-cv` **"Coming Soon"** → `<Badge size="md">` (ai-cv live-verified).
 - `tsc --noEmit` → **exit 0, zero errors.**
 
-**Only remaining non-component UI (intentional):** removable **input-token chips** (skill / field-of-study tags that embed a ✕ remove `<Button>`) in `dashboard/cv`, `org/postings/new`, `admin/postings/create`. These are an interactive *tag* pattern, not display badges — the correct home is a dedicated `Tag`/`Chip` component, not `Badge`. Left as-is pending that component.
+**Removable input-token chips → new `Tag` component (done):** created `components/ui/tag.tsx`
+(`<Tag onRemove={…} removeLabel={…} variant="muted|primary">`) encapsulating the pill + embedded
+✕ remove button. Converted all 4 sites: `dashboard/cv` (skills), `org/postings/new` (skills),
+`admin/postings/create` (skills + fields-of-study). Removed now-unused `X` lucide imports.
+`tsc --noEmit` → exit 0.
+
+**Nothing raw remains.** Every button, input, select, textarea, card, badge, modal, and tag on the
+app now routes through `components/ui/`.
 
 ---
 

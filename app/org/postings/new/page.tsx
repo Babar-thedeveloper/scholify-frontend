@@ -9,13 +9,13 @@ import {
   ArrowLeft,
   Check,
   Lock,
-  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Tag } from "@/components/ui/tag";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -479,22 +479,14 @@ export default function NewPostingPage() {
                   {form.skills.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-2">
                       {form.skills.map((skill) => (
-                        <span
+                        <Tag
                           key={skill}
-                          className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-primary dark:bg-emerald-500/10"
+                          variant="primary"
+                          onRemove={() => removeSkill(skill)}
+                          removeLabel={`Remove ${skill}`}
                         >
                           {skill}
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon-xs"
-                            onClick={() => removeSkill(skill)}
-                            aria-label={`Remove ${skill}`}
-                            className="rounded-full hover:text-primary/70"
-                          >
-                            <X className="size-3" />
-                          </Button>
-                        </span>
+                        </Tag>
                       ))}
                     </div>
                   )}

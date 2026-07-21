@@ -16,10 +16,10 @@ import {
   ScrollText,
   Sparkles,
   Trash2,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Tag } from "@/components/ui/tag";
 import { Spinner } from "@/components/ui/spinner";
 
 // @react-pdf/renderer uses browser-only APIs — must be no-SSR.
@@ -452,15 +452,9 @@ function CVPageContent() {
                   {draft.skills.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {draft.skills.map((s) => (
-                        <span
-                          key={s}
-                          className="flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium"
-                        >
+                        <Tag key={s} onRemove={() => removeSkill(s)} removeLabel={`Remove ${s}`}>
                           {s}
-                          <Button variant="ghost" size="icon-xs" onClick={() => removeSkill(s)} className="text-muted-foreground hover:text-destructive ml-0.5">
-                            <X className="size-3" />
-                          </Button>
-                        </span>
+                        </Tag>
                       ))}
                     </div>
                   )}

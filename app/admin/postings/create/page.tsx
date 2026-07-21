@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Tag } from "@/components/ui/tag";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { createPlatformPosting, type CreatePlatformPostingInput } from "@/lib/api/admin";
@@ -244,11 +245,9 @@ export default function AdminCreatePostingPage() {
               {skills.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-2">
                   {skills.map((s) => (
-                    <span key={s} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
+                    <Tag key={s} onRemove={() => setSkills(skills.filter((x) => x !== s))} removeLabel={`Remove ${s}`}>
                       {s}
-                      <Button type="button" variant="ghost" size="icon-xs" onClick={() => setSkills(skills.filter((x) => x !== s))}
-                        className="rounded-full hover:text-destructive">✕</Button>
-                    </span>
+                    </Tag>
                   ))}
                 </div>
               )}
@@ -328,11 +327,9 @@ export default function AdminCreatePostingPage() {
               {fieldsOfStudy.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-2">
                   {fieldsOfStudy.map((f) => (
-                    <span key={f} className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs font-medium">
+                    <Tag key={f} onRemove={() => setFieldsOfStudy(fieldsOfStudy.filter((x) => x !== f))} removeLabel={`Remove ${f}`}>
                       {f}
-                      <Button type="button" variant="ghost" size="icon-xs" onClick={() => setFieldsOfStudy(fieldsOfStudy.filter((x) => x !== f))}
-                        className="rounded-full hover:text-destructive">✕</Button>
-                    </span>
+                    </Tag>
                   ))}
                 </div>
               )}
