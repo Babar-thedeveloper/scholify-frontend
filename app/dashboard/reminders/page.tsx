@@ -13,6 +13,7 @@ import Link from "next/link";
 import {
   Bell,
   CalendarClock,
+  Loader2,
   Mail,
   MessageSquare,
   Pencil,
@@ -21,8 +22,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { ConfirmModal } from "@/components/shared/ConfirmModal";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/shared/Modal";
@@ -155,9 +154,9 @@ export default function RemindersPage() {
             const ch = channelMeta(r.channel);
             const inactive = !r.isActive;
             return (
-              <Card
+              <div
                 key={r.id}
-                className={`gap-0 border-border p-5 ${inactive ? "opacity-60" : ""}`}
+                className={`rounded-xl border border-border bg-white p-5 dark:bg-card ${inactive ? "opacity-60" : ""}`}
               >
                 <div className="flex items-start gap-3">
                   <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
@@ -212,7 +211,7 @@ export default function RemindersPage() {
                     />
                   </div>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>
@@ -230,7 +229,7 @@ export default function RemindersPage() {
 
         <ModalBody className="grid gap-4">
           <div className="grid gap-1.5">
-            <Label className="text-sm font-medium">Remind me</Label>
+            <label className="text-sm font-medium">Remind me</label>
             <Select value={String(editDays)} onValueChange={(v) => setEditDays(Number(v))}>
               <SelectTrigger>
                 <SelectValue />
@@ -246,7 +245,7 @@ export default function RemindersPage() {
           </div>
 
           <div className="grid gap-1.5">
-            <Label className="text-sm font-medium">Channel</Label>
+            <label className="text-sm font-medium">Channel</label>
             <Select value={editChannel} onValueChange={(v) => setEditChannel(v as ReminderChannel)}>
               <SelectTrigger>
                 <SelectValue />

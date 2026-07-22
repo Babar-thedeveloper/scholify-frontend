@@ -43,6 +43,7 @@ import {
   Check,
   ChevronRight,
   Italic,
+  Loader2,
   Mail,
   Plus,
   Underline,

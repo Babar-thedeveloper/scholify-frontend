@@ -4,6 +4,11 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Clock, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Internship } from "./internships.types";
 import {
   getWorkModePill,
@@ -120,27 +125,13 @@ export function InternshipCard({ internship, onClick }: InternshipCardProps) {
             )}
           </div>
 
-          <div className="mt-1 flex flex-col gap-2">
+          <div className="mt-1 flex gap-2">
             {/* Platform postings apply through Scholify; external postings apply on the provider's site. */}
             <Button
               size="xl"
-              variant={internship.isExternal ? "outline" : "default"}
-              disabled={internship.isExternal}
-              className="relative z-20 w-full"
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(internship.detailUrl);
-              }}
-              aria-label={`Apply with Scholify for ${internship.title}`}
-            >
-              Apply with Scholify
-              {!internship.isExternal && <ArrowRight className="size-4" aria-hidden="true" />}
-            </Button>
-            <Button
-              size="xl"
-              variant={internship.isExternal ? "default" : "outline"}
+              variant="outline"
               disabled={!internship.isExternal}
-              className="relative z-20 w-full"
+              className="relative z-20 min-w-0 flex-1 rounded-md px-2"
               onClick={(e) => {
                 e.stopPropagation();
                 if (internship.applyUrl) window.open(internship.applyUrl, "_blank", "noopener,noreferrer");
@@ -150,6 +141,40 @@ export function InternshipCard({ internship, onClick }: InternshipCardProps) {
               Direct Apply
               {internship.isExternal && <ArrowRight className="size-4" aria-hidden="true" />}
             </Button>
+            {internship.isExternal ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    size="xl"
+                    className="relative z-20 min-w-0 flex-1 rounded-md px-2"
+                    aria-disabled="true"
+                    aria-label="Apply with Scholify unavailable"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
+                    Apply with Scholify
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>This listing only supports direct applications.</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                size="xl"
+                className="relative z-20 min-w-0 flex-1 rounded-md px-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(internship.detailUrl);
+                }}
+                aria-label={`Apply with Scholify for ${internship.title}`}
+              >
+                Apply with Scholify
+                <ArrowRight className="size-4" aria-hidden="true" />
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

@@ -93,6 +93,9 @@ export function PublicNavbar() {
               >
                 <Sparkles className="size-3.5 text-amber-500" />
                 <span>CV Builder</span>
+                <span className="rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-900 shadow-sm">
+                  PRO
+                </span>
               </Button>
             )}
           </nav>
