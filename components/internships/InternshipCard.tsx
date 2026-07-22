@@ -120,48 +120,36 @@ export function InternshipCard({ internship, onClick }: InternshipCardProps) {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            {internship.isExternal ? (
-              <>
-                <Button
-                  size="sm"
-                  className="relative z-20 gap-1 text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(internship.applyUrl, "_blank", "noopener,noreferrer");
-                  }}
-                  aria-label={`Apply on ${internship.company} for ${internship.title}`}
-                >
-                  Apply
-                  <ArrowRight className="size-3" aria-hidden="true" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="relative z-20 w-full text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(internship.detailUrl);
-                  }}
-                  aria-label={`View full details for ${internship.title}`}
-                >
-                  Details
-                </Button>
-              </>
-            ) : (
-              <Button
-                size="sm"
-                className="relative z-20 col-span-2 gap-1 text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push(internship.detailUrl);
-                }}
-                aria-label={`Apply with Scholify for ${internship.title}`}
-              >
-                Apply with Scholify
-                <ArrowRight className="size-3" aria-hidden="true" />
-              </Button>
-            )}
+          <div className="mt-1 flex flex-col gap-2">
+            {/* Platform postings apply through Scholify; external postings apply on the provider's site. */}
+            <Button
+              size="xl"
+              variant={internship.isExternal ? "outline" : "default"}
+              disabled={internship.isExternal}
+              className="relative z-20 w-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(internship.detailUrl);
+              }}
+              aria-label={`Apply with Scholify for ${internship.title}`}
+            >
+              Apply with Scholify
+              {!internship.isExternal && <ArrowRight className="size-4" aria-hidden="true" />}
+            </Button>
+            <Button
+              size="xl"
+              variant={internship.isExternal ? "default" : "outline"}
+              disabled={!internship.isExternal}
+              className="relative z-20 w-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (internship.applyUrl) window.open(internship.applyUrl, "_blank", "noopener,noreferrer");
+              }}
+              aria-label={`Apply on ${internship.company} for ${internship.title}`}
+            >
+              Direct Apply
+              {internship.isExternal && <ArrowRight className="size-4" aria-hidden="true" />}
+            </Button>
           </div>
         </div>
       </CardContent>

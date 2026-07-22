@@ -2,16 +2,22 @@
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { CHART_TOOLTIP_STYLE, type DonutDatum } from "@/lib/dashboard/chart-data";
+import { ChartEmpty } from "./ChartEmpty";
 
 interface DonutChartProps {
   data: DonutDatum[];
   /** Small label under the total in the center of the ring. */
   centerLabel?: string;
   height?: number;
+  emptyMessage?: string;
 }
 
-export function DonutChart({ data, centerLabel, height = 200 }: DonutChartProps) {
+export function DonutChart({ data, centerLabel, height = 200, emptyMessage }: DonutChartProps) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
+
+  if (data.length === 0 || total === 0) {
+    return <ChartEmpty height={height} message={emptyMessage} />;
+  }
 
   return (
     <div>

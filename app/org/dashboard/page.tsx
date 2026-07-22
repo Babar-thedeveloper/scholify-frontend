@@ -10,7 +10,7 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ChartCard } from "@/components/charts/ChartCard";
 import { DonutChart } from "@/components/charts/DonutChart";
 import { TrendBarChart } from "@/components/charts/TrendBarChart";
-import { orgApplicantStatusData, orgApplicationsData, orgPostingStatusData, toDonutData } from "@/lib/dashboard/chart-data";
+import { toDonutData } from "@/lib/dashboard/chart-data";
 import { PostingCard } from "@/components/org/PostingCard";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { timeAgo } from "@/components/dashboard/dashboard.utils";
@@ -140,18 +140,20 @@ export default function OrgDashboardPage() {
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <ChartCard title="Applicants by status" subtitle="Across all your postings">
           <DonutChart
-            data={charts && charts.applicantsByStatus.length > 0 ? toDonutData(charts.applicantsByStatus) : orgApplicantStatusData}
+            data={charts ? toDonutData(charts.applicantsByStatus) : []}
             centerLabel="Applicants"
+            emptyMessage="No applicants yet"
           />
         </ChartCard>
         <ChartCard title="Postings by status" subtitle="Your current postings">
           <DonutChart
-            data={charts && charts.postingsByStatus.length > 0 ? toDonutData(charts.postingsByStatus) : orgPostingStatusData}
+            data={charts ? toDonutData(charts.postingsByStatus) : []}
             centerLabel="Postings"
+            emptyMessage="No postings yet"
           />
         </ChartCard>
         <ChartCard title="Applications received" subtitle="Per month">
-          <TrendBarChart data={charts?.applicationsMonthly ?? orgApplicationsData} />
+          <TrendBarChart data={charts?.applicationsMonthly ?? []} emptyMessage="No applications yet" />
         </ChartCard>
       </div>
 

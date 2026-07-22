@@ -166,48 +166,36 @@ export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) 
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            {scholarship.isExternal ? (
-              <>
-                <Button
-                  size="sm"
-                  className="relative z-20 gap-1 text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
-                  }}
-                  aria-label={`Direct apply for ${scholarship.title}`}
-                >
-                  Apply
-                  <ArrowRight className="size-3" aria-hidden="true" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="relative z-20 w-full text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(scholarship.detailUrl);
-                  }}
-                  aria-label={`View full details for ${scholarship.title}`}
-                >
-                  Details
-                </Button>
-              </>
-            ) : (
-              <Button
-                size="sm"
-                className="relative z-20 col-span-2 gap-1 text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push(scholarship.detailUrl);
-                }}
-                aria-label={`Apply with Scholify for ${scholarship.title}`}
-              >
-                Apply with Scholify
-                <ArrowRight className="size-3" aria-hidden="true" />
-              </Button>
-            )}
+          <div className="mt-1 flex flex-col gap-2">
+            {/* Platform postings apply through Scholify; external postings apply on the provider's site. */}
+            <Button
+              size="xl"
+              variant={scholarship.isExternal ? "outline" : "default"}
+              disabled={scholarship.isExternal}
+              className="relative z-20 w-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(scholarship.detailUrl);
+              }}
+              aria-label={`Apply with Scholify for ${scholarship.title}`}
+            >
+              Apply with Scholify
+              {!scholarship.isExternal && <ArrowRight className="size-4" aria-hidden="true" />}
+            </Button>
+            <Button
+              size="xl"
+              variant={scholarship.isExternal ? "default" : "outline"}
+              disabled={!scholarship.isExternal}
+              className="relative z-20 w-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (scholarship.applyUrl) window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
+              }}
+              aria-label={`Direct apply for ${scholarship.title}`}
+            >
+              Direct Apply
+              {scholarship.isExternal && <ArrowRight className="size-4" aria-hidden="true" />}
+            </Button>
           </div>
         </div>
       </CardContent>

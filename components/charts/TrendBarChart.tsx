@@ -10,13 +10,21 @@ import {
   YAxis,
 } from "recharts";
 import { CHART_TOOLTIP_STYLE, type BarDatum } from "@/lib/dashboard/chart-data";
+import { ChartEmpty } from "./ChartEmpty";
 
 interface TrendBarChartProps {
   data: BarDatum[];
   height?: number;
+  emptyMessage?: string;
 }
 
-export function TrendBarChart({ data, height = 240 }: TrendBarChartProps) {
+export function TrendBarChart({ data, height = 240, emptyMessage }: TrendBarChartProps) {
+  const total = data.reduce((sum, d) => sum + d.value, 0);
+
+  if (data.length === 0 || total === 0) {
+    return <ChartEmpty height={height} message={emptyMessage} />;
+  }
+
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>

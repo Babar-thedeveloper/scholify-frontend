@@ -9,7 +9,7 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ChartCard } from "@/components/charts/ChartCard";
 import { DonutChart } from "@/components/charts/DonutChart";
 import { TrendBarChart } from "@/components/charts/TrendBarChart";
-import { studentStatusData, studentActivityData, toDonutData } from "@/lib/dashboard/chart-data";
+import { toDonutData } from "@/lib/dashboard/chart-data";
 import { ApplicationCard } from "@/components/dashboard/ApplicationCard";
 import { ProfileCompletionBanner } from "@/components/dashboard/ProfileCompletionBanner";
 import { daysUntil } from "@/components/dashboard/dashboard.utils";
@@ -134,12 +134,13 @@ export default function StudentOverviewPage() {
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         <ChartCard title="Applications by status" subtitle="Where your applications stand">
           <DonutChart
-            data={charts && charts.statusBreakdown.length > 0 ? toDonutData(charts.statusBreakdown) : studentStatusData}
+            data={charts ? toDonutData(charts.statusBreakdown) : []}
             centerLabel="Applications"
+            emptyMessage="No applications yet"
           />
         </ChartCard>
         <ChartCard title="Application activity" subtitle="Submitted per month">
-          <TrendBarChart data={charts?.monthly ?? studentActivityData} />
+          <TrendBarChart data={charts?.monthly ?? []} emptyMessage="No applications yet" />
         </ChartCard>
       </div>
 
