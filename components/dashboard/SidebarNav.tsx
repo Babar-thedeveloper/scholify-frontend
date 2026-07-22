@@ -43,7 +43,7 @@ export function SidebarNav({ sections, topSlot, onNavigate }: SidebarNavProps) {
       {/* Logo */}
       <div className="flex h-16 shrink-0 items-center border-b border-border px-5">
         <Link href="/" aria-label="Scholify home">
-          <ScholifyLogo className="h-8 w-auto" />
+          <ScholifyLogo className="h-10 w-auto" />
         </Link>
       </div>
 
