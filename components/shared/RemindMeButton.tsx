@@ -38,7 +38,7 @@ import { ApiError } from "@/lib/api/client";
 interface Props {
   postingId: string;
   postingSlug: string;
-  /** ISO deadline — used to hide the button when already closed. */
+  /** ISO deadline- used to hide the button when already closed. */
   deadlineAt?: string | null;
 }
 

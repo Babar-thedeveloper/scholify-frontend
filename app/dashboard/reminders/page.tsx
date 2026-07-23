@@ -1,7 +1,7 @@
 "use client";
 
 // ─────────────────────────────────────────────────────────────
-// /dashboard/reminders — student's list of active reminders.
+// /dashboard/reminders- student's list of active reminders.
 //
 // Wired to GET /api/v1/reminders. Each row supports:
 //   - Edit: days-before + channel via dialog (PATCH)
@@ -149,7 +149,7 @@ export default function RemindersPage() {
           actionHref="/scholarships"
         />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
           {reminders.map((r) => {
             const ch = channelMeta(r.channel);
             const inactive = !r.isActive;

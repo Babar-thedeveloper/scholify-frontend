@@ -4,7 +4,7 @@ import { ScholifyLogo } from "@/components/scholify-logo";
 
 interface AuthCardProps {
   children: React.ReactNode;
-  /** Width of the white form half — wider for the multi-field signup form */
+  /** Width of the white form half- wider for the multi-field signup form */
   size?: "sm" | "md";
   aside: {
     title: string;

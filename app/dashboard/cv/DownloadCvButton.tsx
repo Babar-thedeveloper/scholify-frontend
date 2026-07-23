@@ -1,6 +1,6 @@
 "use client";
 // ─────────────────────────────────────────────────────────────
-// DownloadCvButton — renders the PDF client-side via
+// DownloadCvButton- renders the PDF client-side via
 // @react-pdf/renderer and triggers a browser download.
 //
 // Loaded dynamically (no SSR) from page.tsx because

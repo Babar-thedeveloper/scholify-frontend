@@ -77,13 +77,13 @@ export default function AdminOrgDetailPage() {
 
       {/* Info card */}
       <Card className="grid gap-4 border-border p-5 sm:grid-cols-2 lg:grid-cols-3">
-        <Detail label="Industry" value={org.industry ?? "—"} />
+        <Detail label="Industry" value={org.industry ?? "-"} />
         <Detail label="Country" value={org.country} />
         <Detail label="Members" value={String(org.memberCount)} />
         <Detail label="Active Postings" value={String(org.activePostingCount)} />
         <Detail
           label="Website"
-          value={org.website ?? "—"}
+          value={org.website ?? "-"}
           href={org.website ?? undefined}
         />
         <Detail

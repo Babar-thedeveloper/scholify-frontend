@@ -38,7 +38,7 @@ export function ScholifyLogo({
       className={className}
       aria-label="Scholify"
     >
-      {/* Icon box — white/translucent on colored bg, brand green otherwise */}
+      {/* Icon box- white/translucent on colored bg, brand green otherwise */}
       <rect width="48" height="48" rx="12" fill={isWhite ? "rgba(255,255,255,0.22)" : "#059669"} x="0" y="4" />
       <polygon points="24,13 40,20 24,27 8,20" fill="white" />
       <line x1="40" y1="20" x2="40" y2="31" stroke="white" strokeWidth="2.2" strokeLinecap="round" />

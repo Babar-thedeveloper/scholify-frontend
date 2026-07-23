@@ -111,38 +111,28 @@ export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) 
           </span>
         </div>
 
-        {/* Provider (matches internship card layout: initials avatar + name) */}
-        <div className="mt-3 flex items-center gap-2">
-          <span className="flex size-5 items-center justify-center rounded-md bg-emerald-100 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
-            {providerInitials(scholarship.provider)}
-          </span>
-          <span className="truncate text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
-            {scholarship.provider}
-            {scholarship.destination && scholarship.destination !== "Pakistan"
-              ? ` · ${scholarship.destination}`
-              : ""}
-          </span>
-        </div>
-
         {/* Title */}
-        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-semibold leading-tight text-gray-900 dark:text-gray-100">
+        <h3 className="mt-3 line-clamp-2 text-[15px] font-semibold leading-snug text-gray-900 dark:text-gray-100">
           {scholarship.title}
         </h3>
 
-        {/* Summary */}
-        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-gray-500 dark:text-gray-400">
-          {scholarship.summary}
-        </p>
+        {/* Provider */}
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <span className="flex size-4 shrink-0 items-center justify-center rounded bg-emerald-100 text-[9px] font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+            {providerInitials(scholarship.provider)}
+          </span>
+          <span className="truncate text-xs text-muted-foreground">{scholarship.provider}</span>
+        </div>
 
         {/* Tags */}
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-            <GraduationCap className="mr-1 size-3" aria-hidden="true" />
+          <span className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+            <GraduationCap className="size-3" aria-hidden="true" />
             {levelLabel(scholarship.level)}
           </span>
           {scholarship.destination !== "Pakistan" && (
-            <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-              <MapPin className="mr-1 size-3" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-[11px] text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+              <MapPin className="size-3" aria-hidden="true" />
               {scholarship.destination}
             </span>
           )}
@@ -153,22 +143,25 @@ export function ScholarshipCard({ scholarship, onClick }: ScholarshipCardProps) 
           <div className="h-px bg-gray-100 dark:bg-gray-800" />
         </div>
 
-        {/* Deadline & action */}
-        <div className="mt-3 flex flex-col gap-2.5">
+        {/* Footer */}
+        <div className="mt-3 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 text-[12px] text-gray-500 dark:text-gray-400">
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-gray-500">
               <Calendar className="size-3.5" aria-hidden="true" />
-              <span>Posted {getDaysAgo(scholarship.postedAt)}</span>
-            </div>
-            <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${deadlineClass}`}>
-              {deadlineText}
+              Posted {getDaysAgo(scholarship.postedAt)}
             </span>
-          </div>
-          <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
-              <CalendarClock className="size-3.5" aria-hidden="true" />
-              Deadline: {formatDeadline(scholarship.deadline)}
-            </span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  className={`inline-flex cursor-default items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${deadlineClass}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <CalendarClock className="size-3" aria-hidden="true" />
+                  {deadlineText}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent side="top">Deadline: {formatDeadline(scholarship.deadline)}</TooltipContent>
+            </Tooltip>
           </div>
 
           <div className="mt-1 flex gap-2">

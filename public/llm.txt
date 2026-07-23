@@ -1,0 +1,19 @@
+# Scholify
+
+> Scholify is Pakistan's #1 free platform for discovering scholarships and internships - national, international, and provincial - with deadline reminders and a free CV builder for students.
+
+Scholify aggregates and hosts scholarship and internship opportunities for Pakistani students. Some listings are managed on-platform (students apply through Scholify and track status); others link out to the provider's official application page ("Direct Apply"). All core features are free, with no paywall.
+
+## Key pages
+- [Scholarships](https://scholify.pk/scholarships): searchable directory of national, international, and provincial scholarships. Supports `?search=` queries.
+- [Internships](https://scholify.pk/internships): paid, unpaid, remote, and onsite internships for students.
+- [AI CV Builder](https://scholify.pk/ai-cv): free CV builder with Europass and Modern templates, exportable to PDF.
+- [About](https://scholify.pk/about): mission, story, and team.
+
+## Structured data
+- Every page exposes Schema.org JSON-LD: `Organization` and `WebSite` site-wide, `JobPosting` on internship detail pages, and `BreadcrumbList` on listing detail pages.
+
+## Facts
+- Audience: students in Pakistan.
+- Cost: 100% free.
+- Categories: scholarships (national / international / provincial) and internships (paid / unpaid / remote / onsite).

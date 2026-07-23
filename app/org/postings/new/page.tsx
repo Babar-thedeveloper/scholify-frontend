@@ -107,7 +107,7 @@ export default function NewPostingPage() {
           : null;
         if (locked) {
           setLockedType(locked);
-          // Skip step 1 entirely — the choice is already made
+          // Skip step 1 entirely- the choice is already made
           setType(locked);
           setStep((s) => (s === 1 ? 2 : s));
         }
@@ -200,7 +200,7 @@ export default function NewPostingPage() {
       };
     }
 
-    // Internship — extract the numeric month count from a free-text field like "3 months".
+    // Internship- extract the numeric month count from a free-text field like "3 months".
     const durationMonths = form.duration ? parseInt(form.duration.replace(/[^\d]/g, ""), 10) : NaN;
     return {
       ...base,
@@ -697,7 +697,7 @@ export default function NewPostingPage() {
                 value={
                   form.applyMethod === "platform"
                     ? "Apply on Scholify"
-                    : `Apply externally — ${form.externalUrl}`
+                    : `Apply externally- ${form.externalUrl}`
                 }
                 full
               />
@@ -745,7 +745,7 @@ function ReviewItem({
         {label}
       </dt>
       <dd className="mt-0.5 whitespace-pre-wrap text-foreground">
-        {value?.trim() ? value : <span className="text-muted-foreground">—</span>}
+        {value?.trim() ? value : <span className="text-muted-foreground">-</span>}
       </dd>
     </div>
   );

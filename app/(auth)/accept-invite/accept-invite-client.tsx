@@ -148,7 +148,7 @@ export function AcceptInviteClient({ token }: Props) {
       </div>
 
       {info?.needsSignup ? (
-        /* New user path — create account on the way in */
+        /* New user path- create account on the way in */
         <div className="flex flex-col gap-4">
           <h1 className="text-xl font-bold text-foreground">Create your account</h1>
           <p className="text-sm text-muted-foreground">
@@ -198,7 +198,7 @@ export function AcceptInviteClient({ token }: Props) {
           </Button>
         </div>
       ) : (
-        /* Existing user path — just confirm */
+        /* Existing user path- just confirm */
         <div className="flex flex-col gap-4">
           <h1 className="text-xl font-bold text-foreground">Join {info?.orgName}</h1>
           <p className="text-sm text-muted-foreground">

@@ -8,7 +8,7 @@ import {
 
 export default function NotificationsPage() {
   return (
-    <div>
+    <div className="mx-auto max-w-3xl">
       <NotificationsList
         header={({ hasUnread, onMarkAllRead, marking }) => (
           <PageHeader

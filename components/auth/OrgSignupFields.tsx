@@ -118,7 +118,7 @@ export function OrgSignupFields({
         error={errors.email}
         helper={
           showPersonalEmailWarning
-            ? "Personal email detected — use your official domain for faster verification."
+            ? "Personal email detected- use your official domain for faster verification."
             : undefined
         }
         helperVariant="warning"

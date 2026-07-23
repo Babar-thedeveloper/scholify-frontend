@@ -1,7 +1,6 @@
 "use client";
 
-import { SlidersHorizontal, Lock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Lock } from "lucide-react";
 import { CategoryTabs } from "./CategoryTabs";
 import {
   Select,
@@ -11,29 +10,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetClose,
-  SheetFooter,
-} from "@/components/ui/sheet";
-import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { ScholarshipFilters } from "./scholarships.types";
 
+type PanelFilters = Omit<ScholarshipFilters, "search" | "sort" | "page">;
+
 interface FilterBarProps {
-  filters: Omit<ScholarshipFilters, "search" | "sort" | "page">;
-  activeCount: number;
-  hasFilters: boolean;
-  onChange: (
-    filters: Omit<ScholarshipFilters, "search" | "sort" | "page">
-  ) => void;
-  onClear: () => void;
+  filters: PanelFilters;
+  onChange: (filters: PanelFilters) => void;
 }
 
 const degreeOptions = [
@@ -71,197 +58,86 @@ const deadlineOptions = [
   { value: "open", label: "Open / rolling" },
 ];
 
-export function FilterBar({
-  filters,
-  activeCount,
-  hasFilters,
-  onChange,
-  onClear,
-}: FilterBarProps) {
-  const update = (
-    key: keyof typeof filters,
-    value: (typeof filters)[keyof typeof filters]
-  ) => {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      {children}
+    </div>
+  );
+}
+
+/** Vertical filter panel - used in the desktop sidebar and the mobile drawer. */
+export function FilterBar({ filters, onChange }: FilterBarProps) {
+  const update = <K extends keyof PanelFilters>(key: K, value: PanelFilters[K]) => {
     onChange({ ...filters, [key]: value });
   };
 
-  const filterContent = (
-    <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-3">
-      <Select
-        value={filters.level}
-        onValueChange={(value) => update("level", value as typeof filters.level)}
-        aria-label="Degree level filter"
-      >
-        <SelectTrigger className="w-full text-[13px] md:w-[150px]">
-          <SelectValue placeholder="Degree level" />
-        </SelectTrigger>
-        <SelectContent>
-          {degreeOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        value={filters.fundingType}
-        onValueChange={(value) =>
-          update("fundingType", value as typeof filters.fundingType)
-        }
-        aria-label="Funding type filter"
-      >
-        <SelectTrigger className="w-full text-[13px] md:w-[150px]">
-          <SelectValue placeholder="Funding type" />
-        </SelectTrigger>
-        <SelectContent>
-          {fundingOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        value={filters.destination}
-        onValueChange={(value) =>
-          update("destination", value as typeof filters.destination)
-        }
-        aria-label="Destination filter"
-      >
-        <SelectTrigger className="w-full text-[13px] md:w-[170px]">
-          <SelectValue placeholder="Destination" />
-        </SelectTrigger>
-        <SelectContent>
-          {destinationOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        value={filters.deadlineRange}
-        onValueChange={(value) =>
-          update("deadlineRange", value as typeof filters.deadlineRange)
-        }
-        aria-label="Deadline filter"
-      >
-        <SelectTrigger className="w-full text-[13px] md:w-[170px]">
-          <SelectValue placeholder="Deadline" />
-        </SelectTrigger>
-        <SelectContent>
-          {deadlineOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="w-full md:w-[170px]">
-            <Select value="all" disabled aria-label="Field of study filter">
-              <SelectTrigger className="w-full cursor-not-allowed opacity-60 text-[13px]">
-                <div className="flex items-center gap-2">
-                  <Lock className="size-3.5" aria-hidden="true" />
-                  <SelectValue placeholder="Field of study" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All fields</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">
-          <p>Coming soon</p>
-        </TooltipContent>
-      </Tooltip>
-    </div>
-  );
-
   return (
-    <div className="sticky top-14 z-30 rounded-2xl bg-card p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)]">
-      <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-5">
+      <Field label="Category">
         <CategoryTabs
           value={filters.category}
           onChange={(category) => onChange({ ...filters, category })}
         />
+      </Field>
 
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div className="hidden md:block">{filterContent}</div>
+      <Field label="Degree level">
+        <Select value={filters.level} onValueChange={(v) => update("level", v as PanelFilters["level"])}>
+          <SelectTrigger className="w-full text-[13px]"><SelectValue placeholder="Degree level" /></SelectTrigger>
+          <SelectContent>
+            {degreeOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </Field>
 
-          <div className="flex items-center gap-2 md:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" className="gap-2 text-[13px]" aria-label="Open filters">
-                <SlidersHorizontal className="size-4" aria-hidden="true" />
-                Filters
-                {activeCount > 0 && (
-                  <span className="ml-1 rounded-full bg-primary px-1.5 py-0.5 text-xs text-primary-foreground">
-                    {activeCount}
-                  </span>
-                )}
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="bottom" className="h-auto max-h-[85vh]">
-              <SheetHeader>
-                <SheetTitle>Filters</SheetTitle>
-              </SheetHeader>
-              <div className="mt-4">{filterContent}</div>
-              <SheetFooter className="mt-6 flex-row gap-2">
-                {hasFilters && (
-                  <SheetClose asChild>
-                    <Button
-                      variant="outline"
-                      onClick={onClear}
-                      className="flex-1 text-[13px]"
-                    >
-                      Clear all
-                    </Button>
-                  </SheetClose>
-                )}
-                <SheetClose asChild>
-                  <Button className="flex-1 text-[13px]">
-                    Show results
-                  </Button>
-                </SheetClose>
-              </SheetFooter>
-            </SheetContent>
-          </Sheet>
-        </div>
+      <Field label="Funding type">
+        <Select value={filters.fundingType} onValueChange={(v) => update("fundingType", v as PanelFilters["fundingType"])}>
+          <SelectTrigger className="w-full text-[13px]"><SelectValue placeholder="Funding type" /></SelectTrigger>
+          <SelectContent>
+            {fundingOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </Field>
 
-        <div className="hidden md:flex md:items-center">
-          {hasFilters && (
-            <Button
-              variant="outline"
-              className="text-[13px] text-gray-500 hover:text-foreground"
-              onClick={onClear}
-              aria-label="Clear all filters"
-            >
-              Clear all filters
-            </Button>
-          )}
-        </div>
-      </div>
+      <Field label="Destination">
+        <Select value={filters.destination} onValueChange={(v) => update("destination", v as PanelFilters["destination"])}>
+          <SelectTrigger className="w-full text-[13px]"><SelectValue placeholder="Destination" /></SelectTrigger>
+          <SelectContent>
+            {destinationOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </Field>
 
-      {hasFilters && (
-        <div className="mt-2 flex md:hidden">
-          <Button
-            variant="ghost"
-            className="px-0 text-[13px] text-primary hover:text-primary"
-            onClick={onClear}
-            aria-label="Clear all filters"
-          >
-            Clear all filters
-          </Button>
-        </div>
-      )}
-      </div>
+      <Field label="Deadline">
+        <Select value={filters.deadlineRange} onValueChange={(v) => update("deadlineRange", v as PanelFilters["deadlineRange"])}>
+          <SelectTrigger className="w-full text-[13px]"><SelectValue placeholder="Deadline" /></SelectTrigger>
+          <SelectContent>
+            {deadlineOptions.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </Field>
+
+      <Field label="Field of study">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <Select value="all" disabled aria-label="Field of study filter">
+                <SelectTrigger className="w-full cursor-not-allowed text-[13px] opacity-60">
+                  <div className="flex items-center gap-2">
+                    <Lock className="size-3.5" aria-hidden="true" />
+                    <SelectValue placeholder="Field of study" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All fields</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="right"><p>Coming soon</p></TooltipContent>
+        </Tooltip>
+      </Field>
     </div>
   );
 }

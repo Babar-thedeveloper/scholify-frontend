@@ -409,7 +409,7 @@
    Applied across student & org logged-in pages.
    ───────────────────────────────────────────── */
 @layer utilities {
-  /* Page entrance — keyed on route so it replays on navigation. */
+  /* Page entrance- keyed on route so it replays on navigation. */
   .page-enter {
     animation: page-enter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
@@ -427,7 +427,7 @@
   .dash-stagger > *:nth-child(5) { animation-delay: 0.25s; }
   .dash-stagger > *:nth-child(6) { animation-delay: 0.3s; }
 
-  /* Interactive card — subtle lift + emerald-tinted ring on hover. */
+  /* Interactive card- subtle lift + emerald-tinted ring on hover. */
   .dash-card {
     transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
   }
@@ -437,7 +437,7 @@
     box-shadow: 0 10px 30px -12px oklch(0.596 0.127 163 / 0.25);
   }
 
-  /* Glassmorphism backdrop — soft emerald mesh so frosted surfaces read as glass. */
+  /* Glassmorphism backdrop- soft emerald mesh so frosted surfaces read as glass. */
   .dash-bg {
     background-color: #ecfdf5;
     background-image:

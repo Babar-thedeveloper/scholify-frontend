@@ -45,7 +45,7 @@ export const announcements: Announcement[] = [
       "Track every global scholarship with email reminders 7, 3 and 1 day before each deadline. Never miss the chance to study abroad.",
     cta: { label: "Explore funded study abroad", href: "/scholarships" },
     icon: "Globe",
-    theme: "blue",
+    theme: "emerald",
   },
   {
     tag: "New",
@@ -55,7 +55,7 @@ export const announcements: Announcement[] = [
       "Onsite, remote and paid roles from employers actively hiring student talent - from Daraz to fast-growing startups.",
     cta: { label: "View internships", href: "/internships" },
     icon: "Briefcase",
-    theme: "violet",
+    theme: "emerald",
   },
   {
     tag: "Free tool",
@@ -64,7 +64,7 @@ export const announcements: Announcement[] = [
       "Fill your profile once, generate a polished CV instantly, and let verified recruiters discover you. Update once, use everywhere.",
     cta: { label: "Create your CV", href: "/signup" },
     icon: "FileText",
-    theme: "amber",
+    theme: "emerald",
   },
   {
     tag: "Give back",
@@ -73,6 +73,6 @@ export const announcements: Announcement[] = [
       "100% transparent community donations - every rupee reaches a verified student, with proof of impact for every contribution.",
     cta: { label: "Support a student", href: "#give-back" },
     icon: "HeartHandshake",
-    theme: "rose",
+    theme: "emerald",
   },
 ];

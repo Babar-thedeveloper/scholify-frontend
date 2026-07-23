@@ -36,7 +36,7 @@ export default function BillingPage() {
       {/* Current plan */}
       <Card className="border-border gap-0 p-5">
         <div className="flex flex-wrap items-center gap-3">
-          <h3 className="text-xl font-semibold text-foreground">Free — Beta</h3>
+          <h3 className="text-xl font-semibold text-foreground">Free- Beta</h3>
           <Badge variant="secondary">Current plan</Badge>
         </div>
         <p className="mt-1 text-2xl font-semibold tracking-tight text-foreground">

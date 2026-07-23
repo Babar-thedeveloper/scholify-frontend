@@ -1,7 +1,7 @@
 "use client";
 
 // ─────────────────────────────────────────────────────────────
-// DEV-ONLY quick-login. Real auth is in place — this just calls
+// DEV-ONLY quick-login. Real auth is in place- this just calls
 // the real /login endpoint with predefined demo credentials so
 // you can flip between roles during UI work without typing them.
 //

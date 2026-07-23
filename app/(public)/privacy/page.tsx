@@ -10,7 +10,7 @@ const SECTIONS = [
   {
     title: "What we collect",
     content:
-      "We collect the information you provide when you sign up, build your profile, or apply to opportunities — such as your name, email, university, education details, and CV. We also collect basic usage data to improve the platform.",
+      "We collect the information you provide when you sign up, build your profile, or apply to opportunities- such as your name, email, university, education details, and CV. We also collect basic usage data to improve the platform.",
   },
   {
     title: "How we use your data",

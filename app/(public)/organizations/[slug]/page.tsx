@@ -196,7 +196,7 @@ export default async function PublicOrgPage({ params }: Props) {
               <div>
                 <dt className="text-xs text-muted-foreground">Type</dt>
                 <dd className="font-medium text-foreground capitalize">
-                  {org.kind?.replace(/_/g, " ") ?? "—"}
+                  {org.kind?.replace(/_/g, " ") ?? "-"}
                 </dd>
               </div>
               <div>

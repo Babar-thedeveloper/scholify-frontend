@@ -17,7 +17,7 @@ export default async function VerifyEmailPage({ searchParams }: VerifyEmailPageP
       size="sm"
       aside={{
         title: token ? "Almost there!" : "One last step!",
-        text: "Verify your email to unlock all Scholify features — scholarships, internships, and more.",
+        text: "Verify your email to unlock all Scholify features- scholarships, internships, and more.",
         switchPrompt: "Already verified?",
         switchLabel: "Sign in",
         switchHref: "/login",

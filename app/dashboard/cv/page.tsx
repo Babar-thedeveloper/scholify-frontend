@@ -6,9 +6,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { handleApiError } from "@/lib/api/handle-error";
 import {
-  ArrowLeft,
   BriefcaseBusiness,
-  GraduationCap,
+  Check,
+  FileText,
   Languages,
   Pencil,
   Plus,
@@ -21,8 +21,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tag } from "@/components/ui/tag";
 import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 
-// @react-pdf/renderer uses browser-only APIs — must be no-SSR.
+// @react-pdf/renderer uses browser-only APIs- must be no-SSR.
 const DownloadCvButton = dynamic(() => import("./DownloadCvButton"), {
   ssr: false,
   loading: () => (
@@ -138,7 +139,7 @@ function CVPageContent() {
         if (reset) {
           setDraft({ ...data, workExperience: [], skills: [], languages: [], certifications: [] });
           router.replace("/dashboard/cv");
-          toast.success("Started fresh — your profile is pre-filled, add your extras below.");
+          toast.success("Started fresh- your profile is pre-filled, add your extras below.");
         } else {
           setDraft(data);
         }
@@ -166,7 +167,7 @@ function CVPageContent() {
         setCv(updated);
         setLastAutoSave(new Date());
       } catch {
-        // Silent on auto-save failure — don't disrupt editing
+        // Silent on auto-save failure- don't disrupt editing
       }
     }, 60_000);
     return () => clearInterval(interval);
@@ -292,13 +293,49 @@ function CVPageContent() {
   }
 
   const templateKey = (draft.templateKey ?? "europass") as TemplateKey;
+  const dirty = JSON.stringify(draft) !== JSON.stringify(cv);
+  const saveStatus = saving
+    ? "Saving…"
+    : saved
+    ? "✓ Saved"
+    : lastAutoSave
+    ? `Draft saved ${lastAutoSave.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+    : dirty
+    ? "Unsaved changes"
+    : "All changes saved";
 
   return (
     <div>
-      <PageHeader
-        title="My CV"
-        subtitle="Auto-generated from your profile · add extras below"
-      />
+      {/* ── Premium header ── */}
+      <div className="mb-6 overflow-hidden rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-white p-5 dark:border-emerald-500/20 dark:from-emerald-500/10 dark:via-card dark:to-card sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shadow-md">
+              <FileText className="size-5" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold tracking-tight text-foreground">CV Builder</h1>
+                <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm">
+                  <Sparkles className="size-3" /> Free
+                </span>
+              </div>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                Recruiter-ready CVs, auto-filled from your profile. Export to PDF anytime.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="hidden text-xs text-muted-foreground sm:inline">{saveStatus}</span>
+            <Button onClick={handleSave} disabled={saving} size="lg">
+              {saving ? <Spinner size="sm" /> : <Save className="size-4" />}
+              {saving ? "Saving…" : saved ? "Saved!" : "Save"}
+            </Button>
+            <DownloadCvButton cv={draft} templateKey={templateKey} />
+          </div>
+        </div>
+      </div>
 
       {error && (
         <div className="mb-4 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -306,43 +343,16 @@ function CVPageContent() {
         </div>
       )}
 
-      {/* ── Top action bar ── */}
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        {/* Auto-save status */}
-        <span className="text-xs text-muted-foreground mr-1">
-          {saving
-            ? "Saving…"
-            : saved
-            ? "✓ Saved"
-            : lastAutoSave
-            ? `Draft saved ${lastAutoSave.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-            : draft && JSON.stringify(draft) !== JSON.stringify(cv)
-            ? "Unsaved changes"
-            : null}
-        </span>
-
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? (
-            <Spinner size="sm" />
-          ) : (
-            <Save className="size-4" />
-          )}
-          {saving ? "Saving…" : saved ? "Saved!" : "Save changes"}
-        </Button>
-        <DownloadCvButton cv={draft} templateKey={templateKey} />
-        <Button
-          variant="ghost"
-          className="ml-auto lg:hidden"
-          onClick={() => setPreviewVisible((v) => !v)}
-        >
-          {previewVisible ? "Hide Preview" : "Show Preview"}
+      <div className="mb-4 lg:hidden">
+        <Button variant="outline" className="w-full" onClick={() => setPreviewVisible((v) => !v)}>
+          {previewVisible ? "Hide preview" : "Show preview"}
         </Button>
       </div>
 
       <div className="flex gap-6 items-start">
         {/* ── Editor pane ── */}
         <div className="w-full lg:w-[420px] shrink-0 space-y-4">
-          {/* Profile info — read-only */}
+          {/* Profile info- read-only */}
           <div className="rounded-xl border border-border bg-muted/30 px-4 py-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -366,25 +376,43 @@ function CVPageContent() {
           </div>
 
           {/* Template picker */}
-          <Card className="gap-0 border-border p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+          <Card className="gap-0 p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Template
             </p>
-            <div className="grid grid-cols-2 gap-2">
-              {(["europass", "modern"] as TemplateKey[]).map((t) => (
-                <Button
-                  key={t}
-                  variant={templateKey === t ? "default" : "outline"}
-                  onClick={() => updateDraft({ templateKey: t })}
-                  className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
-                    templateKey === t
-                      ? "border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
-                      : "border-border bg-background text-muted-foreground hover:border-border/80"
-                  }`}
-                >
-                  {t === "europass" ? "Europass" : "Modern"}
-                </Button>
-              ))}
+            <div className="grid grid-cols-2 gap-3">
+              {(["europass", "modern"] as TemplateKey[]).map((t) => {
+                const active = templateKey === t;
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => updateDraft({ templateKey: t })}
+                    aria-pressed={active}
+                    className={cn(
+                      "group relative rounded-xl border-2 p-2 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40",
+                      active
+                        ? "border-emerald-500 ring-2 ring-emerald-500/15"
+                        : "border-border hover:border-emerald-300",
+                    )}
+                  >
+                    {active && (
+                      <span className="absolute right-1.5 top-1.5 z-10 flex size-4 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+                        <Check className="size-3" />
+                      </span>
+                    )}
+                    <TemplateThumb variant={t} />
+                    <p
+                      className={cn(
+                        "mt-2 text-center text-xs font-semibold",
+                        active ? "text-emerald-700 dark:text-emerald-400" : "text-foreground",
+                      )}
+                    >
+                      {t === "europass" ? "Europass" : "Modern"}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </Card>
 
@@ -524,18 +552,23 @@ function CVPageContent() {
         </div>
 
         {/* ── Preview pane ── */}
-        <div className={`flex-1 min-w-0 ${previewVisible ? "block" : "hidden"} lg:block`}>
+        <div className={cn("min-w-0 flex-1", previewVisible ? "block" : "hidden", "lg:block")}>
           <div className="sticky top-4">
-            <div className="mb-2 flex items-center gap-2">
+            <div className="mb-2 flex items-center justify-between">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Live Preview · {templateKey === "europass" ? "Europass" : "Modern"}
+                Live preview
               </p>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                {templateKey === "europass" ? "Europass" : "Modern"} · A4
+              </span>
             </div>
-            <div className="overflow-hidden rounded-xl border border-border shadow-sm" style={{ maxHeight: "82vh", overflowY: "auto" }}>
-              {templateKey === "europass"
-                ? <EuropassPreview cv={draft} />
-                : <ModernPreview cv={draft} />
-              }
+            <div
+              className="rounded-2xl border border-border bg-gradient-to-b from-muted/60 to-muted/20 p-3 sm:p-5"
+              style={{ maxHeight: "82vh", overflowY: "auto" }}
+            >
+              <div className="mx-auto max-w-[640px] overflow-hidden rounded-lg bg-white shadow-[0_10px_40px_-12px_rgba(0,0,0,0.28)] ring-1 ring-black/5">
+                {templateKey === "europass" ? <EuropassPreview cv={draft} /> : <ModernPreview cv={draft} />}
+              </div>
             </div>
           </div>
         </div>
@@ -553,6 +586,7 @@ function CVPageContent() {
               ? "Edit experience"
               : "Add experience"
           }
+          description="Roles, internships, or volunteer work - most recent first."
         />
         {weDialog.entry && (
           <ModalBody>
@@ -577,6 +611,7 @@ function CVPageContent() {
               ? "Edit language"
               : "Add language"
           }
+          description="Pick your CEFR level - shown as a proficiency bar on your CV."
         />
         {langDialog.entry && (
           <ModalBody>
@@ -601,6 +636,7 @@ function CVPageContent() {
               ? "Edit certification"
               : "Add certification"
           }
+          description="Certifications, online courses, or credentials."
         />
         {certDialog.entry && (
           <ModalBody>
@@ -627,6 +663,48 @@ export default function CVPage() {
     >
       <CVPageContent />
     </Suspense>
+  );
+}
+
+// ─── TemplateThumb - mini live-ish preview of each template ──
+function TemplateThumb({ variant }: { variant: TemplateKey }) {
+  if (variant === "modern") {
+    return (
+      <div className="aspect-[3/4] w-full overflow-hidden rounded-md bg-white shadow-inner ring-1 ring-black/5">
+        <div className="flex h-[26%] items-center gap-1 bg-[#0f172a] px-1.5">
+          <div className="size-2.5 rounded-full bg-emerald-500" />
+          <div className="space-y-0.5">
+            <div className="h-1 w-8 rounded bg-white/70" />
+            <div className="h-0.5 w-5 rounded bg-emerald-400" />
+          </div>
+        </div>
+        <div className="space-y-1 p-1.5">
+          <div className="h-0.5 w-full rounded bg-slate-200" />
+          <div className="h-0.5 w-5/6 rounded bg-slate-200" />
+          <div className="mt-1.5 h-1 w-1/3 rounded bg-emerald-300" />
+          <div className="h-0.5 w-full rounded bg-slate-100" />
+          <div className="h-0.5 w-4/6 rounded bg-slate-100" />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="aspect-[3/4] w-full overflow-hidden rounded-md bg-white shadow-inner ring-1 ring-black/5">
+      <div className="h-[6%] w-full bg-[#003399]" />
+      <div className="flex h-[94%]">
+        <div className="w-1/3 space-y-1 bg-[#eef3fb] p-1">
+          <div className="mx-auto size-4 rounded-full bg-[#dde5f4]" />
+          <div className="h-0.5 w-full rounded bg-[#c0cce8]" />
+          <div className="h-0.5 w-3/4 rounded bg-[#c0cce8]" />
+        </div>
+        <div className="flex-1 space-y-1 p-1">
+          <div className="h-1 w-3/4 rounded bg-[#003399]/70" />
+          <div className="h-0.5 w-full rounded bg-slate-200" />
+          <div className="h-0.5 w-5/6 rounded bg-slate-100" />
+          <div className="h-0.5 w-4/6 rounded bg-slate-100" />
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -8,7 +8,7 @@
 //  - parses the standardized error shape: { error: { code, message, details? } }
 //  - on a 401, transparently calls /api/v1/auth/refresh and retries ONCE
 //
-// We never touch tokens directly — cookies are HTTP-only and handled
+// We never touch tokens directly- cookies are HTTP-only and handled
 // by the browser. The frontend just keeps the user object in React state.
 // ─────────────────────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ export class ApiError extends Error {
     message: string,
     public readonly details?: unknown,
     public readonly requestId?: string,
-    /** Raw backend error — only present in development builds. */
+    /** Raw backend error- only present in development builds. */
     public readonly debug?: string
   ) {
     super(message);
@@ -111,7 +111,7 @@ async function parseOrThrow<T>(res: Response): Promise<T> {
   return payload as T;
 }
 
-// In-flight refresh deduplication — if 3 requests 401 simultaneously,
+// In-flight refresh deduplication- if 3 requests 401 simultaneously,
 // only one refresh call is fired.
 let refreshInFlight: Promise<boolean> | null = null;
 

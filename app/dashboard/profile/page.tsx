@@ -176,7 +176,7 @@ export default function ProfilePage() {
   }
 
   function verify() {
-    // Real .edu.pk flow ships in a later phase — for now this is a UI-only stub.
+    // Real .edu.pk flow ships in a later phase- for now this is a UI-only stub.
     setVerifying(true);
     setTimeout(() => {
       setVerifying(false);
@@ -215,8 +215,11 @@ export default function ProfilePage() {
         subtitle="Keep your profile up to date to get better matches"
       />
 
-      {/* Completion bar */}
-      <Card className="mb-8 gap-0 border-border p-5">
+      <div className="grid gap-6 lg:grid-cols-[300px_1fr] lg:items-start">
+        {/* Left: summary rail */}
+        <div className="space-y-6 lg:sticky lg:top-4">
+          {/* Completion bar */}
+          <Card className="gap-0 border-border p-5">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-foreground">Profile completion</p>
           <span className="text-sm font-bold text-emerald-600">{completion}%</span>
@@ -225,10 +228,13 @@ export default function ProfilePage() {
         <p className="mt-2 text-xs text-muted-foreground">
           Complete all fields to reach 100% and improve your chances.
         </p>
-      </Card>
+          </Card>
+        </div>
 
-      {/* Section 1 — Personal Info */}
-      <Card className="mb-6 gap-0 border-border p-6">
+        {/* Right: editable sections */}
+        <div>
+          {/* Section 1- Personal Info */}
+          <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Personal Information</h2>
 
         {/* Avatar */}
@@ -242,7 +248,7 @@ export default function ProfilePage() {
               size="icon-sm"
               className="absolute -bottom-1 -right-1 rounded-full border-2 border-white shadow-sm dark:border-card"
               aria-label="Upload photo"
-              onClick={() => toast.info("Photo upload — coming soon")}
+              onClick={() => toast.info("Photo upload- coming soon")}
             >
               <Camera className="size-4" />
             </Button>
@@ -293,7 +299,7 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      {/* Section 2 — Academic */}
+      {/* Section 2- Academic */}
       <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Academic Details</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -383,7 +389,7 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      {/* Section 3 — Address */}
+      {/* Section 3- Address */}
       <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Address & Contact</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -434,7 +440,7 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      {/* Section 4 — Verification (real .edu.pk flow ships later) */}
+      {/* Section 4- Verification (real .edu.pk flow ships later) */}
       <Card className="mb-6 gap-0 border-border p-6">
         <h2 className="mb-4 text-lg font-semibold text-foreground">Verification</h2>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
@@ -470,6 +476,8 @@ export default function ProfilePage() {
           </Badge>
         )}
       </Card>
+        </div>
+      </div>
     </div>
   );
 }

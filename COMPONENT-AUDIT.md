@@ -1,6 +1,6 @@
-# Component Consistency Audit — scholify/frontend
+# Component Consistency Audit- scholify/frontend
 
-## ✅ FINAL PASS — gaps closed to ~100% (2026-07-17)
+## ✅ FINAL PASS- gaps closed to ~100% (2026-07-17)
 
 Primitive capabilities added so the last raw elements could route through components:
 - **`Card` now supports `asChild`** (radix `Slot`) → can render as `<form>`, `<button>`, `<a>`, etc. while keeping card styling.
@@ -31,17 +31,17 @@ The card & badge bypasses below have been fixed. `<Card>` is now the single sour
 | Metric | Before | After |
 |--------|--------|-------|
 | Files importing `<Card>` (in `app/`) | 1 | **30** |
-| Hand-rolled card divs (`app/`) | 91 | **3** (intentional — see below) |
+| Hand-rolled card divs (`app/`) | 91 | **3** (intentional- see below) |
 | `dash-card` orphan class usages | ~106 | **0** (folded into `<Card hover>`) |
 
-- **`card.tsx`** — `<Card>` is now `border border-border bg-card rounded-xl` (the app's real look) + opt-in `hover` prop for the lift effect. Ring style dropped.
+- **`card.tsx`**- `<Card>` is now `border border-border bg-card rounded-xl` (the app's real look) + opt-in `hover` prop for the lift effect. Ring style dropped.
 - **~63 card divs** across ~30 pages → `<Card>` / `<Card hover>`; **~6 pills** → `<Badge>`.
 - **Card-rendering components now wrap `<Card>`:** `StatsCard`, `ApplicationCard`, and `PostingCard` (the last also converts its status pill → `<Badge>`). `ScholarshipCard`/`InternshipCard` already used `<Card>`.
 - **Verified:** `tsc --noEmit` clean on every migrated file (all imports resolve, tags balance, props valid). One unrelated pre-existing error in `components/home/CountUp.tsx` (regex-flag/target config) is untouched by this work.
-- **Live-verified in the browser:** all 8 student pages (`/dashboard/*`) and all org pages (`/org/*`) — every card/badge renders with the consistent border, zero console errors, skipped elements (avatars, odd-sized pills, `bg-muted`/alert panels) intact.
-- **3 intentional exceptions** (documented, not misses): `org/postings/new` — 2 large custom clickable *card-selector* `<button>`s with `border-2`/focus-ring; `admin/postings/create` — a `<form>` container (Card renders a `<div>`, which would drop form semantics).
+- **Live-verified in the browser:** all 8 student pages (`/dashboard/*`) and all org pages (`/org/*`)- every card/badge renders with the consistent border, zero console errors, skipped elements (avatars, odd-sized pills, `bg-muted`/alert panels) intact.
+- **3 intentional exceptions** (documented, not misses): `org/postings/new`- 2 large custom clickable *card-selector* `<button>`s with `border-2`/focus-ring; `admin/postings/create`- a `<form>` container (Card renders a `<div>`, which would drop form semantics).
 
-> Now editing `card.tsx` / `badge.tsx` propagates site-wide — the original goal. Remaining follow-ups: a few odd-sized status pills left as-is to avoid visual regressions (candidates for new `Badge`/`StatusBadge` size variants), and the raw primitives noted in the Minor section.
+> Now editing `card.tsx` / `badge.tsx` propagates site-wide- the original goal. Remaining follow-ups: a few odd-sized status pills left as-is to avoid visual regressions (candidates for new `Badge`/`StatusBadge` size variants), and the raw primitives noted in the Minor section.
 
 ---
 
@@ -63,13 +63,13 @@ The card & badge bypasses below have been fixed. `<Card>` is now the single sour
 | **Card** | `ui/card.tsx` | **1 file imports it; ~106 hand-rolled** | ❌ **Bypassed** |
 | **Badge** | `ui/badge.tsx` | ~19 `<Badge>` vs ~18 custom pills | ⚠️ **Split** |
 
-**Bottom line:** buttons, inputs, and modals already funnel through `ui/`. The theme is broken in two places — **Cards (critical)** and **Badges (moderate)**.
+**Bottom line:** buttons, inputs, and modals already funnel through `ui/`. The theme is broken in two places- **Cards (critical)** and **Badges (moderate)**.
 
 ---
 
 ## 🔴 Critical: the Card component is abandoned
 
-`components/ui/card.tsx` exists but is imported by **only one file — the theme demo page**
+`components/ui/card.tsx` exists but is imported by **only one file- the theme demo page**
 (`app/(public)/theme/page.tsx`). Every real screen builds its own card with a
 `dash-card rounded-xl border bg-white p-5` div. There is effectively a **second, undocumented
 card system** competing with `<Card>`.
@@ -121,21 +121,21 @@ org/applicants/[id](1)  dashboard/saved(1)  dashboard/deadlines(1)  dashboard/cv
 ## 🟢 Minor: raw primitives to tidy
 
 - **Raw `<button>` in a page:** `app/org/postings/new/page.tsx` (lines 290, 307) → use `<Button variant="ghost">`.
-- **Raw form elements inside components** (check — some may be legitimate custom widgets):
+- **Raw form elements inside components** (check- some may be legitimate custom widgets):
   `auth/OrgSignupFields.tsx`, `auth/StudentSignupFields.tsx`, `auth/UniversityCombobox.tsx`,
   `cv/CvEntryModal.tsx`, `shared/NotificationsList.tsx`. If these are plain text/checkbox
   inputs, swap for `<Input>` / `<Checkbox>`.
 - Raw `<button>` in `home/HeroCarousel.tsx`, `shared/AvatarDropdown.tsx`,
-  `shared/NotificationDropdown.tsx`, `auth/UserTypeToggle.tsx` are interactive triggers —
+  `shared/NotificationDropdown.tsx`, `auth/UserTypeToggle.tsx` are interactive triggers-
   likely fine to leave, but confirm styling matches `Button`.
 
 ---
 
 ## Recommended order of work
 
-1. **Cards** — biggest payoff. Fix `StatsCard` + `ApplicationCard`, kill `dash-card`, migrate pages.
-2. **Badges** — standardize on `<Badge>`/`StatusBadge`, remove custom pills.
-3. **Primitives** — clean the handful of raw elements above.
+1. **Cards**- biggest payoff. Fix `StatsCard` + `ApplicationCard`, kill `dash-card`, migrate pages.
+2. **Badges**- standardize on `<Badge>`/`StatusBadge`, remove custom pills.
+3. **Primitives**- clean the handful of raw elements above.
 
-After (1) and (2), a change to `card.tsx` / `badge.tsx` will actually propagate site-wide —
+After (1) and (2), a change to `card.tsx` / `badge.tsx` will actually propagate site-wide-
 which is the whole point.

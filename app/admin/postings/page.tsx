@@ -172,7 +172,7 @@ export default function AdminPostingsPage() {
                   </Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground text-xs">
-                  {p.deadlineAt ? new Date(p.deadlineAt).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "numeric" }) : "—"}
+                  {p.deadlineAt ? new Date(p.deadlineAt).toLocaleDateString("en-PK", { year: "numeric", month: "short", day: "numeric" }) : "-"}
                 </TableCell>
                 <TableCell className="text-muted-foreground tabular-nums">{p.applicantCount}</TableCell>
                 <TableCell>

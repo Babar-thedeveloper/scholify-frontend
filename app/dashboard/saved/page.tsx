@@ -60,7 +60,7 @@ export default function SavedItemsPage() {
   );
 
   async function unsave(postingId: string) {
-    // Optimistic removal — undo on failure.
+    // Optimistic removal- undo on failure.
     const prev = items;
     setItems((p) => p.filter((s) => s.postingId !== postingId));
     try {

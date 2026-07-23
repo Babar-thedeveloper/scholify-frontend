@@ -28,7 +28,7 @@ export interface StatusChangePayload {
 interface Props {
   current: ApplicationStatus;
   applicantName: string;
-  /** If provided, called on Update — parent handles the API call.
+  /** If provided, called on Update- parent handles the API call.
    *  If omitted, falls back to a local toast (used in the mock demo). */
   onSubmit?: (payload: StatusChangePayload) => Promise<void>;
 }
@@ -75,7 +75,7 @@ export function StatusChangeControl({ current, applicantName, onSubmit }: Props)
     setNote("");
     toast.success(
       `Status updated to "${formatStatus(next)}"${
-        notify ? ` — ${applicantName} notified by email` : ""
+        notify ? `- ${applicantName} notified by email` : ""
       }`
     );
   }

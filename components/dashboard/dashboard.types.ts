@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// Scholify — Dashboard / application-tracking domain types.
+// Scholify- Dashboard / application-tracking domain types.
 // Shared by student dashboard, org dashboard, navbar, mock data.
 // ─────────────────────────────────────────────────────────────
 
@@ -12,7 +12,7 @@ export type ApplicationStatus =
   | "accepted" // Offer received
   | "not-selected" // Rejected
   | "withdrawn" // Student withdrew
-  | "external-applied"; // Phase 1 — student manually marked as applied externally
+  | "external-applied"; // Phase 1- student manually marked as applied externally
 
 export type ApplicationType = "scholarship" | "internship";
 

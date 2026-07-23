@@ -173,8 +173,8 @@ export default function TeamPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="admin">Admin — can manage team &amp; settings</SelectItem>
-                    <SelectItem value="member">Member — can post &amp; review applicants</SelectItem>
+                    <SelectItem value="admin">Admin- can manage team &amp; settings</SelectItem>
+                    <SelectItem value="member">Member- can post &amp; review applicants</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -232,7 +232,7 @@ export default function TeamPage() {
 
                   <RoleBadge role={m.role} />
 
-                  {/* Role change — only for non-owners */}
+                  {/* Role change- only for non-owners */}
                   {m.role !== "owner" && (
                     <Select
                       value={m.role === "admin" ? "admin" : "member"}

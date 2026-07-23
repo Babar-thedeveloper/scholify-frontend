@@ -45,7 +45,7 @@ export async function unsavePosting(postingId: string): Promise<void> {
   await apiFetch<void>(`${BASE}/${encodeURIComponent(postingId)}`, { method: "DELETE" });
 }
 
-/** Batch check — returns { [postingId]: isSaved } for the listing page. */
+/** Batch check- returns { [postingId]: isSaved } for the listing page. */
 export async function savedStatus(postingIds: string[]): Promise<Record<string, boolean>> {
   if (postingIds.length === 0) return {};
   const { status } = await apiFetch<{ status: Record<string, boolean> }>(

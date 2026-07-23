@@ -58,10 +58,10 @@ function toApplicant(dto: OrgApplicantDto): Applicant {
     name: dto.student.fullName || dto.student.email,
     initials: dto.student.initials,
     email: dto.student.email,
-    university: dto.student.university ?? "—",
-    degreeLevel: dto.student.degreeLevel ?? "—",
-    fieldOfStudy: dto.student.fieldOfStudy ?? "—",
-    gpa: dto.student.cgpa ?? "—",
+    university: dto.student.university ?? "-",
+    degreeLevel: dto.student.degreeLevel ?? "-",
+    fieldOfStudy: dto.student.fieldOfStudy ?? "-",
+    gpa: dto.student.cgpa ?? "-",
     city: "",
     appliedAt: dto.submittedAt ?? dto.createdAt,
     status: STATUS_MAP[dto.status] ?? "submitted",
@@ -89,7 +89,7 @@ export default function ApplicantsPage() {
         const res = await listMyPostings();
         if (!cancelled) setPostings(res.items);
       } catch {
-        /* silent — dropdown gracefully degrades to "All postings" only */
+        /* silent- dropdown gracefully degrades to "All postings" only */
       }
     })();
     return () => { cancelled = true; };

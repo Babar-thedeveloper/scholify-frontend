@@ -7,10 +7,10 @@
 //   access_token   (15min, JWT containing user.id + roles)
 //   refresh_token  (30d, opaque random, scoped to /api/v1/auth/*)
 //
-// /signup intentionally does NOT set cookies — the user must
+// /signup intentionally does NOT set cookies- the user must
 // verify their email first via POST /verify-email.
 //
-// The frontend NEVER reads tokens — the browser sends them
+// The frontend NEVER reads tokens- the browser sends them
 // automatically because every request goes through `apiFetch`
 // (lib/api/client.ts) with `credentials: "include"`.
 // ═════════════════════════════════════════════════════════════
@@ -48,7 +48,7 @@ export interface SignupInput {
   fullName: string;
 }
 
-/** Organization kinds — must match the `organization_kinds` lookup keys. */
+/** Organization kinds- must match the `organization_kinds` lookup keys. */
 export type OrganizationKind =
   | "scholarship_provider"
   | "internship_provider"
@@ -98,7 +98,7 @@ interface AuthBody { user: AuthUser; message?: string }
 const BASE = "/api/v1/auth";
 
 /**
- * Register a new student. Does NOT log the user in — verification
+ * Register a new student. Does NOT log the user in- verification
  * email is sent; the user can sign in only after clicking the link.
  */
 export async function signup(input: SignupInput): Promise<SignupResult> {
@@ -111,7 +111,7 @@ export async function signup(input: SignupInput): Promise<SignupResult> {
 
 /**
  * Register a new organization (creates user + org + owner-membership atomically).
- * Does NOT log the user in — they must verify their email AND wait for org
+ * Does NOT log the user in- they must verify their email AND wait for org
  * verification (admin reviews within 1–2 business days).
  */
 export async function signupOrg(input: SignupOrgInput): Promise<SignupOrgResult> {

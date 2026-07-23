@@ -36,7 +36,7 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 interface Props {
-  /** Slot rendered above the list — the parent's PageHeader. */
+  /** Slot rendered above the list- the parent's PageHeader. */
   header: (opts: {
     hasUnread: boolean;
     onMarkAllRead: () => void;

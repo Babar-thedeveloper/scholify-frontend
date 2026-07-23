@@ -7,7 +7,7 @@ import { ApiError } from "./client";
  * - Shows the backend's friendly `message` as a toast (always).
  * - Logs `debug` to the console in development (never shown in UI).
  *
- * @param err     The caught value — works with ApiError, Error, or anything.
+ * @param err     The caught value- works with ApiError, Error, or anything.
  * @param fallback Shown when the error has no readable message.
  */
 export function handleApiError(err: unknown, fallback = "Something went wrong."): void {

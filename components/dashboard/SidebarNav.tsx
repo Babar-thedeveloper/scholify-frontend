@@ -28,7 +28,7 @@ export interface SidebarSection {
 
 interface SidebarNavProps {
   sections: SidebarSection[];
-  /** Rendered above the sections — e.g. the org "+ New posting" CTA */
+  /** Rendered above the sections- e.g. the org "+ New posting" CTA */
   topSlot?: React.ReactNode;
   onNavigate?: () => void;
 }

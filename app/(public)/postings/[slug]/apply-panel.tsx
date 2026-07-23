@@ -57,7 +57,7 @@ export function ApplyPanel({
           setAlreadyApplied(res.items.some((a) => a.postingId === postingId));
         }
       } catch {
-        // ignore — the submit handler will catch duplicates anyway
+        // ignore- the submit handler will catch duplicates anyway
       } finally {
         if (!cancelled) setCheckingApplied(false);
       }
@@ -105,7 +105,7 @@ export function ApplyPanel({
     return (
       <Card className="gap-0 rounded-2xl border-border p-5">
         <p className="text-sm text-muted-foreground">
-          Sign in to apply through Scholify — we&apos;ll track your application status for you.
+          Sign in to apply through Scholify- we&apos;ll track your application status for you.
         </p>
         <div className="mt-3 flex flex-col gap-2">
           <Button size="lg" asChild>
@@ -127,7 +127,7 @@ export function ApplyPanel({
     );
   }
 
-  // Logged in as org — can't apply as an org
+  // Logged in as org- can't apply as an org
   if (user.role === "org") {
     return (
       <Card className="gap-0 rounded-2xl border-border p-5 text-sm text-muted-foreground">
@@ -231,7 +231,7 @@ export function ApplyPanel({
         }
       >
         <ModalHeader
-          title={`Apply — ${postingTitle}`}
+          title={`Apply- ${postingTitle}`}
           description="Add a short cover letter to strengthen your application. This is optional."
         />
 

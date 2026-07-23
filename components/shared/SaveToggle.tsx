@@ -20,7 +20,7 @@ import { ApiError } from "@/lib/api/client";
 interface Props {
   postingId: string;
   postingSlug: string;
-  /** Optional label — defaults to "Save for later" / "Saved". */
+  /** Optional label- defaults to "Save for later" / "Saved". */
   savedLabel?: string;
   unsavedLabel?: string;
 }

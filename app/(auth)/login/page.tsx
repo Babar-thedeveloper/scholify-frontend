@@ -13,7 +13,7 @@ export default function LoginPage() {
       size="sm"
       aside={{
         title: "Welcome back!",
-        text: "Pakistan's #1 platform for scholarships & internships — always free for students.",
+        text: "Pakistan's #1 platform for scholarships & internships- always free for students.",
         switchPrompt: "New to Scholify?",
         switchLabel: "Create Account",
         switchHref: "/signup",

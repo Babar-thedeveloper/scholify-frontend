@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
+import { PageLoader } from "@/components/shared/PageLoader";
 import type { Scholarship } from "./scholarships.types";
 import {
   getCategoryPill,
@@ -58,6 +60,7 @@ export function ScholarshipModal({
   onOpenChange,
 }: ScholarshipModalProps) {
   const router = useRouter();
+  const [isNavigating, setIsNavigating] = useState(false);
   if (!scholarship) return null;
 
   const daysLeft = daysUntil(scholarship.deadline, new Date());
@@ -81,6 +84,8 @@ export function ScholarshipModal({
 
   return (
     <Modal open={open} onOpenChange={onOpenChange} size="xl">
+      {isNavigating && <PageLoader message="Loading details…" />}
+
       <ModalHeader
         title={
           <div className="space-y-1">
@@ -141,7 +146,7 @@ export function ScholarshipModal({
             {scholarship.isExternal ? (
               <>
                 <Button
-                  className="flex-1 gap-2"
+                  className="flex-1 gap-2 rounded-md"
                   onClick={() => {
                     window.open(scholarship.applyUrl, "_blank", "noopener,noreferrer");
                   }}
@@ -153,8 +158,11 @@ export function ScholarshipModal({
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1 gap-2"
-                  onClick={() => router.push(scholarship.detailUrl)}
+                  className="flex-1 gap-2 rounded-md"
+                  onClick={() => {
+                    setIsNavigating(true);
+                    router.push(scholarship.detailUrl);
+                  }}
                   aria-label={`View full details for ${scholarship.title}`}
                 >
                   View full details
@@ -162,8 +170,11 @@ export function ScholarshipModal({
               </>
             ) : (
               <Button
-                className="flex-1 gap-2"
-                onClick={() => router.push(scholarship.detailUrl)}
+                className="flex-1 gap-2 rounded-md"
+                onClick={() => {
+                  setIsNavigating(true);
+                  router.push(scholarship.detailUrl);
+                }}
                 aria-label={`Apply with Scholify for ${scholarship.title}`}
               >
                 Apply with Scholify

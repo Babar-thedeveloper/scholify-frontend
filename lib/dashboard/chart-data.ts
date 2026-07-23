@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 /**
  * Dashboard chart theming + helpers. Data itself comes from the
- * backend aggregation endpoints — no dummy fallbacks.
+ * backend aggregation endpoints- no dummy fallbacks.
  */
 
 export interface DonutDatum {
@@ -16,7 +16,7 @@ export interface BarDatum {
   value: number;
 }
 
-/** Theme-aligned palette — emerald-led, matching the app's StatusBadge hues. */
+/** Theme-aligned palette- emerald-led, matching the app's StatusBadge hues. */
 export const CHART_COLORS = {
   emerald: "#059669", // active / accepted / approved
   emeraldLight: "#34d399",

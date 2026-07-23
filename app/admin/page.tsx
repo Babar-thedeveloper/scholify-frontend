@@ -27,7 +27,7 @@ function StatCard({
         <p className="text-sm text-muted-foreground">{label}</p>
       </div>
       <p className={`text-3xl font-bold tabular-nums ${highlight ? "text-amber-700 dark:text-amber-300" : "text-foreground"}`}>
-        {value ?? "—"}
+        {value ?? "-"}
       </p>
     </Card>
   );

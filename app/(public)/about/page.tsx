@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   title: "About - Scholify",
   description:
     "Scholify was built by a Pakistani student so no student misses an opportunity again. Read our story and what we stand for.",
+  keywords: ["about Scholify", "Scholify story", "scholarship platform Pakistan", "student opportunities"],
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

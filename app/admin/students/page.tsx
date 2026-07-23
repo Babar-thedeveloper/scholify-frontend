@@ -50,7 +50,7 @@ export default function AdminStudentsPage() {
       await verifyStudent(student.id, !student.isVerifiedStudent);
       load();
     } catch {
-      // silently fail — the next load will show the real state
+      // silently fail- the next load will show the real state
     } finally {
       setToggling(null);
     }
@@ -114,7 +114,7 @@ export default function AdminStudentsPage() {
             {data?.items.map((s) => (
               <TableRow key={s.id}>
                 <TableCell>
-                  <div className="font-medium text-foreground">{s.fullName ?? "—"}</div>
+                  <div className="font-medium text-foreground">{s.fullName ?? "-"}</div>
                   <div className="text-xs text-muted-foreground">{s.email}</div>
                 </TableCell>
                 <TableCell>

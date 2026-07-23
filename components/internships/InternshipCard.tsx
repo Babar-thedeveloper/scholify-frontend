@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowRight, Clock, MapPin } from "lucide-react";
+import { ArrowRight, Calendar, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,35 +62,30 @@ export function InternshipCard({ internship, onClick }: InternshipCardProps) {
           </span>
         </div>
 
+        {/* Title */}
+        <h3 className="mt-3 line-clamp-2 text-[15px] font-semibold leading-snug text-gray-900 dark:text-gray-100">
+          {internship.title}
+        </h3>
+
         {/* Company + city */}
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-1.5 flex items-center gap-1.5">
           {internship.companyLogoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={internship.companyLogoUrl}
               alt={`${internship.company} logo`}
-              className="size-5 rounded-md object-cover"
+              className="size-4 rounded object-cover"
             />
           ) : (
-            <span className="flex size-5 items-center justify-center rounded-md bg-emerald-100 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+            <span className="flex size-4 shrink-0 items-center justify-center rounded bg-emerald-100 text-[9px] font-semibold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
               {internship.companyInitials}
             </span>
           )}
-          <span className="truncate text-[11px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          <span className="truncate text-xs text-muted-foreground">
             {internship.company}
             {internship.city ? ` · ${internship.city}` : " · Remote"}
           </span>
         </div>
-
-        {/* Title */}
-        <h3 className="mt-1.5 line-clamp-2 text-[15px] font-semibold leading-tight text-gray-900 dark:text-gray-100">
-          {internship.title}
-        </h3>
-
-        {/* Summary */}
-        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-gray-500 dark:text-gray-400">
-          {internship.summary}
-        </p>
 
         {/* Tags */}
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
@@ -111,15 +106,16 @@ export function InternshipCard({ internship, onClick }: InternshipCardProps) {
           <div className="h-px bg-gray-100 dark:bg-gray-800" />
         </div>
 
-        {/* Posted & action */}
-        <div className="mt-3 flex flex-col gap-2.5">
+        {/* Footer */}
+        <div className="mt-3 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5 text-[12px] text-gray-500 dark:text-gray-400">
-              <MapPin className="size-3.5" aria-hidden="true" />
-              <span>Posted {getDaysAgo(internship.postedAt)}</span>
-            </div>
-            {internship.deadline && urgency !== "normal" && (
-              <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${deadlineClass}`}>
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-gray-500">
+              <Calendar className="size-3.5" aria-hidden="true" />
+              Posted {getDaysAgo(internship.postedAt)}
+            </span>
+            {internship.deadline && (
+              <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${deadlineClass}`}>
+                <Clock className="size-3" aria-hidden="true" />
                 Closes {formatDeadline(internship.deadline)}
               </span>
             )}

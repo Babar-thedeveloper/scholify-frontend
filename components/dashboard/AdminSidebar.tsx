@@ -9,6 +9,7 @@ import {
   Briefcase,
   BookOpen,
   UserCog,
+  Newspaper,
 } from "lucide-react";
 import { SidebarNav, type SidebarSection } from "./SidebarNav";
 
@@ -30,6 +31,7 @@ const SECTIONS: SidebarSection[] = [
     label: "Content",
     items: [
       { label: "All Postings", href: "/admin/postings", Icon: Briefcase },
+      { label: "Blog", href: "/admin/blog", Icon: Newspaper },
     ],
   },
   {

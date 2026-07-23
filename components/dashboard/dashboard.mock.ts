@@ -328,7 +328,7 @@ export const MOCK_POSTINGS: Posting[] = [
     status: "draft",
     title: "UX Research Intern",
     description:
-      "Help the design team run usability studies and synthesise insights. (Draft — not yet published.)",
+      "Help the design team run usability studies and synthesise insights. (Draft- not yet published.)",
     organizationId: DEMO_ORG_ID,
     organizationName: "Daraz Pakistan",
     postedAt: "2026-06-24T09:00:00Z",

@@ -15,7 +15,7 @@ const FAQS = [
   },
   {
     q: "How do I apply to a scholarship or internship?",
-    a: "Open any listing and click Apply. Some opportunities are submitted directly through Scholify, while others link out to the organization's own application page — we'll always tell you which before you start.",
+    a: "Open any listing and click Apply. Some opportunities are submitted directly through Scholify, while others link out to the organization's own application page- we'll always tell you which before you start.",
   },
   {
     q: "How do organizations get verified?",

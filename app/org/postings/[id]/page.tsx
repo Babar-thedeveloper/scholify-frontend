@@ -73,10 +73,10 @@ function toRow(dto: OrgApplicantDto): Applicant {
     name: dto.student.fullName || dto.student.email,
     initials: dto.student.initials,
     email: dto.student.email,
-    university: dto.student.university ?? "—",
-    degreeLevel: dto.student.degreeLevel ?? "—",
-    fieldOfStudy: dto.student.fieldOfStudy ?? "—",
-    gpa: dto.student.cgpa ?? "—",
+    university: dto.student.university ?? "-",
+    degreeLevel: dto.student.degreeLevel ?? "-",
+    fieldOfStudy: dto.student.fieldOfStudy ?? "-",
+    gpa: dto.student.cgpa ?? "-",
     city: "",
     appliedAt: dto.submittedAt ?? dto.createdAt,
     status: STATUS_MAP_FOR_ROWS[dto.status] ?? "submitted",
@@ -106,7 +106,7 @@ export default function PostingDetailPage() {
   const [saving, setSaving] = useState(false);
   const [busy, setBusy] = useState(false); // status-transition + delete
 
-  // Editable form state — hydrated after fetch.
+  // Editable form state- hydrated after fetch.
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
@@ -147,7 +147,7 @@ export default function PostingDetailPage() {
         const res = await listOrgApplicants({ postingId: posting.id, pageSize: 50 });
         if (!cancelled) setApplicants(res.items.map(toRow));
       } catch {
-        /* silent — the empty state still renders */
+        /* silent- the empty state still renders */
       } finally {
         if (!cancelled) setApplicantsLoading(false);
       }
@@ -332,7 +332,7 @@ export default function PostingDetailPage() {
               )}
             </div>
 
-            {/* Action bar — buttons shown depend on current status */}
+            {/* Action bar- buttons shown depend on current status */}
             <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
               <Button onClick={handleSave} disabled={saving || busy}>
                 {saving ? <Spinner size="sm" /> : null}

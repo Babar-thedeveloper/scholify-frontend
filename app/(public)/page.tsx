@@ -12,11 +12,21 @@ export const metadata: Metadata = {
   title: "Scholify - Pakistan's #1 Scholarship & Internship Platform",
   description:
     "Find every scholarship and internship for Pakistani students in one place. National, international, and provincial. 100% free, deadline reminders included.",
+  alternates: { canonical: "/" },
+  keywords: [
+    "scholarships in Pakistan",
+    "internships in Pakistan",
+    "fully funded scholarships",
+    "study abroad for Pakistani students",
+    "student opportunities Pakistan",
+    "free CV builder",
+    "deadline reminders",
+  ],
   openGraph: {
     title: "Scholify - Pakistan's #1 Scholarship & Internship Platform",
     description:
       "Find every scholarship and internship for Pakistani students in one place. National, international, and provincial. 100% free, deadline reminders included.",
-    images: ["/og-image.png"],
+    images: ["/og-image.svg"],
   },
 };
 

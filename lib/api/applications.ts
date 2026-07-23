@@ -134,7 +134,7 @@ export async function withdrawApplication(publicId: string): Promise<WithdrawRes
 }
 
 // ═════════════════════════════════════════════════════════════
-// Org side — applicants list + detail + status change
+// Org side- applicants list + detail + status change
 // ═════════════════════════════════════════════════════════════
 
 export interface OrgApplicantDto {

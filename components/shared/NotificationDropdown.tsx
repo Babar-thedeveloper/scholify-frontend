@@ -10,7 +10,7 @@
 // UI stays live.
 //
 // We upgrade to Server-Sent Events (SSE) once concurrent users
-// justify the infra work — API layer is designed to be a drop-in.
+// justify the infra work- API layer is designed to be a drop-in.
 // ─────────────────────────────────────────────────────────────
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
@@ -72,7 +72,7 @@ export function NotificationDropdown({ viewAllHref }: Props) {
         const c = await getUnreadCount();
         if (!cancelled) setUnread(c);
       } catch {
-        /* silent — bell just doesn't tick */
+        /* silent- bell just doesn't tick */
       }
     }
     void tick();
@@ -107,7 +107,7 @@ export function NotificationDropdown({ viewAllHref }: Props) {
       setItems((prev) => prev.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })));
       setUnread(0);
     } catch {
-      /* silent — polling will resync */
+      /* silent- polling will resync */
     }
   }
 
@@ -120,7 +120,7 @@ export function NotificationDropdown({ viewAllHref }: Props) {
       );
       setUnread((u) => Math.max(0, u - 1));
     } catch {
-      /* silent — polling will resync */
+      /* silent- polling will resync */
     }
   }
 

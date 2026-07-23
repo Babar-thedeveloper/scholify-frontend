@@ -86,7 +86,7 @@ export async function getPostingBySlug(slug: string): Promise<PostingDto> {
   return posting;
 }
 
-/** DTO returned by GET /api/v1/postings/mine — includes org-only fields. */
+/** DTO returned by GET /api/v1/postings/mine- includes org-only fields. */
 export interface MyPostingDto extends PostingDto {
   status: "draft" | "active" | "paused" | "closed" | "archived";
   applicantCount: number;
@@ -217,7 +217,7 @@ export function toDashboardPosting(dto: MyPostingDto): Posting {
       ? `${dto.stipendCurrency ?? "PKR"} ${Number(dto.stipendAmount).toLocaleString()}/month`
       : undefined;
 
-  // Dashboard type doesn't model 'archived' — treat it as 'closed' for UI.
+  // Dashboard type doesn't model 'archived'- treat it as 'closed' for UI.
   const status: Posting["status"] = dto.status === "archived" ? "closed" : dto.status;
 
   return {
@@ -244,7 +244,7 @@ export function toDashboardPosting(dto: MyPostingDto): Posting {
   };
 }
 
-// ─── Adapters — DTO → frontend types ─────────────────────────
+// ─── Adapters- DTO → frontend types ─────────────────────────
 
 function initials(name: string): string {
   return name.trim().split(/\s+/).map((s) => s[0]).slice(0, 2).join("").toUpperCase() || "?";
@@ -267,7 +267,7 @@ export function toInternship(dto: PostingDto): Internship {
   const duration =
     dto.durationMonths != null
       ? `${dto.durationMonths} month${dto.durationMonths === 1 ? "" : "s"}`
-      : "—";
+      : "-";
   const stipend =
     dto.isPaid && dto.stipendAmount
       ? `${dto.stipendCurrency ?? "PKR"} ${Number(dto.stipendAmount).toLocaleString()}/month`

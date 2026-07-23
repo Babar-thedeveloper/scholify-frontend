@@ -127,7 +127,7 @@ export default function ApplicationsPage() {
           actionHref={items.length === 0 ? "/internships" : undefined}
         />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
           {filtered.map((a) => (
             <ApplicationCard key={a.id} application={a} />
           ))}

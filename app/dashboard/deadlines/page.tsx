@@ -91,7 +91,7 @@ export default function DeadlinesPage() {
       {deadlines.length === 0 ? (
         <EmptyState Icon={CalendarDays} title="No upcoming deadlines" />
       ) : (
-        <div className="dash-stagger flex flex-col gap-3">
+        <div className="dash-stagger grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {deadlines.map((row) => {
             const left = daysUntil(row.deadlineAt) ?? 0;
             const badgeClass =

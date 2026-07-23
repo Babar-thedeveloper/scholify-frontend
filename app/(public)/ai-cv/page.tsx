@@ -25,7 +25,7 @@ export default function AiCvPage() {
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-500 dark:text-gray-400">
           Add your education, experience, and skills once. Our AI generates a
           professional, ATS-friendly CV tailored for scholarships, internships,
-          and jobs — formatted perfectly every time.
+          and jobs- formatted perfectly every time.
         </p>
       </div>
 

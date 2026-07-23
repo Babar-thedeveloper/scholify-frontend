@@ -10,6 +10,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { getPostingBySlug } from "@/lib/api/postings";
+import { SITE_URL } from "@/lib/site";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ApplyPanel } from "./apply-panel";
@@ -26,9 +27,16 @@ export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
   try {
     const p = await getPostingBySlug(slug);
+    const description = p.description?.slice(0, 160) ?? undefined;
     return {
       title: `${p.title} · ${p.organization.name} | Scholify`,
-      description: p.description?.slice(0, 160) ?? undefined,
+      description,
+      alternates: { canonical: `/postings/${slug}` },
+      openGraph: {
+        type: "article",
+        title: `${p.title} · ${p.organization.name}`,
+        description,
+      },
     };
   } catch {
     return { title: "Posting | Scholify" };
@@ -50,8 +58,75 @@ export default async function PostingDetailPage({ params }: Props) {
     ? Math.ceil((deadlineDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     : null;
 
+  // Google JobPosting rich result - internships only (scholarships have no clean type).
+  const jobPostingLd = isInternship
+    ? {
+        "@context": "https://schema.org",
+        "@type": "JobPosting",
+        title: posting.title,
+        description: posting.description ?? posting.title,
+        datePosted: posting.postedAt ?? posting.createdAt,
+        ...(posting.deadlineAt ? { validThrough: posting.deadlineAt } : {}),
+        employmentType: "INTERN",
+        hiringOrganization: { "@type": "Organization", name: posting.organization.name },
+        ...(posting.workMode === "remote"
+          ? {
+              jobLocationType: "TELECOMMUTE",
+              applicantLocationRequirements: { "@type": "Country", name: "Pakistan" },
+            }
+          : {
+              jobLocation: {
+                "@type": "Place",
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: posting.city ?? "Pakistan",
+                  addressCountry: "PK",
+                },
+              },
+            }),
+        ...(posting.isPaid && posting.stipendAmount
+          ? {
+              baseSalary: {
+                "@type": "MonetaryAmount",
+                currency: posting.stipendCurrency ?? "PKR",
+                value: {
+                  "@type": "QuantitativeValue",
+                  value: Number(posting.stipendAmount),
+                  unitText: "MONTH",
+                },
+              },
+            }
+          : {}),
+      }
+    : null;
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: isInternship ? "Internships" : "Scholarships",
+        item: `${SITE_URL}/${isInternship ? "internships" : "scholarships"}`,
+      },
+      { "@type": "ListItem", position: 3, name: posting.title, item: `${SITE_URL}/postings/${slug}` },
+    ],
+  };
+
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      {jobPostingLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingLd) }}
+        />
+      )}
       <Link
         href={isInternship ? "/internships" : "/scholarships"}
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
@@ -201,7 +276,7 @@ export default async function PostingDetailPage({ params }: Props) {
             </dl>
           </Card>
 
-          {/* Apply panel — handles both external URL + platform apply */}
+          {/* Apply panel- handles both external URL + platform apply */}
           <ApplyPanel
             postingSlug={posting.publicSlug}
             postingTitle={posting.title}
@@ -212,10 +287,10 @@ export default async function PostingDetailPage({ params }: Props) {
             deadlinePassed={!!deadlineDate && deadlineDate <= new Date()}
           />
 
-          {/* Save / unsave — only shown to logged-in students */}
+          {/* Save / unsave- only shown to logged-in students */}
           <SaveToggle postingId={posting.id} postingSlug={posting.publicSlug} />
 
-          {/* Remind-me — students only, hidden when deadline already passed */}
+          {/* Remind-me- students only, hidden when deadline already passed */}
           <RemindMeButton
             postingId={posting.id}
             postingSlug={posting.publicSlug}

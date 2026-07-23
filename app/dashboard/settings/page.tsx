@@ -44,7 +44,7 @@ export default function SettingsPage() {
 
   function deleteAccount() {
     // TODO: DELETE /user
-    toast.success("Account deletion requested — this is a mock action");
+    toast.success("Account deletion requested- this is a mock action");
   }
 
   return (
@@ -60,7 +60,7 @@ export default function SettingsPage() {
 
         {/* ─── ACCOUNT TAB ─────────────────────────────── */}
         <TabsContent value="account">
-          <div className="space-y-6">
+          <div className="grid items-start gap-6 lg:grid-cols-2">
             {/* Change email */}
             <Card className="gap-0 border-border p-6">
               <h3 className="mb-4 font-semibold text-foreground">Email address</h3>
@@ -111,7 +111,7 @@ export default function SettingsPage() {
             </Card>
 
             {/* Delete account */}
-            <Card className="gap-0 border-destructive/30 p-6">
+            <Card className="gap-0 border-destructive/30 p-6 lg:col-span-2">
               <h3 className="mb-1 font-semibold text-destructive">Danger zone</h3>
               <p className="mb-4 text-sm text-muted-foreground">
                 Once deleted, your account and all data cannot be recovered.

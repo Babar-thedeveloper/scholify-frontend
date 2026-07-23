@@ -148,7 +148,7 @@ export default function ApplicantDetailPage() {
                   )}
                 </div>
                 <p className="mt-0.5 text-sm text-muted-foreground">
-                  {applicant.student.university ?? "—"} · {applicant.student.degreeLevel ?? "—"}
+                  {applicant.student.university ?? "-"} · {applicant.student.degreeLevel ?? "-"}
                 </p>
               </div>
             </div>
@@ -159,7 +159,7 @@ export default function ApplicantDetailPage() {
                   GPA
                 </p>
                 <p className="mt-1 text-sm font-medium text-foreground">
-                  {applicant.student.cgpa ?? "—"}
+                  {applicant.student.cgpa ?? "-"}
                 </p>
               </div>
               <div>
@@ -167,7 +167,7 @@ export default function ApplicantDetailPage() {
                   Field of study
                 </p>
                 <p className="mt-1 text-sm font-medium text-foreground">
-                  {applicant.student.fieldOfStudy ?? "—"}
+                  {applicant.student.fieldOfStudy ?? "-"}
                 </p>
               </div>
               <div>

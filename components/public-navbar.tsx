@@ -19,9 +19,11 @@ interface NavLink {
 }
 
 const GUEST_LINKS: NavLink[] = [
+  { href: "/", label: "Home" },
   { href: "/scholarships", label: "Scholarships" },
   { href: "/internships", label: "Internships" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact us" },
 ];
 
 const STUDENT_LINKS: NavLink[] = [
@@ -68,22 +70,26 @@ export function PublicNavbar() {
           </Link>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            {links.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "transition-colors",
-                  pathname.startsWith(href)
-                    ? "font-semibold text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {label}
-              </Link>
-            ))}
+            {links.map(({ href, label }) => {
+              const active =
+                href === "/" ? pathname === "/" : pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    "transition-colors",
+                    active
+                      ? "font-semibold text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {label}
+                </Link>
+              );
+            })}
 
-            {/* CV Builder — shown for students and guests, hidden for orgs */}
+            {/* CV Builder- shown for students and guests, hidden for orgs */}
             {role !== "org" && (
               <Button
                 variant="ghost"
@@ -91,11 +97,8 @@ export function PublicNavbar() {
                 onClick={handleCvBuilderClick}
                 className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
               >
-                <Sparkles className="size-3.5 text-amber-500" />
+                <Sparkles className="size-3.5 text-emerald-500" />
                 <span>CV Builder</span>
-                <span className="rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-900 shadow-sm">
-                  PRO
-                </span>
               </Button>
             )}
           </nav>

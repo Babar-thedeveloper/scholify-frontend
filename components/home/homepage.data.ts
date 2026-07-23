@@ -20,7 +20,7 @@ export const hero = {
   headlineTop: "You have the grades.",
   headlineAccent: "We have the opportunities.",
   subtitle:
-    "Scholarships, internships, and career opportunities for every Pakistani student — national, international, and everything in between. One platform, zero cost, forever.",
+    "Scholarships, internships, and career opportunities for every Pakistani student- national, international, and everything in between. One platform, zero cost, forever.",
   primaryCta: { label: "Browse scholarships", href: "/scholarships" },
   secondaryCta: { label: "How it works", href: "#how-it-works" },
   trustLine:
@@ -97,7 +97,7 @@ export const featureHeader = {
   eyebrow: "Everything you need",
   heading: "One platform. Every opportunity.",
   subtitle:
-    "AI-powered matching, smart CV builder, and deadline alerts — from discovery to application, Scholify covers your entire journey.",
+    "AI-powered matching, smart CV builder, and deadline alerts- from discovery to application, Scholify covers your entire journey.",
 };
 
 export const features: Feature[] = [
@@ -111,7 +111,7 @@ export const features: Feature[] = [
     icon: "FileText",
     title: "AI-powered CV builder",
     description:
-      "Add your details once. Our AI generates a professional, ATS-friendly CV tailored for every application — scholarships, internships, and jobs.",
+      "Add your details once. Our AI generates a professional, ATS-friendly CV tailored for every application- scholarships, internships, and jobs.",
   },
   {
     icon: "Search",
@@ -322,14 +322,14 @@ export const footer = {
       links: [
         { label: "CV builder", href: "/dashboard/cv" },
         { label: "Application tips", href: "/help" },
-        { label: "Blog", href: "/about" },
+        { label: "Blog", href: "/blog" },
         { label: "Help center", href: "/help" },
       ] as FooterLink[],
     },
     {
       heading: "Connect",
       links: [
-        { label: "Contact us", href: "/help" },
+        { label: "Contact us", href: "/contact" },
         { label: "WhatsApp updates", href: "#", icon: "whatsapp" },
         { label: "Instagram", href: "#", icon: "instagram" },
         { label: "LinkedIn", href: "#", icon: "linkedin" },

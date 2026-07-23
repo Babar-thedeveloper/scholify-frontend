@@ -4,14 +4,14 @@
 // Real auth context. Backend-backed via lib/api/auth.
 //
 // What it gives the rest of the app:
-//   - `user`       — the logged-in user, or the guest sentinel
-//   - `role`       — coarse UI bucket ('guest' | 'student' | 'org')
-//   - `roles`      — fine-grained backend roles (for RBAC checks)
-//   - `login()`    — wraps the real /login + refreshes context
-//   - `signup()`   — wraps the real /signup + refreshes context
-//   - `logout()`   — wraps the real /logout + clears context
-//   - `refetch()`  — re-hydrate from /me (e.g. after role grant)
-//   - `isLoading`  — true until the initial /me check finishes
+//   - `user`      - the logged-in user, or the guest sentinel
+//   - `role`      - coarse UI bucket ('guest' | 'student' | 'org')
+//   - `roles`     - fine-grained backend roles (for RBAC checks)
+//   - `login()`   - wraps the real /login + refreshes context
+//   - `signup()`  - wraps the real /signup + refreshes context
+//   - `logout()`  - wraps the real /logout + clears context
+//   - `refetch()` - re-hydrate from /me (e.g. after role grant)
+//   - `isLoading` - true until the initial /me check finishes
 // ─────────────────────────────────────────────────────────────
 
 import {
@@ -85,7 +85,7 @@ interface UserContextValue {
   roles: BackendRole[];
   isAuthed: boolean;
   isLoading: boolean;
-  /** Returns { user, message } — show the message via toast. */
+  /** Returns { user, message }- show the message via toast. */
   login: (input: LoginInput) => Promise<LoginResult>;
   /** Returns { user, message } but does NOT log the user in
    *  (they must verify their email first). */
@@ -112,7 +112,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // On mount, ask the backend "who am I?" — succeeds if the cookie is valid.
+  // On mount, ask the backend "who am I?"- succeeds if the cookie is valid.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -129,7 +129,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signup = useCallback(async (input: SignupInput): Promise<SignupResult> => {
-    // No setUser — verification gate. The user becomes a real session only
+    // No setUser- verification gate. The user becomes a real session only
     // after they confirm the email and then call login.
     return signupApi(input);
   }, []);

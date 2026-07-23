@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Modal, ModalBody, ModalHeader } from "@/components/shared/Modal";
+import { PageLoader } from "@/components/shared/PageLoader";
 import type { Internship } from "./internships.types";
 import {
   getWorkModePill,
@@ -37,10 +39,13 @@ export function InternshipModal({
   onOpenChange,
 }: InternshipModalProps) {
   const router = useRouter();
+  const [isNavigating, setIsNavigating] = useState(false);
   if (!internship) return null;
 
   return (
     <Modal open={open} onOpenChange={onOpenChange} size="xl">
+      {isNavigating && <PageLoader message="Loading details…" />}
+
       <ModalHeader
         title={
           <div className="space-y-1">
@@ -115,7 +120,7 @@ export function InternshipModal({
             {internship.isExternal ? (
               <>
                 <Button
-                  className="flex-1 gap-2"
+                  className="flex-1 gap-2 rounded-md"
                   onClick={() => {
                     window.open(internship.applyUrl, "_blank", "noopener,noreferrer");
                   }}
@@ -127,8 +132,11 @@ export function InternshipModal({
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1 gap-2"
-                  onClick={() => router.push(internship.detailUrl)}
+                  className="flex-1 gap-2 rounded-md"
+                  onClick={() => {
+                    setIsNavigating(true);
+                    router.push(internship.detailUrl);
+                  }}
                   aria-label={`View full details for ${internship.title}`}
                 >
                   View full details
@@ -136,8 +144,11 @@ export function InternshipModal({
               </>
             ) : (
               <Button
-                className="flex-1 gap-2"
-                onClick={() => router.push(internship.detailUrl)}
+                className="flex-1 gap-2 rounded-md"
+                onClick={() => {
+                  setIsNavigating(true);
+                  router.push(internship.detailUrl);
+                }}
                 aria-label={`Apply with Scholify for ${internship.title}`}
               >
                 Apply with Scholify

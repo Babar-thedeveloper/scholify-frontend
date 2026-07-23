@@ -52,7 +52,7 @@ const EVENT_TYPE_MAP: Record<string, ApplicationTimelineEvent["type"]> = {
   status_change: "status-change",
   note: "note",
   message: "message",
-  attachment: "note",   // no dedicated icon — reuse "note"
+  attachment: "note",   // no dedicated icon- reuse "note"
   view: "note",
 };
 
@@ -67,7 +67,7 @@ function mapStatus(k: ApplicationStatusKey | null): ApplicationStatus | undefine
 }
 
 function toTimeline(events: ApplicationDetailDto["timeline"]): ApplicationTimelineEvent[] {
-  // Newest first — matches the mock we replaced.
+  // Newest first- matches the mock we replaced.
   return [...events].reverse().map((e) => ({
     timestamp: e.occurredAt,
     type: EVENT_TYPE_MAP[e.eventType] ?? "note",

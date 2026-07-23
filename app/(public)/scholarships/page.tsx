@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import { GraduationCap } from "lucide-react";
+import { ListingHero } from "@/components/shared/ListingHero";
 import { ScholarshipsClient } from "@/components/scholarships/ScholarshipsClient";
 import { ScholarshipGridSkeleton } from "@/components/scholarships/ScholarshipGridSkeleton";
 import { listPostings, toScholarship } from "@/lib/api/postings";
@@ -7,9 +9,20 @@ import type { Scholarship } from "@/components/scholarships/scholarships.types";
 export const metadata = {
   title: "Scholarships | Scholify",
   description: "Discover national, international, and provincial scholarships for Pakistani students.",
+  keywords: [
+    "scholarships in Pakistan",
+    "fully funded scholarships",
+    "international scholarships for Pakistani students",
+    "undergraduate scholarships",
+    "masters scholarships",
+    "PhD scholarships",
+    "HEC scholarships",
+    "study abroad scholarships",
+  ],
+  alternates: { canonical: "/scholarships" },
 };
 
-// SSR-fresh — always pull the latest listings from the backend.
+// SSR-fresh- always pull the latest listings from the backend.
 export const dynamic = "force-dynamic";
 
 export default async function ScholarshipsPage() {
@@ -25,16 +38,11 @@ export default async function ScholarshipsPage() {
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mb-6">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-          Every scholarship, one search.{" "}
-          <span className="text-primary">Zero guesswork.</span>
-        </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Every national, international and provincial scholarship for Pakistani students — updated daily,
-          completely free.
-        </p>
-      </div>
+      <ListingHero
+        Icon={GraduationCap}
+        title="Scholarships for Pakistani students"
+        subtitle="National, international and provincial scholarships in one place. Filter by degree level, funding type and destination to find the ones you qualify for."
+      />
 
       {fetchError ? (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-sm text-destructive">

@@ -27,12 +27,12 @@ export default function OrgSettingsPage() {
   const [expiryReminders, setExpiryReminders] = useState(true);
 
   function saveEmail() {
-    // TODO: API — PATCH org email
+    // TODO: API- PATCH org email
     toast.success("Email updated");
   }
 
   function savePassword() {
-    // TODO: API — PATCH org password
+    // TODO: API- PATCH org password
     toast.success("Password updated");
     setCurrentPassword("");
     setNewPassword("");
@@ -40,12 +40,12 @@ export default function OrgSettingsPage() {
   }
 
   function deactivate() {
-    // TODO: API — deactivate organization
-    toast.success("Organization deactivation requested — this is a mock action");
+    // TODO: API- deactivate organization
+    toast.success("Organization deactivation requested- this is a mock action");
   }
 
   function saveNotifications() {
-    // TODO: API — PATCH org notification preferences
+    // TODO: API- PATCH org notification preferences
     toast.success("Notification preferences saved");
   }
 
