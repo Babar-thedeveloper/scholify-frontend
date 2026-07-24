@@ -17,7 +17,7 @@ const SECTIONS: SidebarSection[] = [
   {
     label: "Platform",
     items: [
-      { label: "Overview", href: "/admin", Icon: LayoutDashboard, exact: true },
+      { label: "Dashboard", href: "/admin", Icon: LayoutDashboard, exact: true },
     ],
   },
   {

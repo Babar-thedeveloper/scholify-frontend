@@ -4,7 +4,7 @@
 // clean sidebar (contact, languages with CEFR bars, skills) and a
 // structured main column.
 // ─────────────────────────────────────────────────────────────
-import type { CvDto, LanguageEntry, WorkExperienceEntry } from "@/lib/api/cv";
+import { sortByRecency, type CvDto, type LanguageEntry, type WorkExperienceEntry } from "@/lib/api/cv";
 
 const NAVY = "#003399";
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -54,8 +54,8 @@ export default function EuropassPreview({ cv }: Props) {
           <h1 className="text-[26px] font-bold leading-tight" style={{ color: NAVY }}>
             {cv.fullName ?? "Your Name"}
           </h1>
-          {cv.fieldOfStudy && cv.degreeLevel && (
-            <p className="mt-1 text-[13px] text-[#444]">{cv.degreeLevel} in {cv.fieldOfStudy}</p>
+          {(cv.headline || (cv.degreeLevel && cv.fieldOfStudy)) && (
+            <p className="mt-1 text-[13px] text-[#444]">{cv.headline || `${cv.degreeLevel} in ${cv.fieldOfStudy}`}</p>
           )}
         </div>
       </header>
@@ -74,7 +74,7 @@ export default function EuropassPreview({ cv }: Props) {
           </Section>
 
           {hasLanguages && (
-            <Section label="Languages">
+            <Section label="Language skills">
               <div className="space-y-2.5">
                 {cv.languages.map((l) => <LanguageBar key={l.id} lang={l} />)}
               </div>
@@ -100,51 +100,78 @@ export default function EuropassPreview({ cv }: Props) {
 
         {/* Main */}
         <main className="flex-1 space-y-5 px-6 py-6">
-          {cv.bio && (
-            <MainSection label="Profile">
-              <p className="leading-relaxed text-[#333]">{cv.bio}</p>
+          {(cv.aboutMe || cv.bio) && (
+            <MainSection label="About Me">
+              <p className="whitespace-pre-line leading-relaxed text-[#333]">{cv.aboutMe || cv.bio}</p>
             </MainSection>
           )}
 
           {hasWorkExp && (
             <MainSection label="Work Experience">
-              <div className="space-y-4">
-                {cv.workExperience.map((e) => (
-                  <TimelineRow key={e.id} left={period(e)}>
-                    <p className="font-semibold text-[#1a1a1a]">{e.title}</p>
+              <div className="space-y-3.5">
+                {sortByRecency(cv.workExperience).map((e) => (
+                  <div key={e.id}>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="font-semibold text-[#1a1a1a]">{e.title}</p>
+                      <p className="shrink-0 text-[10px] text-[#667]">{period(e)}</p>
+                    </div>
                     <p className="text-[#555]">{e.company}{e.city ? `, ${e.city}` : ""}</p>
                     {e.description && (
                       <p className="mt-1 whitespace-pre-line leading-snug text-[#444]">{e.description}</p>
                     )}
-                  </TimelineRow>
+                  </div>
                 ))}
               </div>
             </MainSection>
           )}
 
           {cv.university && (
-            <MainSection label="Education">
-              <TimelineRow left={cv.expectedGraduationYear ? `- ${cv.expectedGraduationYear}` : ""}>
-                {cv.degreeLevel && cv.fieldOfStudy && (
-                  <p className="font-semibold text-[#1a1a1a]">{cv.degreeLevel} in {cv.fieldOfStudy}</p>
-                )}
+            <MainSection label="Education and Training">
+              <div>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="font-semibold text-[#1a1a1a]">
+                    {cv.degreeLevel && cv.fieldOfStudy ? `${cv.degreeLevel} in ${cv.fieldOfStudy}` : (cv.degreeLevel || cv.fieldOfStudy || "Education")}
+                  </p>
+                  {cv.expectedGraduationYear && <p className="shrink-0 text-[10px] text-[#667]">{cv.expectedGraduationYear}</p>}
+                </div>
                 <p className="text-[#555]">{cv.university}</p>
                 {cv.cgpa && <p className="mt-0.5 text-[#444]">CGPA: {cv.cgpa} / 4.0</p>}
-              </TimelineRow>
+              </div>
             </MainSection>
           )}
 
           {hasCerts && (
             <MainSection label="Certifications">
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {cv.certifications.map((c) => (
-                  <TimelineRow key={c.id} left={c.year ? String(c.year) : ""}>
-                    <p className="font-semibold text-[#1a1a1a]">{c.name}</p>
+                  <div key={c.id}>
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="font-semibold text-[#1a1a1a]">{c.name}</p>
+                      {c.year && <p className="shrink-0 text-[10px] text-[#667]">{c.year}</p>}
+                    </div>
                     {c.issuer && <p className="text-[#555]">{c.issuer}</p>}
-                  </TimelineRow>
+                  </div>
                 ))}
               </div>
             </MainSection>
+          )}
+
+          {(cv.customSections ?? []).map((sec) =>
+            sec.items.length > 0 ? (
+              <MainSection key={sec.id} label={sec.title}>
+                <div className="space-y-2.5">
+                  {sec.items.map((it) => (
+                    <div key={it.id}>
+                      <p className="font-semibold text-[#1a1a1a]">{it.heading}</p>
+                      {it.subtitle && <p className="text-[#555]">{it.subtitle}</p>}
+                      {it.description && (
+                        <p className="mt-1 whitespace-pre-line leading-snug text-[#444]">{it.description}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </MainSection>
+            ) : null
           )}
 
           <MainSection label="References">
@@ -210,13 +237,3 @@ function MainSection({ label, children }: { label: string; children: React.React
   );
 }
 
-function TimelineRow({ left, children }: { left: string; children: React.ReactNode }) {
-  return (
-    <div className="flex gap-4">
-      <div className="w-[96px] shrink-0 pt-0.5 text-[9.5px] font-medium uppercase tracking-wide text-[#667]">
-        {left}
-      </div>
-      <div className="flex-1">{children}</div>
-    </div>
-  );
-}

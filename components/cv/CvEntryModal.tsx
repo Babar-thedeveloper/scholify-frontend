@@ -43,16 +43,16 @@ export function CvEntryModal({ open, onClose }: CvEntryModalProps) {
             icon={<User className="size-5" />}
             badge="Recommended"
             title="From My Profile"
-            description="Auto-fill name, university, and all saved extras."
+            description="Auto-fill your name, university and details from your profile."
             cta="Use my profile"
-            ctaHref="/dashboard/cv"
+            ctaHref="/dashboard/cv?source=profile"
             onNavigate={go}
             variant="primary"
           />
           <OptionCard
             icon={<FileText className="size-5" />}
             title="Start Fresh"
-            description="Build a new CV. Your profile header stays pre-filled."
+            description="Start with a completely blank CV — nothing pre-filled."
             cta="Start blank"
             ctaHref="/dashboard/cv?reset=true"
             onNavigate={go}

@@ -86,6 +86,22 @@ export async function getPostingBySlug(slug: string): Promise<PostingDto> {
   return posting;
 }
 
+// ─── AI Opportunity Finder ──────────────────────────────────
+export interface RecommendationDto extends PostingDto {
+  matchScore: number;
+  reasons: string[];
+}
+
+export interface RecommendationResult {
+  items: RecommendationDto[];
+  profileComplete: boolean;
+}
+
+/** Personalized, ranked opportunities for the logged-in student. */
+export async function getRecommendations(): Promise<RecommendationResult> {
+  return apiFetch<RecommendationResult>(`/api/v1/postings/recommended`);
+}
+
 /** DTO returned by GET /api/v1/postings/mine- includes org-only fields. */
 export interface MyPostingDto extends PostingDto {
   status: "draft" | "active" | "paused" | "closed" | "archived";

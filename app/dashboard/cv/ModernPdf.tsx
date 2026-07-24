@@ -10,7 +10,7 @@ import {
   Text,
   StyleSheet,
 } from "@react-pdf/renderer";
-import type { CvDto, WorkExperienceEntry } from "@/lib/api/cv";
+import { sortByRecency, type CvDto, type WorkExperienceEntry } from "@/lib/api/cv";
 
 // ─── Colours ────────────────────────────────────────────────
 const NAVY    = "#111827";
@@ -130,7 +130,7 @@ const s = StyleSheet.create({
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <View style={s.section}>
-      <View style={s.sectionHeader}>
+      <View style={s.sectionHeader} minPresenceAhead={50}>
         <Text style={s.sectionLabel}>{label}</Text>
         <View style={s.sectionLine} />
       </View>
@@ -158,8 +158,8 @@ export default function ModernPdf({ cv }: Props) {
           </View>
           <View style={s.headerRight}>
             <Text style={s.name}>{cv.fullName ?? "Your Name"}</Text>
-            {cv.fieldOfStudy && cv.degreeLevel && (
-              <Text style={s.subtitle}>{cv.fieldOfStudy} · {cv.degreeLevel}</Text>
+            {(cv.headline || (cv.fieldOfStudy && cv.degreeLevel)) && (
+              <Text style={s.subtitle}>{cv.headline || `${cv.fieldOfStudy} · ${cv.degreeLevel}`}</Text>
             )}
             <View style={s.contactLine}>
               <Text style={s.contactItem}>{cv.email}</Text>
@@ -173,18 +173,18 @@ export default function ModernPdf({ cv }: Props) {
 
         {/* Body */}
         <View style={s.body}>
-          {/* About */}
-          {cv.bio && (
-            <Section label="About">
-              <Text style={s.bioText}>{cv.bio}</Text>
+          {/* About Me */}
+          {(cv.aboutMe || cv.bio) && (
+            <Section label="About Me">
+              <Text style={s.bioText}>{cv.aboutMe || cv.bio}</Text>
             </Section>
           )}
 
           {/* Work experience */}
           {cv.workExperience.length > 0 && (
             <Section label="Work Experience">
-              {cv.workExperience.map((e) => (
-                <View key={e.id} style={s.entryRow}>
+              {sortByRecency(cv.workExperience).map((e) => (
+                <View key={e.id} wrap={false} style={s.entryRow}>
                   <Text style={s.entryDate}>{period(e)}</Text>
                   <View style={s.entryContent}>
                     <Text style={s.entryTitle}>{e.title}</Text>
@@ -203,7 +203,7 @@ export default function ModernPdf({ cv }: Props) {
           {/* Education */}
           {cv.university && (
             <Section label="Education">
-              <View style={s.entryRow}>
+              <View wrap={false} style={s.entryRow}>
                 <Text style={s.entryDate}>
                   {cv.expectedGraduationYear ? `– ${cv.expectedGraduationYear}` : ""}
                 </Text>
@@ -257,7 +257,7 @@ export default function ModernPdf({ cv }: Props) {
           {hasCerts && (
             <Section label="Certifications">
               {cv.certifications.map((c) => (
-                <View key={c.id} style={s.certRow}>
+                <View key={c.id} wrap={false} style={s.certRow}>
                   <View>
                     <Text style={s.certName}>{c.name}</Text>
                     {c.issuer && <Text style={s.certIssuer}>{c.issuer}</Text>}
@@ -266,6 +266,21 @@ export default function ModernPdf({ cv }: Props) {
                 </View>
               ))}
             </Section>
+          )}
+
+          {/* Custom sections */}
+          {(cv.customSections ?? []).map((sec) =>
+            sec.items.length > 0 ? (
+              <Section key={sec.id} label={sec.title}>
+                {sec.items.map((it) => (
+                  <View key={it.id} wrap={false} style={{ marginBottom: 7 }}>
+                    <Text style={s.entryTitle}>{it.heading}</Text>
+                    {it.subtitle && <Text style={s.entryCompany}>{it.subtitle}</Text>}
+                    {it.description && <Text style={s.entryBody}>{it.description}</Text>}
+                  </View>
+                ))}
+              </Section>
+            ) : null
           )}
 
           {/* References */}

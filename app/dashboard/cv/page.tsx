@@ -10,12 +10,14 @@ import {
   Check,
   FileText,
   Languages,
+  LayoutList,
   Pencil,
   Plus,
   Save,
   ScrollText,
   Sparkles,
   Trash2,
+  Import,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -49,12 +51,16 @@ import EuropassPreview from "./EuropassPreview";
 import ModernPreview from "./ModernPreview";
 import type {
   CertificationEntry,
+  CvCustomSection,
+  CvCustomSectionItem,
   CvDto,
   LanguageEntry,
   PatchCvInput,
   WorkExperienceEntry,
 } from "@/lib/api/cv";
 import { getMyCv, patchMyCv } from "@/lib/api/cv";
+import { ResumeImportModal } from "@/components/cv/ResumeImportModal";
+import type { ParsedResume } from "@/lib/cv/resume-parser";
 
 // ─── Months helper ──────────────────────────────────────────
 const MONTHS = [
@@ -101,6 +107,14 @@ const emptyCert = (): CertificationEntry => ({
   id: crypto.randomUUID(), name: "", issuer: "", year: undefined,
 });
 
+const emptyCustomSection = (): CvCustomSection => ({
+  id: crypto.randomUUID(), title: "", items: [],
+});
+
+const emptyCustomItem = (): CvCustomSectionItem => ({
+  id: crypto.randomUUID(), heading: "", subtitle: "", description: "",
+});
+
 // ─── Main page ───────────────────────────────────────────────
 function CVPageContent() {
   const router = useRouter();
@@ -113,7 +127,7 @@ function CVPageContent() {
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const [lastAutoSave, setLastAutoSave] = useState<Date | null>(null);
-  const [activeTab, setActiveTab] = useState<"work" | "skills" | "languages" | "certs">("work");
+  const [activeTab, setActiveTab] = useState<"work" | "skills" | "languages" | "certs" | "custom">("work");
   const [previewVisible, setPreviewVisible] = useState(false); // mobile toggle
 
   // Work exp dialog
@@ -128,18 +142,67 @@ function CVPageContent() {
   const [certDialog, setCertDialog] = useState<{ open: boolean; entry: CertificationEntry | null }>({
     open: false, entry: null,
   });
+  // Custom section dialog
+  const [customDialog, setCustomDialog] = useState<{ open: boolean; entry: CvCustomSection | null }>({
+    open: false, entry: null,
+  });
   // Skills input
   const [skillInput, setSkillInput] = useState("");
+  // Resume import
+  const [resumeOpen, setResumeOpen] = useState(false);
+
+  function applyResume(r: ParsedResume) {
+    setDraft((prev) => {
+      if (!prev) return prev;
+      const skills = Array.from(new Set([...prev.skills, ...r.skills])).slice(0, 40);
+      const workExperience = [...prev.workExperience, ...r.workExperience].slice(0, 20);
+      const haveLang = new Set(prev.languages.map((l) => l.language.toLowerCase()));
+      const languages = [...prev.languages, ...r.languages.filter((l) => !haveLang.has(l.language.toLowerCase()))].slice(0, 20);
+      const certifications = [...prev.certifications, ...r.certifications].slice(0, 20);
+      const customSections = [...prev.customSections, ...r.customSections].slice(0, 10);
+      return { ...prev, skills, workExperience, languages, certifications, customSections };
+    });
+    setSaved(false);
+    const added =
+      r.skills.length + r.workExperience.length + r.languages.length +
+      r.certifications.length + r.customSections.reduce((n, s) => n + s.items.length, 0);
+    toast.success(`Imported ${added} item${added === 1 ? "" : "s"} from your resume. Review, then Save.`);
+    setActiveTab(r.workExperience.length ? "work" : r.skills.length ? "skills" : "custom");
+  }
 
   useEffect(() => {
     const reset = searchParams.get("reset") === "true";
+    const fromProfile = searchParams.get("source") === "profile";
     getMyCv()
       .then((data) => {
         setCv(data);
         if (reset) {
-          setDraft({ ...data, workExperience: [], skills: [], languages: [], certifications: [] });
+          // Truly blank CV- no profile data pulled in.
+          setDraft({
+            ...data,
+            fullName: "", phone: "", city: "", headline: "",
+            university: "", degreeLevel: "", fieldOfStudy: "", cgpa: "",
+            bio: "", aboutMe: "",
+            workExperience: [], skills: [], languages: [], certifications: [], customSections: [],
+          });
           router.replace("/dashboard/cv");
-          toast.success("Started fresh- your profile is pre-filled, add your extras below.");
+          toast.success("Started fresh- a blank CV. Fill in your details below.");
+        } else if (fromProfile) {
+          // Pull the identity from the profile defaults, keep saved extras.
+          const pd = data.profileDefaults ?? {};
+          setDraft({
+            ...data,
+            fullName: pd.fullName ?? null,
+            phone: pd.phone ?? null,
+            city: pd.city ?? null,
+            headline: pd.headline ?? null,
+            university: pd.university ?? null,
+            degreeLevel: pd.degreeLevel ?? null,
+            fieldOfStudy: pd.fieldOfStudy ?? null,
+            cgpa: pd.cgpa ?? null,
+          });
+          router.replace("/dashboard/cv");
+          toast.success("Loaded your details from your profile.");
         } else {
           setDraft(data);
         }
@@ -189,6 +252,18 @@ function CVPageContent() {
         certifications: draft.certifications,
         skills: draft.skills,
         templateKey: draft.templateKey as TemplateKey,
+        customSections: draft.customSections,
+        aboutMe: draft.aboutMe,
+        identity: {
+          fullName: draft.fullName ?? undefined,
+          phone: draft.phone ?? undefined,
+          city: draft.city ?? undefined,
+          headline: draft.headline ?? undefined,
+          university: draft.university ?? undefined,
+          degreeLevel: draft.degreeLevel ?? undefined,
+          fieldOfStudy: draft.fieldOfStudy ?? undefined,
+          cgpa: draft.cgpa ?? undefined,
+        },
       };
       const updated = await patchMyCv(payload);
       setCv(updated);
@@ -274,6 +349,26 @@ function CVPageContent() {
     updateDraft({ certifications: (draft?.certifications ?? []).filter((e) => e.id !== id) });
   }
 
+  // ── Custom section actions ────────────────────────────────
+  function openCustomAdd() {
+    setCustomDialog({ open: true, entry: emptyCustomSection() });
+  }
+  function openCustomEdit(entry: CvCustomSection) {
+    setCustomDialog({ open: true, entry: { ...entry, items: entry.items.map((i) => ({ ...i })) } });
+  }
+  function saveCustomSection(entry: CvCustomSection) {
+    const list = draft?.customSections ?? [];
+    const existing = list.findIndex((e) => e.id === entry.id);
+    const updated = existing >= 0
+      ? list.map((e) => e.id === entry.id ? entry : e)
+      : [...list, entry];
+    updateDraft({ customSections: updated });
+    setCustomDialog({ open: false, entry: null });
+  }
+  function removeCustomSection(id: string) {
+    updateDraft({ customSections: (draft?.customSections ?? []).filter((e) => e.id !== id) });
+  }
+
   // ─────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -328,6 +423,9 @@ function CVPageContent() {
 
           <div className="flex items-center gap-2">
             <span className="hidden text-xs text-muted-foreground sm:inline">{saveStatus}</span>
+            <Button variant="outline" size="lg" onClick={() => setResumeOpen(true)} className="gap-1.5">
+              <Import className="size-4" /> <span className="hidden sm:inline">Import resume</span>
+            </Button>
             <Button onClick={handleSave} disabled={saving} size="lg">
               {saving ? <Spinner size="sm" /> : <Save className="size-4" />}
               {saving ? "Saving…" : saved ? "Saved!" : "Save"}
@@ -352,29 +450,6 @@ function CVPageContent() {
       <div className="flex gap-6 items-start">
         {/* ── Editor pane ── */}
         <div className="w-full lg:w-[420px] shrink-0 space-y-4">
-          {/* Profile info- read-only */}
-          <div className="rounded-xl border border-border bg-muted/30 px-4 py-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Profile info (auto-populated)
-              </p>
-              <Button asChild variant="ghost" size="sm" className="h-7 text-xs gap-1">
-                <Link href="/dashboard/profile">
-                  <Pencil className="size-3" /> Edit
-                </Link>
-              </Button>
-            </div>
-            <div className="mt-2 space-y-0.5 text-sm text-foreground">
-              <p><span className="text-muted-foreground">Name:</span> {draft.fullName ?? <em className="text-muted-foreground">not set</em>}</p>
-              <p><span className="text-muted-foreground">Email:</span> {draft.email}</p>
-              {draft.phone && <p><span className="text-muted-foreground">Phone:</span> {draft.phone}</p>}
-              {draft.university && <p><span className="text-muted-foreground">University:</span> {draft.university}</p>}
-              {draft.degreeLevel && draft.fieldOfStudy && (
-                <p><span className="text-muted-foreground">Degree:</span> {draft.degreeLevel} in {draft.fieldOfStudy}</p>
-              )}
-            </div>
-          </div>
-
           {/* Template picker */}
           <Card className="gap-0 p-4">
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -416,29 +491,112 @@ function CVPageContent() {
             </div>
           </Card>
 
+          {/* Personal details- editable (blank on "Start Fresh") */}
+          <Card className="gap-0 p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Personal details
+              </p>
+              <Button asChild variant="ghost" size="sm" className="h-7 gap-1 text-xs">
+                <Link href="/dashboard/cv?source=profile">
+                  <Sparkles className="size-3 text-emerald-500" /> Fill from profile
+                </Link>
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-2.5">
+              <div className="col-span-2">
+                <Label className="mb-1 block text-xs">Full name</Label>
+                <Input value={draft.fullName ?? ""} onChange={(e) => updateDraft({ fullName: e.target.value })} placeholder="e.g. Ayesha Khan" className="h-9 text-sm" />
+              </div>
+              <div className="col-span-2">
+                <Label className="mb-1 block text-xs">Headline</Label>
+                <Input value={draft.headline ?? ""} onChange={(e) => updateDraft({ headline: e.target.value })} placeholder="e.g. Computer Science Undergraduate" className="h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Email</Label>
+                <Input value={draft.email} disabled className="h-9 text-sm opacity-70" />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Phone</Label>
+                <Input value={draft.phone ?? ""} onChange={(e) => updateDraft({ phone: e.target.value })} placeholder="03xx xxxxxxx" className="h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">City</Label>
+                <Input value={draft.city ?? ""} onChange={(e) => updateDraft({ city: e.target.value })} placeholder="e.g. Karachi" className="h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">University</Label>
+                <Input value={draft.university ?? ""} onChange={(e) => updateDraft({ university: e.target.value })} placeholder="University" className="h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Degree</Label>
+                <Input value={draft.degreeLevel ?? ""} onChange={(e) => updateDraft({ degreeLevel: e.target.value })} placeholder="e.g. Bachelor's" className="h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Field of study</Label>
+                <Input value={draft.fieldOfStudy ?? ""} onChange={(e) => updateDraft({ fieldOfStudy: e.target.value })} placeholder="e.g. Computer Science" className="h-9 text-sm" />
+              </div>
+              <div className="col-span-2">
+                <Label className="mb-1 block text-xs">CGPA</Label>
+                <Input value={draft.cgpa ?? ""} onChange={(e) => updateDraft({ cgpa: e.target.value })} placeholder="e.g. 3.8" className="h-9 text-sm" />
+              </div>
+            </div>
+          </Card>
+
+          {/* About Me- Europass personal statement (tailorable) */}
+          <Card className="gap-0 p-4">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                About Me
+              </p>
+              <span className="text-[10px] text-muted-foreground">{(draft.aboutMe ?? "").length}/600</span>
+            </div>
+            <Textarea
+              rows={4}
+              maxLength={600}
+              value={draft.aboutMe ?? ""}
+              onChange={(e) => updateDraft({ aboutMe: e.target.value })}
+              placeholder="2–4 lines on why you're a strong fit. Tailor it to the role and use strong verbs (led, built, increased)."
+              className="resize-none text-sm"
+            />
+            <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+              Europass recommends a short, tailored summary here- focus on the facts that match the job. Leave blank to use your profile bio.
+            </p>
+          </Card>
+
           {/* Section tabs */}
           <Card className="gap-0 border-border overflow-hidden">
-            <div className="flex border-b border-border">
+            <div className="flex border-b border-border" role="tablist">
               {([
-                { key: "work",      label: "Work",         Icon: BriefcaseBusiness },
-                { key: "skills",    label: "Skills",       Icon: Sparkles },
-                { key: "languages", label: "Languages",    Icon: Languages },
-                { key: "certs",     label: "Certs",        Icon: ScrollText },
-              ] as const).map(({ key, label, Icon }) => (
-                <Button
-                  key={key}
-                  variant="ghost"
-                  onClick={() => setActiveTab(key)}
-                  className={`flex-1 flex flex-col items-center gap-0.5 py-2.5 text-xs font-medium transition-colors rounded-none ${
-                    activeTab === key
-                      ? "bg-emerald-50 text-emerald-700 border-b-2 border-emerald-500 dark:bg-emerald-500/10 dark:text-emerald-400"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Icon className="size-3.5" />
-                  {label}
-                </Button>
-              ))}
+                { key: "work",      label: "Work",      Icon: BriefcaseBusiness },
+                { key: "skills",    label: "Skills",    Icon: Sparkles },
+                { key: "languages", label: "Languages", Icon: Languages },
+                { key: "certs",     label: "Certs",     Icon: ScrollText },
+                { key: "custom",    label: "Custom",    Icon: LayoutList },
+              ] as const).map(({ key, label, Icon }) => {
+                const active = activeTab === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setActiveTab(key)}
+                    className={cn(
+                      "relative flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500/40",
+                      active
+                        ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
+                        : "text-muted-foreground hover:bg-muted/40 hover:text-foreground",
+                    )}
+                  >
+                    <Icon className="size-4" />
+                    {label}
+                    {active && (
+                      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-emerald-500" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="p-4">
@@ -547,6 +705,39 @@ function CVPageContent() {
                   </Button>
                 </div>
               )}
+
+              {/* ── Custom sections tab ── */}
+              {activeTab === "custom" && (
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground">
+                    Add your own sections- Projects, Awards, Volunteering, Publications, anything. Each section has a title and your own entries.
+                  </p>
+                  {draft.customSections.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No custom sections yet.</p>
+                  )}
+                  {draft.customSections.map((sec) => (
+                    <div key={sec.id} className="flex items-start justify-between gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2.5">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{sec.title || "Untitled section"}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {sec.items.length} {sec.items.length === 1 ? "entry" : "entries"}
+                        </p>
+                      </div>
+                      <div className="flex shrink-0 gap-1">
+                        <Button variant="ghost" size="icon" className="size-7" onClick={() => openCustomEdit(sec)}>
+                          <Pencil className="size-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="size-7 text-destructive" onClick={() => removeCustomSection(sec.id)}>
+                          <Trash2 className="size-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" className="w-full gap-1" onClick={openCustomAdd}>
+                    <Plus className="size-3.5" /> Add custom section
+                  </Button>
+                </div>
+              )}
             </div>
           </Card>
         </div>
@@ -566,7 +757,7 @@ function CVPageContent() {
               className="rounded-2xl border border-border bg-gradient-to-b from-muted/60 to-muted/20 p-3 sm:p-5"
               style={{ maxHeight: "82vh", overflowY: "auto" }}
             >
-              <div className="mx-auto max-w-[640px] overflow-hidden rounded-lg bg-white shadow-[0_10px_40px_-12px_rgba(0,0,0,0.28)] ring-1 ring-black/5">
+              <div className="mx-auto w-full max-w-[794px] overflow-hidden rounded-lg bg-white shadow-[0_10px_40px_-12px_rgba(0,0,0,0.28)] ring-1 ring-black/5">
                 {templateKey === "europass" ? <EuropassPreview cv={draft} /> : <ModernPreview cv={draft} />}
               </div>
             </div>
@@ -644,6 +835,34 @@ function CVPageContent() {
               initial={certDialog.entry}
               onSave={saveCertEntry}
               onCancel={() => setCertDialog({ open: false, entry: null })}
+            />
+          </ModalBody>
+        )}
+      </Modal>
+
+      {/* ── Resume import ── */}
+      <ResumeImportModal open={resumeOpen} onOpenChange={setResumeOpen} onApply={applyResume} />
+
+      {/* ── Custom section dialog ── */}
+      <Modal
+        open={customDialog.open}
+        onOpenChange={(o) => !o && setCustomDialog({ open: false, entry: null })}
+        size="md"
+      >
+        <ModalHeader
+          title={
+            customDialog.entry && draft.customSections.find((s) => s.id === customDialog.entry?.id)
+              ? "Edit custom section"
+              : "Add custom section"
+          }
+          description="Give the section a title, then add your own entries- e.g. Projects, Awards, Volunteering."
+        />
+        {customDialog.entry && (
+          <ModalBody>
+            <CustomSectionForm
+              initial={customDialog.entry}
+              onSave={saveCustomSection}
+              onCancel={() => setCustomDialog({ open: false, entry: null })}
             />
           </ModalBody>
         )}
@@ -830,6 +1049,96 @@ function WorkExpForm({ initial, onSave, onCancel }: {
       <div className="flex justify-end gap-2 pt-1">
         <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
         <Button type="submit">Save</Button>
+      </div>
+    </form>
+  );
+}
+
+// ─── CustomSectionForm ───────────────────────────────────────
+function CustomSectionForm({ initial, onSave, onCancel }: {
+  initial: CvCustomSection;
+  onSave: (e: CvCustomSection) => void;
+  onCancel: () => void;
+}) {
+  const [title, setTitle] = useState(initial.title);
+  const [items, setItems] = useState<CvCustomSectionItem[]>(
+    initial.items.length ? initial.items : [emptyCustomItem()]
+  );
+
+  const setItem = (id: string, patch: Partial<CvCustomSectionItem>) =>
+    setItems((list) => list.map((it) => (it.id === id ? { ...it, ...patch } : it)));
+  const addItem = () => setItems((list) => [...list, emptyCustomItem()]);
+  const removeItem = (id: string) => setItems((list) => list.filter((it) => it.id !== id));
+
+  function submit(ev: React.FormEvent) {
+    ev.preventDefault();
+    if (!title.trim()) return;
+    // Keep only entries that have at least a heading.
+    const cleaned = items
+      .filter((it) => it.heading.trim())
+      .map((it) => ({
+        ...it,
+        heading: it.heading.trim(),
+        subtitle: it.subtitle?.trim() || undefined,
+        description: it.description?.trim() || undefined,
+      }));
+    onSave({ ...initial, title: title.trim(), items: cleaned });
+  }
+
+  return (
+    <form onSubmit={submit} className="space-y-4 pt-1">
+      <div className="space-y-1">
+        <Label>Section title *</Label>
+        <Input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Projects, Awards, Volunteering"
+          required
+        />
+      </div>
+
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <Label>Entries</Label>
+          <span className="text-xs text-muted-foreground">{items.length} added</span>
+        </div>
+        {items.map((it, idx) => (
+          <div key={it.id} className="space-y-2 rounded-lg border border-border bg-muted/20 p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-muted-foreground">Entry {idx + 1}</span>
+              {items.length > 1 && (
+                <Button type="button" variant="ghost" size="icon" className="size-6 text-destructive" onClick={() => removeItem(it.id)}>
+                  <Trash2 className="size-3.5" />
+                </Button>
+              )}
+            </div>
+            <Input
+              value={it.heading}
+              onChange={(e) => setItem(it.id, { heading: e.target.value })}
+              placeholder="Heading * (e.g. Scholarship Finder App)"
+            />
+            <Input
+              value={it.subtitle ?? ""}
+              onChange={(e) => setItem(it.id, { subtitle: e.target.value })}
+              placeholder="Subtitle (e.g. 2024, or Team Lead) - optional"
+            />
+            <Textarea
+              rows={2}
+              value={it.description ?? ""}
+              onChange={(e) => setItem(it.id, { description: e.target.value })}
+              placeholder="Description - optional"
+              className="resize-none"
+            />
+          </div>
+        ))}
+        <Button type="button" variant="outline" size="sm" className="w-full gap-1" onClick={addItem}>
+          <Plus className="size-3.5" /> Add entry
+        </Button>
+      </div>
+
+      <div className="flex justify-end gap-2 pt-1">
+        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+        <Button type="submit">Save section</Button>
       </div>
     </form>
   );

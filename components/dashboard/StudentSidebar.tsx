@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   ListChecks,
   Settings,
+  Sparkles,
   User,
 } from "lucide-react";
 import { SidebarNav, type SidebarSection } from "./SidebarNav";
@@ -23,7 +24,7 @@ function useSections(): SidebarSection[] {
     {
       label: "Main",
       items: [
-        { label: "Overview", href: "/dashboard", Icon: LayoutDashboard, exact: true },
+        { label: "Dashboard", href: "/dashboard", Icon: LayoutDashboard, exact: true },
         { label: "My Applications", href: "/dashboard/applications", Icon: ListChecks, badge: student?.applications || undefined },
         { label: "Saved Items", href: "/dashboard/saved", Icon: Bookmark, badge: student?.saved || undefined },
         { label: "Reminders", href: "/dashboard/reminders", Icon: Clock, badge: student?.reminders || undefined },
@@ -32,6 +33,7 @@ function useSections(): SidebarSection[] {
     {
       label: "Discover",
       items: [
+        { label: "AI Opportunity Finder", href: "/ai-finder", Icon: Sparkles },
         { label: "Scholarships", href: "/scholarships", Icon: GraduationCap },
         { label: "Internships", href: "/internships", Icon: Briefcase },
         { label: "Deadlines", href: "/dashboard/deadlines", Icon: CalendarDays },

@@ -3,7 +3,7 @@
 // Modern CV - premium single-column layout: slate header with an
 // emerald accent, quiet typography, and a subtle experience rail.
 // ─────────────────────────────────────────────────────────────
-import type { CvDto, WorkExperienceEntry } from "@/lib/api/cv";
+import { sortByRecency, type CvDto, type WorkExperienceEntry } from "@/lib/api/cv";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -46,9 +46,9 @@ export default function ModernPreview({ cv }: Props) {
           </div>
           <div className="min-w-0">
             <h1 className="text-[27px] font-bold leading-none tracking-tight">{cv.fullName ?? "Your Name"}</h1>
-            {cv.fieldOfStudy && cv.degreeLevel && (
+            {(cv.headline || (cv.fieldOfStudy && cv.degreeLevel)) && (
               <p className="mt-2 text-[13px] font-medium text-emerald-400">
-                {cv.degreeLevel} in {cv.fieldOfStudy}
+                {cv.headline || `${cv.degreeLevel} in ${cv.fieldOfStudy}`}
               </p>
             )}
             <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] text-slate-300">
@@ -65,16 +65,16 @@ export default function ModernPreview({ cv }: Props) {
 
       {/* ── Body ── */}
       <div className="space-y-6 px-9 py-7">
-        {cv.bio && (
-          <Section label="Profile">
-            <p className="text-[#4b5563]">{cv.bio}</p>
+        {(cv.aboutMe || cv.bio) && (
+          <Section label="About Me">
+            <p className="whitespace-pre-line text-[#4b5563]">{cv.aboutMe || cv.bio}</p>
           </Section>
         )}
 
         {cv.workExperience.length > 0 && (
           <Section label="Experience">
             <div className="space-y-4">
-              {cv.workExperience.map((e) => (
+              {sortByRecency(cv.workExperience).map((e) => (
                 <div key={e.id} className="grid grid-cols-[86px_1fr] gap-4">
                   <div className="pt-0.5 text-[9.5px] font-medium uppercase tracking-wide text-slate-400">
                     {period(e)}
@@ -157,6 +157,26 @@ export default function ModernPreview({ cv }: Props) {
               ))}
             </div>
           </Section>
+        )}
+
+        {(cv.customSections ?? []).map((sec) =>
+          sec.items.length > 0 ? (
+            <Section key={sec.id} label={sec.title}>
+              <div className="space-y-3">
+                {sec.items.map((it) => (
+                  <div key={it.id}>
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className="text-[12px] font-semibold text-slate-900">{it.heading}</p>
+                      {it.subtitle && <p className="shrink-0 text-[10.5px] font-medium text-emerald-700">{it.subtitle}</p>}
+                    </div>
+                    {it.description && (
+                      <p className="mt-0.5 whitespace-pre-line leading-snug text-[#555]">{it.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Section>
+          ) : null
         )}
 
         <Section label="References">

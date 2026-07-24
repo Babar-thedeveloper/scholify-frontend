@@ -12,7 +12,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
-import type { CvDto, WorkExperienceEntry } from "@/lib/api/cv";
+import { sortByRecency, type CvDto, type WorkExperienceEntry } from "@/lib/api/cv";
 
 // ─── Colours ────────────────────────────────────────────────
 const BLUE   = "#003399";
@@ -44,9 +44,12 @@ const s = StyleSheet.create({
     fontSize: 8,
     color: DARK,
     backgroundColor: "#ffffff",
+    paddingTop: 8,
+    paddingBottom: 10,
   },
-  topStripe: { height: 4, backgroundColor: BLUE },
-  bottomStripe: { height: 3, backgroundColor: BLUE, marginTop: "auto" },
+  // Fixed decorative stripes (repeat on every page).
+  topStripe: { position: "absolute", top: 0, left: 0, right: 0, height: 4, backgroundColor: BLUE },
+  bottomStripe: { position: "absolute", bottom: 0, left: 0, right: 0, height: 3, backgroundColor: BLUE },
 
   // Header
   header: {
@@ -67,21 +70,29 @@ const s = StyleSheet.create({
   },
   avatarText: { fontSize: 16, fontFamily: "Helvetica-Bold", color: BLUE },
   headerRight: { flex: 1 },
+  // Header inside the main column (page 1 top).
+  headerMain: { borderBottom: `1.5pt solid ${BLUE}`, paddingBottom: 8, marginBottom: 4 },
   cvLabel: { fontSize: 6, color: BLUE, fontFamily: "Helvetica-Bold", letterSpacing: 1.5, marginBottom: 2 },
   name: { fontSize: 18, fontFamily: "Helvetica-Bold", color: BLUE, lineHeight: 1.2 },
   subTitle: { fontSize: 8, color: MID, marginTop: 2 },
 
-  // Body
-  body: { flexDirection: "row", flex: 1 },
-
-  // Sidebar
+  // Fixed left band (full page height, repeats on every page). This
+  // is what makes multi-page output paginate cleanly- the main column
+  // is a normal single-column flow beside it.
   sidebar: {
-    width: 140,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: 150,
     backgroundColor: SIDE,
     paddingHorizontal: 12,
-    paddingVertical: 14,
-    gap: 14,
+    paddingTop: 18,
+    paddingBottom: 16,
+    gap: 12,
+    borderRight: `1pt solid ${LINE}`,
   },
+  sideAvatar: { alignSelf: "center", marginBottom: 4 },
   sideSection: { gap: 6 },
   sideSectionLabel: {
     fontSize: 5.5,
@@ -109,8 +120,8 @@ const s = StyleSheet.create({
   skillChipText: { fontSize: 6, color: BLUE },
   skillsWrap: { flexDirection: "row", flexWrap: "wrap" },
 
-  // Main
-  main: { flex: 1, paddingHorizontal: 16, paddingVertical: 14, gap: 14 },
+  // Main flowing column- sits to the right of the fixed 150pt band.
+  main: { marginLeft: 150, paddingHorizontal: 18, paddingTop: 10, gap: 13 },
   mainSection: { gap: 6 },
   mainSectionHeader: { flexDirection: "row", alignItems: "center", gap: 5, marginBottom: 4 },
   mainSectionBar: { width: 4, height: 10, backgroundColor: BLUE, borderRadius: 1 },
@@ -123,11 +134,11 @@ const s = StyleSheet.create({
   },
   mainSectionLine: { flex: 1, height: 0.5, backgroundColor: LINE },
 
-  // Entry row (date | content)
-  entryRow: { flexDirection: "row", gap: 10, marginBottom: 6 },
-  entryDate: { width: 80, fontSize: 6.5, color: LIGHT, paddingTop: 1 },
-  entryContent: { flex: 1 },
-  entryTitle: { fontSize: 8, fontFamily: "Helvetica-Bold", color: DARK },
+  // Entry- stacked: bold title (+ right period) / subtitle / body.
+  entryBlock: { marginBottom: 7 },
+  entryHeadRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", gap: 10 },
+  entryTitle: { flex: 1, fontSize: 8, fontFamily: "Helvetica-Bold", color: DARK, lineHeight: 1.3 },
+  entryMeta: { fontSize: 6.8, color: LIGHT, paddingTop: 0.5 },
   entrySubtitle: { fontSize: 7, color: LIGHT, marginTop: 1 },
   entryBody: { fontSize: 7, color: MID, marginTop: 2, lineHeight: 1.4 },
 
@@ -151,7 +162,7 @@ function SideSection({ label, children }: { label: string; children: React.React
 function MainSection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <View style={s.mainSection}>
-      <View style={s.mainSectionHeader}>
+      <View style={s.mainSectionHeader} minPresenceAhead={50}>
         <View style={s.mainSectionBar} />
         <Text style={s.mainSectionLabel}>{label}</Text>
         <View style={s.mainSectionLine} />
@@ -168,28 +179,15 @@ export default function EuropassPdf({ cv }: Props) {
   return (
     <Document title={`${cv.fullName ?? "CV"} – Europass`} author="Scholify">
       <Page size="A4" style={s.page}>
-        {/* Top stripe */}
-        <View style={s.topStripe} />
+        {/* Fixed stripes + left band- repeat on every page for clean pagination */}
+        <View fixed style={s.topStripe} />
+        <View fixed style={s.bottomStripe} />
 
-        {/* Header */}
-        <View style={s.header}>
-          <View style={s.avatar}>
+        <View fixed style={s.sidebar}>
+          <View style={[s.avatar, s.sideAvatar]}>
             <Text style={s.avatarText}>{initials(cv.fullName)}</Text>
           </View>
-          <View style={s.headerRight}>
-            <Text style={s.cvLabel}>CURRICULUM VITAE</Text>
-            <Text style={s.name}>{cv.fullName ?? "Your Name"}</Text>
-            {cv.fieldOfStudy && cv.degreeLevel && (
-              <Text style={s.subTitle}>{cv.fieldOfStudy} · {cv.degreeLevel}</Text>
-            )}
-          </View>
-        </View>
-
-        {/* Body */}
-        <View style={s.body}>
-          {/* Sidebar */}
-          <View style={s.sidebar}>
-            {/* Contact */}
+          {/* Contact */}
             <SideSection label="Contact">
               <View style={s.contactRow}>
                 <Text style={s.contactIcon}>✉</Text>
@@ -217,7 +215,7 @@ export default function EuropassPdf({ cv }: Props) {
 
             {/* Languages */}
             {cv.languages.length > 0 && (
-              <SideSection label="Languages">
+              <SideSection label="Language skills">
                 {cv.languages.map((l) => (
                   <View key={l.id} style={{ marginBottom: 4 }}>
                     <Text style={s.langName}>{l.language}</Text>
@@ -241,30 +239,33 @@ export default function EuropassPdf({ cv }: Props) {
             )}
           </View>
 
-          {/* Main content */}
+          {/* Main flowing column- single column beside the fixed band */}
           <View style={s.main}>
-            {/* Profile / bio */}
-            {cv.bio && (
-              <MainSection label="Profile">
-                <Text style={s.bioText}>{cv.bio}</Text>
+            <View style={s.headerMain}>
+              <Text style={s.cvLabel}>CURRICULUM VITAE</Text>
+              <Text style={s.name}>{cv.fullName ?? "Your Name"}</Text>
+              {(cv.headline || (cv.fieldOfStudy && cv.degreeLevel)) && (
+                <Text style={s.subTitle}>{cv.headline || `${cv.fieldOfStudy} · ${cv.degreeLevel}`}</Text>
+              )}
+            </View>
+            {/* About Me */}
+            {(cv.aboutMe || cv.bio) && (
+              <MainSection label="About Me">
+                <Text style={s.bioText}>{cv.aboutMe || cv.bio}</Text>
               </MainSection>
             )}
 
             {/* Work experience */}
             {cv.workExperience.length > 0 && (
               <MainSection label="Work Experience">
-                {cv.workExperience.map((e) => (
-                  <View key={e.id} style={s.entryRow}>
-                    <Text style={s.entryDate}>{period(e)}</Text>
-                    <View style={s.entryContent}>
+                {sortByRecency(cv.workExperience).map((e) => (
+                  <View key={e.id} wrap={false} style={s.entryBlock}>
+                    <View style={s.entryHeadRow}>
                       <Text style={s.entryTitle}>{e.title}</Text>
-                      <Text style={s.entrySubtitle}>
-                        {e.company}{e.city ? `, ${e.city}` : ""}
-                      </Text>
-                      {e.description && (
-                        <Text style={s.entryBody}>{e.description}</Text>
-                      )}
+                      <Text style={s.entryMeta}>{period(e)}</Text>
                     </View>
+                    <Text style={s.entrySubtitle}>{e.company}{e.city ? `, ${e.city}` : ""}</Text>
+                    {e.description && <Text style={s.entryBody}>{e.description}</Text>}
                   </View>
                 ))}
               </MainSection>
@@ -272,22 +273,16 @@ export default function EuropassPdf({ cv }: Props) {
 
             {/* Education */}
             {cv.university && (
-              <MainSection label="Education">
-                <View style={s.entryRow}>
-                  <Text style={s.entryDate}>
-                    {cv.expectedGraduationYear ? `– ${cv.expectedGraduationYear}` : ""}
-                  </Text>
-                  <View style={s.entryContent}>
-                    {cv.degreeLevel && cv.fieldOfStudy && (
-                      <Text style={s.entryTitle}>
-                        {cv.degreeLevel} in {cv.fieldOfStudy}
-                      </Text>
-                    )}
-                    <Text style={s.entrySubtitle}>{cv.university}</Text>
-                    {cv.cgpa && (
-                      <Text style={s.entryBody}>CGPA: {cv.cgpa} / 4.0</Text>
-                    )}
+              <MainSection label="Education and Training">
+                <View wrap={false} style={s.entryBlock}>
+                  <View style={s.entryHeadRow}>
+                    <Text style={s.entryTitle}>
+                      {cv.degreeLevel && cv.fieldOfStudy ? `${cv.degreeLevel} in ${cv.fieldOfStudy}` : (cv.degreeLevel || cv.fieldOfStudy || "Education")}
+                    </Text>
+                    {cv.expectedGraduationYear ? <Text style={s.entryMeta}>{cv.expectedGraduationYear}</Text> : null}
                   </View>
+                  <Text style={s.entrySubtitle}>{cv.university}</Text>
+                  {cv.cgpa && <Text style={s.entryBody}>CGPA: {cv.cgpa} / 4.0</Text>}
                 </View>
               </MainSection>
             )}
@@ -296,15 +291,32 @@ export default function EuropassPdf({ cv }: Props) {
             {cv.certifications.length > 0 && (
               <MainSection label="Certifications">
                 {cv.certifications.map((c) => (
-                  <View key={c.id} style={s.entryRow}>
-                    <Text style={s.entryDate}>{c.year ?? ""}</Text>
-                    <View style={s.entryContent}>
+                  <View key={c.id} wrap={false} style={s.entryBlock}>
+                    <View style={s.entryHeadRow}>
                       <Text style={s.entryTitle}>{c.name}</Text>
-                      {c.issuer && <Text style={s.entrySubtitle}>{c.issuer}</Text>}
+                      {c.year ? <Text style={s.entryMeta}>{c.year}</Text> : null}
                     </View>
+                    {c.issuer && <Text style={s.entrySubtitle}>{c.issuer}</Text>}
                   </View>
                 ))}
               </MainSection>
+            )}
+
+            {/* Custom sections */}
+            {(cv.customSections ?? []).map((sec) =>
+              sec.items.length > 0 ? (
+                <MainSection key={sec.id} label={sec.title}>
+                  {sec.items.map((it) => (
+                    <View key={it.id} wrap={false} style={s.entryBlock}>
+                      <View style={s.entryHeadRow}>
+                        <Text style={s.entryTitle}>{it.heading}</Text>
+                      </View>
+                      {it.subtitle && <Text style={s.entrySubtitle}>{it.subtitle}</Text>}
+                      {it.description && <Text style={s.entryBody}>{it.description}</Text>}
+                    </View>
+                  ))}
+                </MainSection>
+              ) : null
             )}
 
             {/* References */}
@@ -312,10 +324,6 @@ export default function EuropassPdf({ cv }: Props) {
               <Text style={s.refText}>Available on request.</Text>
             </MainSection>
           </View>
-        </View>
-
-        {/* Bottom stripe */}
-        <View style={s.bottomStripe} />
       </Page>
     </Document>
   );

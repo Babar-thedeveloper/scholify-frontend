@@ -22,6 +22,7 @@ const GUEST_LINKS: NavLink[] = [
   { href: "/", label: "Home" },
   { href: "/scholarships", label: "Scholarships" },
   { href: "/internships", label: "Internships" },
+  { href: "/ai-finder", label: "AI Opportunity Finder" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact us" },
 ];
@@ -29,6 +30,7 @@ const GUEST_LINKS: NavLink[] = [
 const STUDENT_LINKS: NavLink[] = [
   { href: "/scholarships", label: "Scholarships" },
   { href: "/internships", label: "Internships" },
+  { href: "/ai-finder", label: "AI Opportunity Finder" },
   { href: "/dashboard/applications", label: "My Applications" },
 ];
 
@@ -97,7 +99,7 @@ export function PublicNavbar() {
                 onClick={handleCvBuilderClick}
                 className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
               >
-                <Sparkles className="size-3.5 text-emerald-500" />
+                <Sparkles className="size-3.5 text-amber-400 [fill:currentColor] drop-shadow-[0_0_6px_rgba(251,191,36,0.45)]" />
                 <span>CV Builder</span>
               </Button>
             )}

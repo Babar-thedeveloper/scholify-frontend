@@ -29,6 +29,19 @@ export interface CertificationEntry {
   year?: number;
 }
 
+export interface CvCustomSectionItem {
+  id: string;
+  heading: string;
+  subtitle?: string;
+  description?: string;
+}
+
+export interface CvCustomSection {
+  id: string;
+  title: string;
+  items: CvCustomSectionItem[];
+}
+
 export interface CvDto {
   fullName: string | null;
   email: string;
@@ -47,6 +60,24 @@ export interface CvDto {
   certifications: CertificationEntry[];
   skills: string[];
   templateKey: string;
+  customSections: CvCustomSection[];
+  /** Europass "About Me" — tailorable personal statement (falls back to profile bio). */
+  aboutMe: string | null;
+  /** CV subtitle line (e.g. "Computer Science Undergraduate"). */
+  headline: string | null;
+  /** Raw profile values, used to pre-fill "From Profile" mode. */
+  profileDefaults: CvIdentity;
+}
+
+export interface CvIdentity {
+  fullName?: string;
+  phone?: string;
+  city?: string;
+  headline?: string;
+  university?: string;
+  degreeLevel?: string;
+  fieldOfStudy?: string;
+  cgpa?: string;
 }
 
 export interface PatchCvInput {
@@ -55,6 +86,20 @@ export interface PatchCvInput {
   certifications?: CertificationEntry[];
   skills?: string[];
   templateKey?: "europass" | "modern";
+  customSections?: CvCustomSection[];
+  aboutMe?: string | null;
+  identity?: CvIdentity | null;
+}
+
+/**
+ * Europass requires reverse-chronological order (most recent first).
+ * Current/ongoing roles sort to the very top, then by end date, then start.
+ */
+export function sortByRecency(list: WorkExperienceEntry[]): WorkExperienceEntry[] {
+  const rank = (e: WorkExperienceEntry) =>
+    e.isCurrent ? 999999 : (e.endYear ?? e.startYear) * 12 + (e.endMonth ?? 12);
+  const startRank = (e: WorkExperienceEntry) => e.startYear * 12 + e.startMonth;
+  return [...list].sort((a, b) => rank(b) - rank(a) || startRank(b) - startRank(a));
 }
 
 export async function getMyCv(): Promise<CvDto> {
