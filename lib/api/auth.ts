@@ -187,6 +187,21 @@ export async function resetPassword(token: string, password: string): Promise<Me
   });
 }
 
+/**
+ * Change password while logged in (requires current password).
+ * Backend revokes all sessions on success- the caller should
+ * redirect to /login afterwards.
+ */
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+): Promise<MessageResult> {
+  return apiFetch<MessageResult>(`${BASE}/change-password`, {
+    method: "POST",
+    body: { currentPassword, newPassword },
+  });
+}
+
 // ─── Helpers used by UserContext + UI ─────────────────────────
 
 export function deriveUiRole(roles: BackendRole[]): UiRole {

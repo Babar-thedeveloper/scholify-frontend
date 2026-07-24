@@ -105,6 +105,44 @@ export async function getSidebarCounts(): Promise<SidebarCountsDto> {
   return counts;
 }
 
+// ─── Account deletion ───────────────────────────────────────
+export async function deleteMyAccount(): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>(`${BASE}/me/account`, { method: "DELETE" });
+}
+
+// ─── User settings (theme, locale, notification prefs) ──────
+export interface UserSettingsDto {
+  locale: string;
+  theme: string;
+  timezone: string;
+  notifEmail: boolean;
+  notifWhatsApp: boolean;
+  notifApplicationUpdates: boolean;
+  notifWeeklyDigest: boolean;
+}
+
+export interface PatchSettingsInput {
+  locale?: string;
+  theme?: "light" | "dark" | "system";
+  timezone?: string;
+  notifEmail?: boolean;
+  notifWhatsApp?: boolean;
+  notifApplicationUpdates?: boolean;
+  notifWeeklyDigest?: boolean;
+}
+
+export async function getMySettings(): Promise<UserSettingsDto> {
+  const { settings } = await apiFetch<{ settings: UserSettingsDto }>(`${BASE}/me/settings`);
+  return settings;
+}
+
+export async function patchMySettings(input: PatchSettingsInput): Promise<{ settings: UserSettingsDto; message: string }> {
+  return apiFetch<{ settings: UserSettingsDto; message: string }>(`${BASE}/me/settings`, {
+    method: "PATCH",
+    body: input,
+  });
+}
+
 // ─── Frontend-friendly labels ────────────────────────────────
 export const DEGREE_LABEL: Record<DegreeLevelKey, string> = {
   undergraduate: "Undergraduate",
