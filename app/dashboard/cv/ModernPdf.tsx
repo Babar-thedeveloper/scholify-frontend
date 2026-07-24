@@ -164,8 +164,8 @@ export default function ModernPdf({ cv }: Props) {
             <View style={s.contactLine}>
               <Text style={s.contactItem}>{cv.email}</Text>
               {cv.phone && <Text style={s.contactItem}>{cv.phone}</Text>}
-              {cv.city && (
-                <Text style={s.contactItem}>{cv.city}, {cv.country}</Text>
+              {(cv.city || cv.country) && (
+                <Text style={s.contactItem}>{[cv.city, cv.country].filter(Boolean).join(", ")}</Text>
               )}
             </View>
           </View>

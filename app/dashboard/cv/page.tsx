@@ -92,6 +92,19 @@ const CEFR_LEVELS = [
 
 type TemplateKey = "europass" | "modern";
 
+// Country options for the CV location dropdown (common destinations first).
+const COUNTRIES = [
+  "Pakistan", "Afghanistan", "Australia", "Austria", "Bahrain", "Bangladesh", "Belgium",
+  "Brazil", "Canada", "China", "Denmark", "Egypt", "Finland", "France", "Germany",
+  "Greece", "Hungary", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Italy",
+  "Japan", "Jordan", "Kazakhstan", "Kenya", "Kuwait", "Malaysia", "Maldives", "Mexico",
+  "Morocco", "Nepal", "Netherlands", "New Zealand", "Nigeria", "Norway", "Oman",
+  "Philippines", "Poland", "Portugal", "Qatar", "Russia", "Saudi Arabia", "Singapore",
+  "South Africa", "South Korea", "Spain", "Sri Lanka", "Sweden", "Switzerland",
+  "Thailand", "Turkey", "Ukraine", "United Arab Emirates", "United Kingdom",
+  "United States", "Uzbekistan", "Vietnam", "Other",
+];
+
 // ─── Empty drafts ────────────────────────────────────────────
 const emptyWorkExp = (): WorkExperienceEntry => ({
   id: crypto.randomUUID(), title: "", company: "", city: "",
@@ -180,7 +193,7 @@ function CVPageContent() {
           // Truly blank CV- no profile data pulled in.
           setDraft({
             ...data,
-            fullName: "", phone: "", city: "", headline: "",
+            fullName: "", phone: "", city: "", country: "", headline: "",
             university: "", degreeLevel: "", fieldOfStudy: "", cgpa: "",
             bio: "", aboutMe: "",
             workExperience: [], skills: [], languages: [], certifications: [], customSections: [],
@@ -195,6 +208,7 @@ function CVPageContent() {
             fullName: pd.fullName ?? null,
             phone: pd.phone ?? null,
             city: pd.city ?? null,
+            country: pd.country ?? "Pakistan",
             headline: pd.headline ?? null,
             university: pd.university ?? null,
             degreeLevel: pd.degreeLevel ?? null,
@@ -258,6 +272,7 @@ function CVPageContent() {
           fullName: draft.fullName ?? undefined,
           phone: draft.phone ?? undefined,
           city: draft.city ?? undefined,
+          country: draft.country ?? undefined,
           headline: draft.headline ?? undefined,
           university: draft.university ?? undefined,
           degreeLevel: draft.degreeLevel ?? undefined,
@@ -522,7 +537,16 @@ function CVPageContent() {
               </div>
               <div>
                 <Label className="mb-1 block text-xs">City</Label>
-                <Input value={draft.city ?? ""} onChange={(e) => updateDraft({ city: e.target.value })} placeholder="e.g. Karachi" className="h-9 text-sm" />
+                <Input value={draft.city ?? ""} onChange={(e) => updateDraft({ city: e.target.value })} placeholder="e.g. Toronto" className="h-9 text-sm" />
+              </div>
+              <div>
+                <Label className="mb-1 block text-xs">Country</Label>
+                <Select value={draft.country || ""} onValueChange={(v) => updateDraft({ country: v })}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select country" /></SelectTrigger>
+                  <SelectContent>
+                    {COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <Label className="mb-1 block text-xs">University</Label>

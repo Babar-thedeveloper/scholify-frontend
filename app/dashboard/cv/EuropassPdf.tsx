@@ -199,10 +199,10 @@ export default function EuropassPdf({ cv }: Props) {
                   <Text style={s.contactText}>{cv.phone}</Text>
                 </View>
               )}
-              {cv.city && (
+              {(cv.city || cv.country) && (
                 <View style={s.contactRow}>
                   <Text style={s.contactIcon}>⌖</Text>
-                  <Text style={s.contactText}>{cv.city}, {cv.country}</Text>
+                  <Text style={s.contactText}>{[cv.city, cv.country].filter(Boolean).join(", ")}</Text>
                 </View>
               )}
               {cv.dateOfBirth && (

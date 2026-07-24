@@ -68,7 +68,7 @@ export default function EuropassPreview({ cv }: Props) {
             <div className="space-y-2">
               <ContactRow icon="✉" value={cv.email} />
               {cv.phone && <ContactRow icon="✆" value={cv.phone} />}
-              {cv.city && <ContactRow icon="⌖" value={`${cv.city}, ${cv.country}`} />}
+              {(cv.city || cv.country) && <ContactRow icon="⌖" value={[cv.city, cv.country].filter(Boolean).join(", ")} />}
               {cv.dateOfBirth && <ContactRow icon="◷" value={cv.dateOfBirth} />}
             </div>
           </Section>

@@ -28,7 +28,7 @@ export default function ModernPreview({ cv }: Props) {
   const contact = [
     cv.email,
     cv.phone ?? null,
-    cv.city ? `${cv.city}, ${cv.country}` : null,
+    (cv.city || cv.country) ? [cv.city, cv.country].filter(Boolean).join(", ") : null,
   ].filter(Boolean) as string[];
 
   return (

@@ -73,6 +73,7 @@ export interface CvIdentity {
   fullName?: string;
   phone?: string;
   city?: string;
+  country?: string;
   headline?: string;
   university?: string;
   degreeLevel?: string;
