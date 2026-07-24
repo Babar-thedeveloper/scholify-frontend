@@ -201,19 +201,22 @@ function CVPageContent() {
           router.replace("/dashboard/cv");
           toast.success("Started fresh- a blank CV. Fill in your details below.");
         } else if (fromProfile) {
-          // Pull the identity from the profile defaults, keep saved extras.
+          // Merge profile defaults into the CV- only overwrite CV fields that
+          // are empty/null so we never destroy manually-entered data.
           const pd = data.profileDefaults ?? {};
+          const pick = (profileVal: string | null | undefined, cvVal: string | null | undefined) =>
+            (cvVal && cvVal.trim()) ? cvVal : (profileVal ?? null);
           setDraft({
             ...data,
-            fullName: pd.fullName ?? null,
-            phone: pd.phone ?? null,
-            city: pd.city ?? null,
-            country: pd.country ?? "Pakistan",
-            headline: pd.headline ?? null,
-            university: pd.university ?? null,
-            degreeLevel: pd.degreeLevel ?? null,
-            fieldOfStudy: pd.fieldOfStudy ?? null,
-            cgpa: pd.cgpa ?? null,
+            fullName: pick(pd.fullName, data.fullName),
+            phone: pick(pd.phone, data.phone),
+            city: pick(pd.city, data.city),
+            country: (data.country && data.country.trim()) ? data.country : (pd.country ?? "Pakistan"),
+            headline: pick(pd.headline, data.headline),
+            university: pick(pd.university, data.university),
+            degreeLevel: pick(pd.degreeLevel, data.degreeLevel),
+            fieldOfStudy: pick(pd.fieldOfStudy, data.fieldOfStudy),
+            cgpa: pick(pd.cgpa, data.cgpa),
           });
           router.replace("/dashboard/cv");
           toast.success("Loaded your details from your profile.");
@@ -239,6 +242,19 @@ function CVPageContent() {
           certifications: draft.certifications,
           skills: draft.skills,
           templateKey: draft.templateKey as TemplateKey,
+          customSections: draft.customSections,
+          aboutMe: draft.aboutMe,
+          identity: {
+            fullName: draft.fullName ?? undefined,
+            phone: draft.phone ?? undefined,
+            city: draft.city ?? undefined,
+            country: draft.country ?? undefined,
+            headline: draft.headline ?? undefined,
+            university: draft.university ?? undefined,
+            degreeLevel: draft.degreeLevel ?? undefined,
+            fieldOfStudy: draft.fieldOfStudy ?? undefined,
+            cgpa: draft.cgpa ?? undefined,
+          },
         };
         const updated = await patchMyCv(payload);
         setCv(updated);
@@ -768,22 +784,17 @@ function CVPageContent() {
 
         {/* ── Preview pane ── */}
         <div className={cn("min-w-0 flex-1", previewVisible ? "block" : "hidden", "lg:block")}>
-          <div className="sticky top-4">
-            <div className="mb-2 flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Live preview
-              </p>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                {templateKey === "europass" ? "Europass" : "Modern"} · A4
-              </span>
-            </div>
-            <div
-              className="rounded-2xl border border-border bg-gradient-to-b from-muted/60 to-muted/20 p-3 sm:p-5"
-              style={{ maxHeight: "82vh", overflowY: "auto" }}
-            >
-              <div className="mx-auto w-full max-w-[794px] overflow-hidden rounded-lg bg-white shadow-[0_10px_40px_-12px_rgba(0,0,0,0.28)] ring-1 ring-black/5">
-                {templateKey === "europass" ? <EuropassPreview cv={draft} /> : <ModernPreview cv={draft} />}
-              </div>
+          <div className="mb-2 flex items-center justify-between lg:sticky lg:top-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Live preview
+            </p>
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+              {templateKey === "europass" ? "Europass" : "Modern"} · A4
+            </span>
+          </div>
+          <div className="rounded-2xl border border-border bg-gradient-to-b from-muted/60 to-muted/20 p-3 sm:p-5">
+            <div className="mx-auto w-full max-w-[794px] overflow-hidden rounded-lg bg-white shadow-[0_10px_40px_-12px_rgba(0,0,0,0.28)] ring-1 ring-black/5">
+              {templateKey === "europass" ? <EuropassPreview cv={draft} /> : <ModernPreview cv={draft} />}
             </div>
           </div>
         </div>
