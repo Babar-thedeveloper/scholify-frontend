@@ -62,9 +62,9 @@ export default function AiFinderPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl px-4 py-28 sm:px-6 lg:px-8">
       {/* ── Hero ── */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 px-6 py-10 text-white shadow-sm sm:px-10 sm:py-12">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 px-6 py-16 text-white shadow-sm sm:px-10 sm:py-20">
         <div aria-hidden className="pointer-events-none absolute -right-12 -top-16 size-56 rounded-full bg-white/10 blur-2xl" />
         <div aria-hidden className="pointer-events-none absolute -bottom-20 right-32 size-52 rounded-full bg-black/10 blur-2xl" />
         <div className="relative max-w-2xl">
