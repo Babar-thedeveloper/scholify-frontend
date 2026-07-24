@@ -189,7 +189,7 @@ export default function ModernPdf({ cv }: Props) {
                   <View style={s.entryContent}>
                     <Text style={s.entryTitle}>{e.title}</Text>
                     <Text style={s.entryCompany}>
-                      {e.company}{e.city ? ` · ${e.city}` : ""}
+                      {e.company}{(e.city || e.country) ? ` · ${[e.city, e.country].filter(Boolean).join(", ")}` : ""}
                     </Text>
                     {e.description && (
                       <Text style={s.entryBody}>{e.description}</Text>

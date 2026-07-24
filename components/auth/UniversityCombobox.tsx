@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -43,7 +44,32 @@ interface UniversityComboboxProps {
 export function UniversityCombobox({ value, onChange, invalid, id }: UniversityComboboxProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [rect, setRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Position the (portalled) panel under the trigger; keep it in sync on
+  // scroll/resize. Rendering in a portal avoids the card's overflow clip.
+  useEffect(() => {
+    if (!open) return;
+    const update = () => {
+      const r = triggerRef.current?.getBoundingClientRect();
+      if (r) setRect({ top: r.bottom + 4, left: r.left, width: r.width });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [open]);
+
+  // Focus search without scrolling once the panel is positioned.
+  useEffect(() => {
+    if (open && rect) inputRef.current?.focus({ preventScroll: true });
+  }, [open, rect]);
 
   const selected = useMemo(
     () => UNIVERSITIES.find((u) => u.value === value),
@@ -63,19 +89,21 @@ export function UniversityCombobox({ value, onChange, invalid, id }: UniversityC
 
   useEffect(() => {
     if (!open) return;
-    function onClick(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+    function onDown(e: MouseEvent) {
+      const t = e.target as Node;
+      if (triggerRef.current?.contains(t)) return;
+      if (panelRef.current?.contains(t)) return;
+      setOpen(false);
     }
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
   }, [open]);
 
   return (
-    <div ref={wrapperRef} className="relative">
+    <div className="relative">
       <button
         type="button"
+        ref={triggerRef}
         id={id}
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -102,12 +130,16 @@ export function UniversityCombobox({ value, onChange, invalid, id }: UniversityC
         <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
       </button>
 
-      {open && (
-        <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-lg border border-border bg-popover shadow-lg animate-in fade-in-0 zoom-in-95">
+      {open && rect && createPortal(
+        <div
+          ref={panelRef}
+          style={{ position: "fixed", top: rect.top, left: rect.left, width: rect.width, zIndex: 200 }}
+          className="overflow-hidden rounded-lg border border-border bg-white shadow-xl ring-1 ring-black/5 dark:bg-card"
+        >
           <div className="relative border-b border-border p-2">
             <Search className="absolute left-4 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <Input
-              autoFocus
+              ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Type to search..."
@@ -158,7 +190,8 @@ export function UniversityCombobox({ value, onChange, invalid, id }: UniversityC
               })
             )}
           </ul>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

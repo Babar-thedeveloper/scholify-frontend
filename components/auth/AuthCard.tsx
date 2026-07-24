@@ -24,8 +24,8 @@ export function AuthCard({ children, size = "sm", aside }: AuthCardProps) {
     >
       <div className="grid w-full grid-cols-1 md:grid-cols-[40%_60%]">
 
-        {/* ── GREEN BRANDING HALF (fixed, never scrolls) ── */}
-        <aside className="group relative flex flex-col justify-between overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-600 to-teal-600 p-7 text-white md:p-8">
+        {/* ── GREEN BRANDING HALF (desktop only; hidden on mobile so only the form shows) ── */}
+        <aside className="group relative hidden flex-col justify-between overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-600 to-teal-600 p-7 text-white md:flex md:p-8">
           {/* animated decorative shapes */}
           <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 transition-transform duration-700 group-hover:scale-125" />
           <div className="pointer-events-none absolute -bottom-12 -left-8 h-44 w-44 rounded-full bg-teal-400/20 transition-transform duration-700 group-hover:scale-110" />

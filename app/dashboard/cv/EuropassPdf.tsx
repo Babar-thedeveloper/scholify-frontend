@@ -264,7 +264,7 @@ export default function EuropassPdf({ cv }: Props) {
                       <Text style={s.entryTitle}>{e.title}</Text>
                       <Text style={s.entryMeta}>{period(e)}</Text>
                     </View>
-                    <Text style={s.entrySubtitle}>{e.company}{e.city ? `, ${e.city}` : ""}</Text>
+                    <Text style={s.entrySubtitle}>{[e.company, e.city, e.country].filter(Boolean).join(", ")}</Text>
                     {e.description && <Text style={s.entryBody}>{e.description}</Text>}
                   </View>
                 ))}

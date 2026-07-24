@@ -80,7 +80,7 @@ export function OrgSignupFields({
         <div
           role="radiogroup"
           aria-label="Organization type"
-          className="grid h-9 grid-cols-2 gap-1 rounded-xl bg-muted p-1"
+          className="grid grid-cols-1 gap-1 rounded-xl bg-muted p-1 sm:grid-cols-2"
         >
           {orgTypeOptions.map(({ value: v, label, Icon }) => {
             const active = values.organizationType === v;
@@ -92,14 +92,14 @@ export function OrgSignupFields({
                 aria-checked={active}
                 onClick={() => onChange("organizationType", v)}
                 className={cn(
-                  "inline-flex items-center justify-center gap-1.5 rounded-lg text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   active
                     ? "bg-white text-emerald-700 shadow-sm dark:bg-background dark:text-emerald-400"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 <Icon className="size-3.5 shrink-0" aria-hidden="true" />
-                <span className="truncate">{label}</span>
+                <span className="whitespace-nowrap">{label}</span>
               </button>
             );
           })}

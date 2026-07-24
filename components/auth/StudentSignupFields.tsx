@@ -84,16 +84,13 @@ export function StudentSignupFields({
         )}
       </div>
 
-      {/* Row 3: University + Degree level (2-col) */}
-      <div className="grid grid-cols-2 gap-3">
+      {/* Row 3: University + Degree level (stacks on mobile) */}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <FormField id="university" label="University" error={errors.university}>
           <UniversityCombobox
             id="university"
             value={values.university}
-            onChange={(v) => {
-              onChange("university", v);
-              onBlur("university");
-            }}
+            onChange={(v) => onChange("university", v)}
             invalid={!!errors.university}
           />
         </FormField>

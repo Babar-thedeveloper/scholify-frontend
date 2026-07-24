@@ -8,6 +8,7 @@ export interface WorkExperienceEntry {
   title: string;
   company: string;
   city?: string;
+  country?: string;
   startMonth: number;
   startYear: number;
   endMonth?: number;

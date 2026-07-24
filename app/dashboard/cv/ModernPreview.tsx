@@ -83,7 +83,7 @@ export default function ModernPreview({ cv }: Props) {
                     <span className="absolute -left-[3.5px] top-[5px] size-[7px] rounded-full bg-emerald-500 ring-2 ring-white" />
                     <p className="text-[12px] font-semibold text-slate-900">{e.title}</p>
                     <p className="text-[10.5px] font-medium text-emerald-700">
-                      {e.company}{e.city ? ` · ${e.city}` : ""}
+                      {e.company}{(e.city || e.country) ? ` · ${[e.city, e.country].filter(Boolean).join(", ")}` : ""}
                     </p>
                     {e.description && (
                       <p className="mt-1 whitespace-pre-line leading-snug text-[#555]">{e.description}</p>

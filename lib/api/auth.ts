@@ -171,6 +171,22 @@ export async function resendVerification(email: string): Promise<MessageResult> 
   });
 }
 
+/** Request a password-reset link to the account's registered email. */
+export async function requestPasswordReset(email: string): Promise<MessageResult> {
+  return apiFetch<MessageResult>(`${BASE}/forgot-password`, {
+    method: "POST",
+    body: { email },
+  });
+}
+
+/** Set a new password using the token from the reset link. */
+export async function resetPassword(token: string, password: string): Promise<MessageResult> {
+  return apiFetch<MessageResult>(`${BASE}/reset-password`, {
+    method: "POST",
+    body: { token, password },
+  });
+}
+
 // ─── Helpers used by UserContext + UI ─────────────────────────
 
 export function deriveUiRole(roles: BackendRole[]): UiRole {

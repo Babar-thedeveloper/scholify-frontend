@@ -115,7 +115,7 @@ export default function EuropassPreview({ cv }: Props) {
                       <p className="font-semibold text-[#1a1a1a]">{e.title}</p>
                       <p className="shrink-0 text-[10px] text-[#667]">{period(e)}</p>
                     </div>
-                    <p className="text-[#555]">{e.company}{e.city ? `, ${e.city}` : ""}</p>
+                    <p className="text-[#555]">{[e.company, e.city, e.country].filter(Boolean).join(", ")}</p>
                     {e.description && (
                       <p className="mt-1 whitespace-pre-line leading-snug text-[#444]">{e.description}</p>
                     )}

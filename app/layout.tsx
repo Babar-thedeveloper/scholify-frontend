@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { UserProvider } from "@/components/auth/UserContext";
-import { RoleSwitcher } from "@/components/auth/RoleSwitcher";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 const DESCRIPTION =
@@ -111,7 +110,6 @@ export default function RootLayout({
             <TooltipProvider>
               {children}
               <Toaster />
-              <RoleSwitcher />
             </TooltipProvider>
           </UserProvider>
         </ThemeProvider>

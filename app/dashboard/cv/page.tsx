@@ -963,7 +963,7 @@ function WorkExpCard({ entry, onEdit, onRemove }: {
     <div className="flex items-start justify-between rounded-lg border border-border bg-muted/30 px-3 py-2.5 gap-2">
       <div className="min-w-0">
         <p className="text-sm font-medium truncate">{entry.title || "Untitled"}</p>
-        <p className="text-xs text-muted-foreground truncate">{entry.company}{entry.city ? `, ${entry.city}` : ""}</p>
+        <p className="text-xs text-muted-foreground truncate">{[entry.company, entry.city, entry.country].filter(Boolean).join(", ")}</p>
         <p className="text-xs text-muted-foreground">{start}{end ? ` – ${end}` : ""}</p>
       </div>
       <div className="flex shrink-0 gap-1">
@@ -1004,9 +1004,18 @@ function WorkExpForm({ initial, onSave, onCancel }: {
           <Label>Company *</Label>
           <Input value={form.company} onChange={(e) => set({ company: e.target.value })} placeholder="Company name" required />
         </div>
-        <div className="col-span-2 space-y-1">
+        <div className="space-y-1">
           <Label>City</Label>
-          <Input value={form.city ?? ""} onChange={(e) => set({ city: e.target.value })} placeholder="e.g. Karachi" />
+          <Input value={form.city ?? ""} onChange={(e) => set({ city: e.target.value })} placeholder="e.g. Toronto" />
+        </div>
+        <div className="space-y-1">
+          <Label>Country</Label>
+          <Select value={form.country || ""} onValueChange={(v) => set({ country: v })}>
+            <SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger>
+            <SelectContent>
+              {COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-1">
